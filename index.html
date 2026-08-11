@@ -1,629 +1,378 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Nepal News Top 10</title>
-
-<meta name="description"
-content="Nepal's top news stories, organized by category and updated automatically.">
-
-<style>
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  background: #f5f6f8;
-  color: #15191f;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-/* HEADER */
-
-header {
-  background: #ffffff;
-  border-bottom: 1px solid #e2e5e9;
-  padding: 18px 15px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-inner {
-  max-width: 950px;
-  margin: auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 15px;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-
-.logo-icon {
-  font-size: 28px;
-}
-
-.logo-text h1 {
-  margin: 0;
-  font-size: 20px;
-}
-
-.logo-text p {
-  margin: 2px 0 0;
-  color: #777;
-  font-size: 11px;
-}
-
-.updated {
-  font-size: 11px;
-  color: #777;
-  text-align: right;
-}
-
-/* NAVIGATION */
-
-nav {
-  background: #111827;
-  overflow-x: auto;
-  white-space: nowrap;
-  scrollbar-width: none;
-}
-
-nav::-webkit-scrollbar {
-  display: none;
-}
-
-.nav-inner {
-  max-width: 950px;
-  margin: auto;
-  display: flex;
-}
-
-nav a {
-  color: #ffffff;
-  text-decoration: none;
-  padding: 12px 13px;
-  font-size: 13px;
-  opacity: .9;
-}
-
-nav a:hover {
-  background: #273449;
-}
-
-/* MAIN */
-
-main {
-  max-width: 950px;
-  margin: auto;
-  padding: 18px 15px 50px;
-}
-
-/* BREAKING / TOP */
-
-.top-banner {
-  background: #0b3d91;
-  color: white;
-  border-radius: 12px;
-  padding: 18px;
-  margin-bottom: 25px;
-}
-
-.top-banner h2 {
-  margin: 0 0 5px;
-  font-size: 20px;
-}
-
-.top-banner p {
-  margin: 0;
-  font-size: 13px;
-  opacity: .9;
-}
-
-/* SECTION */
-
-.section {
-  margin-bottom: 34px;
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section-title h2 {
-  margin: 0;
-  font-size: 21px;
-}
-
-.section-count {
-  font-size: 11px;
-  color: #777;
-}
-
-/* NEWS */
-
-.news-card {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 15px;
-  margin-bottom: 9px;
-  transition: transform .15s ease, box-shadow .15s ease;
-}
-
-.news-card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 3px 12px rgba(0,0,0,.07);
-}
-
-.rank {
-  color: #0b3d91;
-  font-weight: bold;
-  margin-right: 5px;
-}
-
-.headline {
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.4;
-  margin-bottom: 7px;
-}
-
-.summary {
-  font-size: 14px;
-  color: #4b5563;
-  line-height: 1.55;
-  margin-bottom: 10px;
-}
-
-.article-info {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 7px;
-  font-size: 11px;
-  color: #777;
-}
-
-.source {
-  font-weight: 700;
-  color: #0b3d91;
-}
-
-.read-link {
-  margin-left: auto;
-  text-decoration: none;
-  font-weight: 700;
-  color: #0b3d91;
-}
-
-/* LOADING */
-
-.loading,
-.error {
-  background: white;
-  border-radius: 10px;
-  padding: 30px;
-  text-align: center;
-  color: #777;
-}
-
-/* FOOTER */
-
-footer {
-  background: #111827;
-  color: #9ca3af;
-  padding: 30px 15px;
-  text-align: center;
-  font-size: 11px;
-}
-
-footer strong {
-  color: white;
-}
-
-/* DESKTOP */
-
-@media (min-width: 700px) {
-
-  .logo-text h1 {
-    font-size: 23px;
-  }
-
-  main {
-    padding-top: 25px;
-  }
-
-  .news-card {
-    padding: 17px 18px;
-  }
-
-  .headline {
-    font-size: 17px;
-  }
-
-}
-
-</style>
-</head>
-
-<body>
-
-<header>
-
-  <div class="header-inner">
-
-    <div class="logo">
-
-      <div class="logo-icon">🇳🇵</div>
-
-      <div class="logo-text">
-
-        <h1>Nepal News Top 10</h1>
-
-        <p>News that matters, summarized in one sentence.</p>
-
-      </div>
-
-    </div>
-
-    <div class="updated" id="updated">
-      Updating...
-    </div>
-
-  </div>
-
-</header>
-
-
-<nav>
-
-  <div class="nav-inner">
-
-    <a href="#national">National</a>
-    <a href="#politics">Politics</a>
-    <a href="#business">Business</a>
-    <a href="#sports">Sports</a>
-    <a href="#technology">Tech</a>
-    <a href="#entertainment">Entertainment</a>
-    <a href="#world">World</a>
-    <a href="#crime">Crime</a>
-    <a href="#health">Health</a>
-    <a href="#weather">Weather</a>
-
-  </div>
-
-</nav>
-
-
-<main>
-
-  <div class="top-banner">
-
-    <h2>🔥 Today's Top News</h2>
-
-    <p>
-      The latest important stories from Nepal and around the world,
-      organized by category.
-    </p>
-
-  </div>
-
-  <div id="news">
-
-    <div class="loading">
-      Loading latest news...
-    </div>
-
-  </div>
-
-</main>
-
-
-<footer>
-
-  <p>
-    <strong>Nepal News Top 10</strong>
-  </p>
-
-  <p>
-    News summaries are provided for informational purposes.
-    Original stories belong to their respective publishers.
-  </p>
-
-</footer>
-
-
-<script>
-
-const sectionNames = {
-
-  national: "🇳🇵 National",
-  politics: "🏛️ Politics",
-  business: "💰 Business",
-  sports: "⚽ Sports",
-  technology: "💻 Technology",
-  entertainment: "🎬 Entertainment",
-  world: "🌍 World",
-  crime: "🚨 Crime & Security",
-  health: "🩺 Health",
-  weather: "🌦️ Weather"
-
-};
-
-
-async function loadNews() {
-
-  const container =
-    document.getElementById("news");
-
-  try {
-
-    const response =
-      await fetch("news.json?cache=" + Date.now());
-
-    if (!response.ok) {
-      throw new Error("News file unavailable");
-    }
-
-    const data =
-      await response.json();
-
-    container.innerHTML = "";
-
-    if (data.updated) {
-
-      const updated =
-        new Date(data.updated);
-
-      document.getElementById("updated").textContent =
-        "Updated " +
-        updated.toLocaleString(
-          undefined,
-          {
-            dateStyle: "medium",
-            timeStyle: "short"
-          }
-        );
-
-    }
-
-
-    for (
-      const [section, articles]
-      of Object.entries(data.sections)
-    ) {
-
-      const sectionElement =
-        document.createElement("section");
-
-      sectionElement.className =
-        "section";
-
-      sectionElement.id =
-        section;
-
-
-      const header =
-        document.createElement("div");
-
-      header.className =
-        "section-header";
-
-
-      const title =
-        document.createElement("div");
-
-      title.className =
-        "section-title";
-
-
-      const heading =
-        document.createElement("h2");
-
-      heading.textContent =
-        sectionNames[section] || section;
-
-
-      const count =
-        document.createElement("span");
-
-      count.className =
-        "section-count";
-
-      count.textContent =
-        "TOP 10";
-
-
-      title.appendChild(heading);
-
-      header.appendChild(title);
-
-      header.appendChild(count);
-
-      sectionElement.appendChild(header);
-
-
-      if (!articles || articles.length === 0) {
-
-        const empty =
-          document.createElement("div");
-
-        empty.className =
-          "loading";
-
-        empty.textContent =
-          "No stories available right now.";
-
-        sectionElement.appendChild(empty);
-
-      } else {
-
-        articles
-          .slice(0, 10)
-          .forEach(
-            (article, index) => {
-
-              const card =
-                document.createElement("article");
-
-              card.className =
-                "news-card";
-
-
-              const headline =
-                document.createElement("div");
-
-              headline.className =
-                "headline";
-
-
-              const rank =
-                document.createElement("span");
-
-              rank.className =
-                "rank";
-
-              rank.textContent =
-                String(index + 1)
-                  .padStart(2, "0") + ".";
-
-
-              headline.appendChild(rank);
-
-              headline.appendChild(
-                document.createTextNode(
-                  " " + article.title
-                )
-              );
-
-
-              const summary =
-                document.createElement("div");
-
-              summary.className =
-                "summary";
-
-              summary.textContent =
-                article.summary ||
-                "Read the original article for more information.";
-
-
-              const info =
-                document.createElement("div");
-
-              info.className =
-                "article-info";
-
-
-              const source =
-                document.createElement("span");
-
-              source.className =
-                "source";
-
-              source.textContent =
-                article.source ||
-                "Original source";
-
-
-              const time =
-                document.createElement("span");
-
-              time.textContent =
-                article.published || "";
-
-
-              const link =
-                document.createElement("a");
-
-              link.className =
-                "read-link";
-
-              link.href =
-                article.link || "#";
-
-              link.target =
-                "_blank";
-
-              link.rel =
-                "noopener noreferrer";
-
-              link.textContent =
-                "Read original →";
-
-
-              info.appendChild(source);
-
-              if (article.published) {
-                info.appendChild(time);
+name: Update Nepal News
+
+on:
+  schedule:
+    - cron: "0 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-news:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install packages
+        run: |
+          pip install feedparser requests
+
+      - name: Build news database
+        run: |
+          cat > update_news.py <<'PY'
+          import feedparser
+          import requests
+          import json
+          import re
+          from datetime import datetime, timezone
+
+          SOURCES = [
+              {
+                  "name": "The Kathmandu Post",
+                  "url": "https://kathmandupost.com/rss"
+              },
+              {
+                  "name": "OnlineKhabar",
+                  "url": "https://www.onlinekhabar.com/feed"
               }
+          ]
 
-              info.appendChild(link);
+          SECTIONS = [
+              "national",
+              "politics",
+              "business",
+              "sports",
+              "technology",
+              "entertainment",
+              "world",
+              "crime",
+              "health",
+              "weather"
+          ]
 
+          KEYWORDS = {
+              "politics": [
+                  "government", "minister", "parliament",
+                  "election", "political", "prime minister",
+                  "cabinet", "party", "president"
+              ],
+              "business": [
+                  "business", "economy", "bank", "market",
+                  "company", "trade", "finance", "investment",
+                  "stock", "nepse", "remittance"
+              ],
+              "sports": [
+                  "football", "cricket", "sport", "tournament",
+                  "player", "match", "league", "championship",
+                  "olympic", "athlete"
+              ],
+              "technology": [
+                  "technology", "tech", "digital",
+                  "artificial intelligence", "ai", "software",
+                  "internet", "cyber", "computer", "app"
+              ],
+              "entertainment": [
+                  "movie", "film", "music", "actor", "actress",
+                  "entertainment", "concert", "singer",
+                  "cinema", "television"
+              ],
+              "world": [
+                  "world", "international", "india", "china",
+                  "america", "iran", "israel", "usa",
+                  "ukraine", "russia", "pakistan"
+              ],
+              "crime": [
+                  "crime", "police", "arrest", "murder",
+                  "fraud", "accident", "security", "court",
+                  "criminal", "investigation"
+              ],
+              "health": [
+                  "health", "hospital", "doctor", "disease",
+                  "medical", "medicine", "patient",
+                  "healthcare", "virus", "outbreak"
+              ],
+              "weather": [
+                  "weather", "rain", "flood", "storm",
+                  "snow", "temperature", "monsoon",
+                  "landslide", "climate"
+              ]
+          }
 
-              card.appendChild(headline);
+          def clean(text):
+              if not text:
+                  return ""
 
-              card.appendChild(summary);
+              text = re.sub(r"<[^>]+>", " ", text)
+              text = re.sub(r"\s+", " ", text)
 
-              card.appendChild(info);
+              return text.strip()
 
-              sectionElement.appendChild(card);
+          def one_sentence(text):
+              text = clean(text)
 
-            }
-          );
+              if not text:
+                  return "Read the original article for the latest information."
 
-      }
+              parts = re.split(
+                  r"(?<=[.!?])\s+",
+                  text
+              )
 
+              sentence = parts[0].strip()
 
-      container.appendChild(
-        sectionElement
-      );
+              if len(sentence) > 280:
+                  sentence = (
+                      sentence[:277]
+                      .rsplit(" ", 1)[0]
+                      + "..."
+                  )
 
-    }
+              if not sentence.endswith(
+                  (".", "!", "?")
+              ):
+                  sentence += "."
 
-  } catch (error) {
+              return sentence
 
-    container.innerHTML = `
-      <div class="error">
-        <strong>Unable to load today's news.</strong>
-        <br><br>
-        Please try again later.
-      </div>
-    `;
+          def classify(title, summary):
 
-    console.error(error);
+              text = (
+                  title + " " + summary
+              ).lower()
 
-  }
+              scores = {}
 
-}
+              for section, words in KEYWORDS.items():
 
+                  score = 0
 
-loadNews();
+                  for word in words:
 
-</script>
+                      if word in text:
+                          score += 1
 
-</body>
-</html>
+                  scores[section] = score
+
+              best = max(
+                  scores,
+                  key=scores.get
+              )
+
+              if scores[best] == 0:
+                  return "national"
+
+              return best
+
+          def importance(article):
+
+              title = article["title"].lower()
+
+              score = 0
+
+              important_words = [
+                  "breaking",
+                  "latest",
+                  "government",
+                  "prime minister",
+                  "president",
+                  "election",
+                  "death",
+                  "major",
+                  "new",
+                  "crisis",
+                  "decision",
+                  "agreement",
+                  "earthquake",
+                  "flood"
+              ]
+
+              for word in important_words:
+
+                  if word in title:
+                      score += 2
+
+              # Prefer articles with a real publication date.
+              if article["published"]:
+                  score += 1
+
+              return score
+
+          articles = []
+          seen = set()
+
+          for source in SOURCES:
+
+              print(
+                  "Reading:",
+                  source["name"]
+              )
+
+              try:
+
+                  response = requests.get(
+                      source["url"],
+                      headers={
+                          "User-Agent":
+                          "Mozilla/5.0 NepalNewsTop10"
+                      },
+                      timeout=20
+                  )
+
+                  response.raise_for_status()
+
+                  feed = feedparser.parse(
+                      response.content
+                  )
+
+                  print(
+                      "Found:",
+                      len(feed.entries)
+                  )
+
+                  for item in feed.entries[:50]:
+
+                      title = clean(
+                          item.get("title", "")
+                      )
+
+                      summary = clean(
+                          item.get(
+                              "summary",
+                              item.get(
+                                  "description",
+                                  ""
+                              )
+                          )
+                      )
+
+                      link = item.get(
+                          "link",
+                          ""
+                      ).strip()
+
+                      published = item.get(
+                          "published",
+                          item.get(
+                              "updated",
+                              ""
+                          )
+                      )
+
+                      if not title or not link:
+                          continue
+
+                      # Remove duplicate links.
+                      if link in seen:
+                          continue
+
+                      seen.add(link)
+
+                      section = classify(
+                          title,
+                          summary
+                      )
+
+                      articles.append({
+                          "title": title,
+                          "summary": one_sentence(
+                              summary
+                          ),
+                          "source": source["name"],
+                          "link": link,
+                          "published": published,
+                          "section": section
+                      })
+
+              except Exception as error:
+
+                  print(
+                      "Source failed:",
+                      error
+                  )
+
+          if not articles:
+              raise RuntimeError(
+                  "No news articles were collected."
+              )
+
+          # Sort by importance first.
+          articles.sort(
+              key=importance,
+              reverse=True
+          )
+
+          result = {
+              section: []
+              for section in SECTIONS
+          }
+
+          # Put each article into its best section.
+          for article in articles:
+
+              section = article["section"]
+
+              if len(result[section]) < 10:
+                  result[section].append({
+                      "title": article["title"],
+                      "summary": article["summary"],
+                      "source": article["source"],
+                      "link": article["link"],
+                      "published": article["published"]
+                  })
+
+          output = {
+              "updated":
+                  datetime.now(
+                      timezone.utc
+                  ).isoformat(),
+              "sections": result
+          }
+
+          with open(
+              "news.json",
+              "w",
+              encoding="utf-8"
+          ) as file:
+
+              json.dump(
+                  output,
+                  file,
+                  ensure_ascii=False,
+                  indent=2
+              )
+
+          print("")
+          print("NEWS UPDATED")
+
+          for section in SECTIONS:
+              print(
+                  section,
+                  ":",
+                  len(result[section])
+              )
+
+          PY
+
+          python update_news.py
+
+      - name: Commit updated news
+        run: |
+          git config user.name "Nepal News Bot"
+          git config user.email "actions@github.com"
+
+          git add news.json
+
+          if git diff --cached --quiet; then
+            echo "No changes."
+          else
+            git commit -m "Update Nepal news"
+            git push
+          fi
