@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Python
@@ -25,13 +25,13 @@ jobs:
         run: |
           pip install feedparser requests
 
-      - name: Download and build news
+      - name: Build news database
         run: |
           cat > update_news.py <<'PY'
           import feedparser
+          import requests
           import json
           import re
-          import requests
           from datetime import datetime, timezone
 
           SOURCES = [
@@ -45,102 +45,102 @@ jobs:
               }
           ]
 
-          sections = {
-              "national": [],
-              "politics": [],
-              "business": [],
-              "sports": [],
-              "technology": [],
-              "entertainment": [],
-              "world": [],
-              "crime": [],
-              "health": [],
-              "weather": []
-          }
+          SECTIONS = [
+              "national",
+              "politics",
+              "business",
+              "sports",
+              "technology",
+              "entertainment",
+              "world",
+              "crime",
+              "health",
+              "weather"
+          ]
 
-          keywords = {
+          KEYWORDS = {
               "politics": [
                   "government", "minister", "parliament",
                   "election", "political", "prime minister",
-                  "cabinet", "party", "congress"
+                  "cabinet", "party", "president"
               ],
-
               "business": [
                   "business", "economy", "bank", "market",
-                  "company", "trade", "finance",
-                  "investment", "stock", "nepse"
+                  "company", "trade", "finance", "investment",
+                  "stock", "nepse", "remittance"
               ],
-
               "sports": [
-                  "football", "cricket", "sport",
-                  "tournament", "player", "match",
-                  "league", "championship"
+                  "football", "cricket", "sport", "tournament",
+                  "player", "match", "league", "championship",
+                  "olympic", "athlete"
               ],
-
               "technology": [
                   "technology", "tech", "digital",
-                  "artificial intelligence", " AI ",
-                  "software", "internet", "cyber"
+                  "artificial intelligence", "ai", "software",
+                  "internet", "cyber", "computer", "app"
               ],
-
               "entertainment": [
-                  "movie", "film", "music", "actor",
-                  "actress", "entertainment", "concert",
-                  "singer", "cinema"
+                  "movie", "film", "music", "actor", "actress",
+                  "entertainment", "concert", "singer",
+                  "cinema", "television"
               ],
-
               "world": [
-                  "world", "international", "india",
-                  "china", "america", "iran",
-                  "israel", "usa", "ukraine",
-                  "russia"
+                  "world", "international", "india", "china",
+                  "america", "iran", "israel", "usa",
+                  "ukraine", "russia", "pakistan"
               ],
-
               "crime": [
-                  "crime", "police", "arrest",
-                  "murder", "fraud", "accident",
-                  "security", "court", "criminal"
+                  "crime", "police", "arrest", "murder",
+                  "fraud", "accident", "security", "court",
+                  "criminal", "investigation"
               ],
-
               "health": [
-                  "health", "hospital", "doctor",
-                  "disease", "medical", "medicine",
-                  "patient", "healthcare"
+                  "health", "hospital", "doctor", "disease",
+                  "medical", "medicine", "patient",
+                  "healthcare", "virus", "outbreak"
               ],
-
               "weather": [
-                  "weather", "rain", "flood",
-                  "storm", "snow", "temperature",
-                  "monsoon", "landslide"
+                  "weather", "rain", "flood", "storm",
+                  "snow", "temperature", "monsoon",
+                  "landslide", "climate"
               ]
           }
 
-          def clean_html(text):
+          def clean(text):
               if not text:
                   return ""
 
-              text = re.sub(r"<[^>]*>", " ", text)
+              text = re.sub(r"<[^>]+>", " ", text)
               text = re.sub(r"\s+", " ", text)
 
               return text.strip()
 
           def one_sentence(text):
-              text = clean_html(text)
+              text = clean(text)
 
               if not text:
                   return "Read the original article for the latest information."
 
-              sentences = re.split(r"(?<=[.!?])\s+", text)
+              parts = re.split(
+                  r"(?<=[.!?])\s+",
+                  text
+              )
 
-              result = sentences[0].strip()
+              sentence = parts[0].strip()
 
-              if len(result) > 300:
-                  result = result[:297].rsplit(" ", 1)[0] + "..."
+              if len(sentence) > 280:
+                  sentence = (
+                      sentence[:277]
+                      .rsplit(" ", 1)[0]
+                      + "..."
+                  )
 
-              if not result.endswith((".", "!", "?")):
-                  result += "."
+              if not sentence.endswith(
+                  (".", "!", "?")
+              ):
+                  sentence += "."
 
-              return result
+              return sentence
 
           def classify(title, summary):
 
@@ -150,15 +150,13 @@ jobs:
 
               scores = {}
 
-              for section, words in keywords.items():
+              for section, words in KEYWORDS.items():
 
                   score = 0
 
                   for word in words:
 
-                      word = word.strip().lower()
-
-                      if word and word in text:
+                      if word in text:
                           score += 1
 
                   scores[section] = score
@@ -173,14 +171,49 @@ jobs:
 
               return best
 
-          all_articles = []
-          seen_links = set()
+          def importance(article):
+
+              title = article["title"].lower()
+
+              score = 0
+
+              important_words = [
+                  "breaking",
+                  "latest",
+                  "government",
+                  "prime minister",
+                  "president",
+                  "election",
+                  "death",
+                  "major",
+                  "new",
+                  "crisis",
+                  "decision",
+                  "agreement",
+                  "earthquake",
+                  "flood"
+              ]
+
+              for word in important_words:
+
+                  if word in title:
+                      score += 2
+
+              # Prefer articles with a real publication date.
+              if article["published"]:
+                  score += 1
+
+              return score
+
+          articles = []
+          seen = set()
 
           for source in SOURCES:
 
-              print("")
-              print("Reading:", source["name"])
-              print("URL:", source["url"])
+              print(
+                  "Reading:",
+                  source["name"]
+              )
 
               try:
 
@@ -193,11 +226,6 @@ jobs:
                       timeout=20
                   )
 
-                  print(
-                      "HTTP status:",
-                      response.status_code
-                  )
-
                   response.raise_for_status()
 
                   feed = feedparser.parse(
@@ -205,26 +233,23 @@ jobs:
                   )
 
                   print(
-                      "Articles found:",
+                      "Found:",
                       len(feed.entries)
                   )
 
-                  if len(feed.entries) == 0:
-                      print(
-                          "WARNING: feed returned zero articles"
-                      )
-                      continue
-
                   for item in feed.entries[:50]:
 
-                      title = clean_html(
+                      title = clean(
                           item.get("title", "")
                       )
 
-                      summary = clean_html(
+                      summary = clean(
                           item.get(
                               "summary",
-                              item.get("description", "")
+                              item.get(
+                                  "description",
+                                  ""
+                              )
                           )
                       )
 
@@ -235,23 +260,27 @@ jobs:
 
                       published = item.get(
                           "published",
-                          item.get("updated", "")
+                          item.get(
+                              "updated",
+                              ""
+                          )
                       )
 
                       if not title or not link:
                           continue
 
-                      if link in seen_links:
+                      # Remove duplicate links.
+                      if link in seen:
                           continue
 
-                      seen_links.add(link)
+                      seen.add(link)
 
                       section = classify(
                           title,
                           summary
                       )
 
-                      all_articles.append({
+                      articles.append({
                           "title": title,
                           "summary": one_sentence(
                               summary
@@ -265,46 +294,46 @@ jobs:
               except Exception as error:
 
                   print(
-                      "ERROR reading source:",
+                      "Source failed:",
                       error
                   )
 
-          print("")
-          print(
-              "TOTAL ARTICLES:",
-              len(all_articles)
+          if not articles:
+              raise RuntimeError(
+                  "No news articles were collected."
+              )
+
+          # Sort by importance first.
+          articles.sort(
+              key=importance,
+              reverse=True
           )
 
-          if len(all_articles) == 0:
+          result = {
+              section: []
+              for section in SECTIONS
+          }
 
-              raise RuntimeError(
-                  "No articles were collected. "
-                  "news.json was NOT changed."
-              )
+          # Put each article into its best section.
+          for article in articles:
 
-          for article in all_articles:
+              section = article["section"]
 
-              section = article.pop(
-                  "section"
-              )
-
-              sections[section].append(
-                  article
-              )
-
-          for section in sections:
-
-              sections[section] = (
-                  sections[section][:10]
-              )
+              if len(result[section]) < 10:
+                  result[section].append({
+                      "title": article["title"],
+                      "summary": article["summary"],
+                      "source": article["source"],
+                      "link": article["link"],
+                      "published": article["published"]
+                  })
 
           output = {
               "updated":
                   datetime.now(
                       timezone.utc
                   ).isoformat(),
-
-              "sections": sections
+              "sections": result
           }
 
           with open(
@@ -321,21 +350,20 @@ jobs:
               )
 
           print("")
-          print("NEWS UPDATE COMPLETE")
+          print("NEWS UPDATED")
 
-          for section, articles in sections.items():
-
+          for section in SECTIONS:
               print(
                   section,
-                  "=>",
-                  len(articles)
+                  ":",
+                  len(result[section])
               )
 
           PY
 
           python update_news.py
 
-      - name: Save news.json
+      - name: Commit updated news
         run: |
           git config user.name "Nepal News Bot"
           git config user.email "actions@github.com"
@@ -343,7 +371,7 @@ jobs:
           git add news.json
 
           if git diff --cached --quiet; then
-            echo "No changes to save."
+            echo "No changes."
           else
             git commit -m "Update Nepal news"
             git push
