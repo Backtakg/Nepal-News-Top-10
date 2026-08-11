@@ -1,378 +1,216 @@
-name: Update Nepal News
-
-on:
-  schedule:
-    - cron: "0 */3 * * *"
-  workflow_dispatch:
-
-permissions:
-  contents: write
-
-jobs:
-  update-news:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-
-      - name: Install packages
-        run: |
-          pip install feedparser requests
-
-      - name: Build news database
-        run: |
-          cat > update_news.py <<'PY'
-          import feedparser
-          import requests
-          import json
-          import re
-          from datetime import datetime, timezone
-
-          SOURCES = [
-              {
-                  "name": "The Kathmandu Post",
-                  "url": "https://kathmandupost.com/rss"
-              },
-              {
-                  "name": "OnlineKhabar",
-                  "url": "https://www.onlinekhabar.com/feed"
-              }
-          ]
-
-          SECTIONS = [
-              "national",
-              "politics",
-              "business",
-              "sports",
-              "technology",
-              "entertainment",
-              "world",
-              "crime",
-              "health",
-              "weather"
-          ]
-
-          KEYWORDS = {
-              "politics": [
-                  "government", "minister", "parliament",
-                  "election", "political", "prime minister",
-                  "cabinet", "party", "president"
-              ],
-              "business": [
-                  "business", "economy", "bank", "market",
-                  "company", "trade", "finance", "investment",
-                  "stock", "nepse", "remittance"
-              ],
-              "sports": [
-                  "football", "cricket", "sport", "tournament",
-                  "player", "match", "league", "championship",
-                  "olympic", "athlete"
-              ],
-              "technology": [
-                  "technology", "tech", "digital",
-                  "artificial intelligence", "ai", "software",
-                  "internet", "cyber", "computer", "app"
-              ],
-              "entertainment": [
-                  "movie", "film", "music", "actor", "actress",
-                  "entertainment", "concert", "singer",
-                  "cinema", "television"
-              ],
-              "world": [
-                  "world", "international", "india", "china",
-                  "america", "iran", "israel", "usa",
-                  "ukraine", "russia", "pakistan"
-              ],
-              "crime": [
-                  "crime", "police", "arrest", "murder",
-                  "fraud", "accident", "security", "court",
-                  "criminal", "investigation"
-              ],
-              "health": [
-                  "health", "hospital", "doctor", "disease",
-                  "medical", "medicine", "patient",
-                  "healthcare", "virus", "outbreak"
-              ],
-              "weather": [
-                  "weather", "rain", "flood", "storm",
-                  "snow", "temperature", "monsoon",
-                  "landslide", "climate"
-              ]
-          }
-
-          def clean(text):
-              if not text:
-                  return ""
-
-              text = re.sub(r"<[^>]+>", " ", text)
-              text = re.sub(r"\s+", " ", text)
-
-              return text.strip()
-
-          def one_sentence(text):
-              text = clean(text)
-
-              if not text:
-                  return "Read the original article for the latest information."
-
-              parts = re.split(
-                  r"(?<=[.!?])\s+",
-                  text
-              )
-
-              sentence = parts[0].strip()
-
-              if len(sentence) > 280:
-                  sentence = (
-                      sentence[:277]
-                      .rsplit(" ", 1)[0]
-                      + "..."
-                  )
-
-              if not sentence.endswith(
-                  (".", "!", "?")
-              ):
-                  sentence += "."
-
-              return sentence
-
-          def classify(title, summary):
-
-              text = (
-                  title + " " + summary
-              ).lower()
-
-              scores = {}
-
-              for section, words in KEYWORDS.items():
-
-                  score = 0
-
-                  for word in words:
-
-                      if word in text:
-                          score += 1
-
-                  scores[section] = score
-
-              best = max(
-                  scores,
-                  key=scores.get
-              )
-
-              if scores[best] == 0:
-                  return "national"
-
-              return best
-
-          def importance(article):
-
-              title = article["title"].lower()
-
-              score = 0
-
-              important_words = [
-                  "breaking",
-                  "latest",
-                  "government",
-                  "prime minister",
-                  "president",
-                  "election",
-                  "death",
-                  "major",
-                  "new",
-                  "crisis",
-                  "decision",
-                  "agreement",
-                  "earthquake",
-                  "flood"
-              ]
-
-              for word in important_words:
-
-                  if word in title:
-                      score += 2
-
-              # Prefer articles with a real publication date.
-              if article["published"]:
-                  score += 1
-
-              return score
-
-          articles = []
-          seen = set()
-
-          for source in SOURCES:
-
-              print(
-                  "Reading:",
-                  source["name"]
-              )
-
-              try:
-
-                  response = requests.get(
-                      source["url"],
-                      headers={
-                          "User-Agent":
-                          "Mozilla/5.0 NepalNewsTop10"
-                      },
-                      timeout=20
-                  )
-
-                  response.raise_for_status()
-
-                  feed = feedparser.parse(
-                      response.content
-                  )
-
-                  print(
-                      "Found:",
-                      len(feed.entries)
-                  )
-
-                  for item in feed.entries[:50]:
-
-                      title = clean(
-                          item.get("title", "")
-                      )
-
-                      summary = clean(
-                          item.get(
-                              "summary",
-                              item.get(
-                                  "description",
-                                  ""
-                              )
-                          )
-                      )
-
-                      link = item.get(
-                          "link",
-                          ""
-                      ).strip()
-
-                      published = item.get(
-                          "published",
-                          item.get(
-                              "updated",
-                              ""
-                          )
-                      )
-
-                      if not title or not link:
-                          continue
-
-                      # Remove duplicate links.
-                      if link in seen:
-                          continue
-
-                      seen.add(link)
-
-                      section = classify(
-                          title,
-                          summary
-                      )
-
-                      articles.append({
-                          "title": title,
-                          "summary": one_sentence(
-                              summary
-                          ),
-                          "source": source["name"],
-                          "link": link,
-                          "published": published,
-                          "section": section
-                      })
-
-              except Exception as error:
-
-                  print(
-                      "Source failed:",
-                      error
-                  )
-
-          if not articles:
-              raise RuntimeError(
-                  "No news articles were collected."
-              )
-
-          # Sort by importance first.
-          articles.sort(
-              key=importance,
-              reverse=True
-          )
-
-          result = {
-              section: []
-              for section in SECTIONS
-          }
-
-          # Put each article into its best section.
-          for article in articles:
-
-              section = article["section"]
-
-              if len(result[section]) < 10:
-                  result[section].append({
-                      "title": article["title"],
-                      "summary": article["summary"],
-                      "source": article["source"],
-                      "link": article["link"],
-                      "published": article["published"]
-                  })
-
-          output = {
-              "updated":
-                  datetime.now(
-                      timezone.utc
-                  ).isoformat(),
-              "sections": result
-          }
-
-          with open(
-              "news.json",
-              "w",
-              encoding="utf-8"
-          ) as file:
-
-              json.dump(
-                  output,
-                  file,
-                  ensure_ascii=False,
-                  indent=2
-              )
-
-          print("")
-          print("NEWS UPDATED")
-
-          for section in SECTIONS:
-              print(
-                  section,
-                  ":",
-                  len(result[section])
-              )
-
-          PY
-
-          python update_news.py
-
-      - name: Commit updated news
-        run: |
-          git config user.name "Nepal News Bot"
-          git config user.email "actions@github.com"
-
-          git add news.json
-
-          if git diff --cached --quiet; then
-            echo "No changes."
-          else
-            git commit -m "Update Nepal news"
-            git push
-          fi
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b3b82">
+<meta name="description" content="Nepal News Top 10 — simple, fast news from Nepal and around the world.">
+<title>Nepal News Top 10</title>
+
+<style>
+:root{
+  --blue:#0b3b82;--accent:#0878ee;--navy:#071a33;
+  --text:#101827;--muted:#64748b;--bg:#f4f7fb;
+  --card:#fff;--line:#e5eaf1;--shadow:0 8px 25px rgba(15,23,42,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.45}
+a{text-decoration:none;color:inherit}
+button,input{font:inherit}
+button{cursor:pointer}
+.topbar{background:linear-gradient(90deg,#06468e,#075fc1);color:#fff;font-size:12px;padding:7px 16px}
+.topbar-inner,.header-inner,.nav-inner,.main,.footer-inner{max-width:1200px;margin:auto}
+.topbar-inner{display:flex;justify-content:space-between}
+.header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+.header-inner{min-height:80px;padding:11px 18px;display:flex;align-items:center;gap:18px}
+.brand{display:flex;align-items:center;gap:9px;min-width:275px}
+.mountain{font-size:38px}.brand h1{font-size:21px;margin:0}.brand p{font-size:11px;color:var(--muted);margin:2px 0 0}
+.badge{background:#0878ee;color:#fff;padding:2px 6px;border-radius:5px;font-size:13px}
+.search{flex:1;position:relative}.search input{width:100%;height:43px;border:1px solid #dce3ec;border-radius:24px;background:#f7f9fc;padding:0 16px 0 43px;outline:none}
+.search input:focus{border-color:#78aef0;box-shadow:0 0 0 3px #dbeafe}
+.search-icon{position:absolute;left:16px;top:9px;font-size:21px}
+.actions{display:flex;gap:7px;align-items:center}
+.action,.lang{border:1px solid #dce3ec;background:#fff;border-radius:22px;height:41px}
+.action{min-width:41px;padding:0 11px}.lang{display:flex;overflow:hidden}.lang button{border:0;background:#fff;padding:0 12px}.lang .active{background:#0878ee;color:#fff}
+.nav{background:#fff;border-bottom:1px solid var(--line)}.nav-inner{display:flex;overflow:auto;white-space:nowrap}
+.nav a{padding:12px 15px;font-size:13px;color:#334155;border-bottom:3px solid transparent}.nav a.active,.nav a:hover{color:#0878ee;border-color:#0878ee}
+.main{padding:26px 18px 50px}
+.hero-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(300px,1fr);gap:18px}
+.hero{min-height:405px;border-radius:16px;overflow:hidden;background:linear-gradient(0deg,rgba(2,13,28,.94),rgba(2,13,28,.1)),url("https://images.unsplash.com/photo-1585135497273-1a86c9a5d4a1?auto=format&fit=crop&w=1400&q=85") center/cover;color:#fff;display:flex;align-items:flex-end;box-shadow:var(--shadow)}
+.hero-content{padding:27px}.pill{display:inline-block;background:#ff2d55;padding:6px 12px;border-radius:18px;font-size:12px;font-weight:800}.hero h2{font-size:35px;line-height:1.08;margin:13px 0 10px}.hero p{font-size:15px;color:#eaf3ff;max-width:690px}.meta{font-size:12px;color:#d5e2f2}.read-btn{display:inline-flex;margin-top:15px;background:#0878ee;color:#fff;padding:10px 17px;border-radius:22px;font-weight:800}
+.top10{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:17px}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.section-head h2{margin:0;font-size:20px}.view{color:#0870e8;font-size:13px;font-weight:800}
+.top-list{margin:0;padding:0;list-style:none}.top-list li{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}.top-list li:last-child{border:0}.rank{width:25px;height:25px;flex:none;display:grid;place-items:center;border-radius:50%;background:#e8eef6;font-size:11px;font-weight:800}.rank.hot{background:#ff334f;color:#fff}.rank.orange{background:#ff9f1c;color:#fff}.rank.green{background:#61b329;color:#fff}
+.quick-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:11px;margin:18px 0 30px}.quick{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:13px 5px;text-align:center;transition:.2s}.quick:hover{transform:translateY(-3px);box-shadow:var(--shadow)}.quick .ico{font-size:25px}.quick strong{display:block;font-size:12px;margin-top:5px}.quick small{font-size:10px;color:#0870e8}
+.section{margin-top:28px}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 4px 15px rgba(15,23,42,.05);transition:.2s}.card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}.card-img{height:145px;background:#dbeafe center/cover}.card-body{padding:13px}.tag{display:inline-block;border-radius:14px;padding:4px 8px;font-size:10px;font-weight:800;background:#e9f2ff;color:#0668e8}.card h3{font-size:16px;line-height:1.2;margin:9px 0 7px}.card p{font-size:12px;color:var(--muted);margin:0 0 11px}.card-foot{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}.card-foot a{color:#0668e8;font-weight:800}
+.category-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:11px}.cat-card{background:var(--card);border:1px solid var(--line);border-radius:13px;overflow:hidden}.cat-img{height:85px;background:center/cover}.cat-body{padding:9px}.cat-body strong{font-size:12px}.cat-body small{display:block;color:#0870e8;font-size:11px;margin-top:4px}
+.trust{margin-top:30px;background:#f0f5ff;border:1px solid #dce7f7;border-radius:16px;padding:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.trust-item{display:flex;gap:9px;align-items:center}.trust-icon{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#e2edff;font-size:20px}.trust strong{display:block;font-size:13px}.trust span{display:block;font-size:11px;color:var(--muted)}
+.footer{background:#071a33;color:#d9e4f3;padding:32px 18px 17px}.footer-inner{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px}.footer h3{color:#fff;margin:0 0 9px}.footer p,.footer a{font-size:12px;color:#9fb0c7}.footer a{display:block;margin:6px 0}.copy{border-top:1px solid #21344f;margin-top:22px;padding-top:14px;display:flex;justify-content:space-between}
+.to-top{position:fixed;right:16px;bottom:16px;width:43px;height:43px;border:0;border-radius:50%;background:#0878ee;color:#fff;font-size:19px;display:none;place-items:center;z-index:80;box-shadow:var(--shadow)}
+body.dark{--bg:#0d1219;--card:#171d25;--text:#eef3f9;--muted:#9eabbc;--line:#293340}
+body.dark .header,body.dark .nav,body.dark .action,body.dark .lang,body.dark .lang button{background:#171d25;color:#fff}
+body.dark .nav a{color:#cbd5e1}.dark .search input{background:#202732}
+body.dark .search input{background:#202732;color:#fff;border-color:#34404f}.dark{}
+body.dark .trust{background:#151f2d;border-color:#29384c}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr}.quick-grid{grid-template-columns:repeat(4,1fr)}.cards{grid-template-columns:repeat(2,1fr)}.category-grid{grid-template-columns:repeat(4,1fr)}.trust{grid-template-columns:repeat(2,1fr)}.footer-inner{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.topbar-inner span:last-child{display:none}.header-inner{padding:10px 12px;gap:9px;flex-wrap:wrap}.brand{min-width:0;flex:1}.mountain{font-size:30px}.brand h1{font-size:17px}.brand p{font-size:9px}.search{order:3;flex-basis:100%}.actions .lang{display:none}.main{padding:15px 11px 38px}.hero{min-height:365px}.hero-content{padding:19px}.hero h2{font-size:27px}.hero p{font-size:13px}.quick-grid{gap:6px}.quick{padding:10px 3px}.quick .ico{font-size:21px}.quick strong{font-size:10px}.cards{grid-template-columns:1fr}.card-img{height:175px}.category-grid{grid-template-columns:repeat(2,1fr)}.trust{grid-template-columns:1fr}.footer-inner{grid-template-columns:1fr}.copy{flex-direction:column;gap:6px}}
+</style>
+</head>
+
+<body>
+<div class="topbar"><div class="topbar-inner"><span>🇳🇵 Reliable News. Better Nepal.</span><span>Live Updates • Top 10 Stories • Trusted Sources 🟢</span></div></div>
+
+<header class="header">
+<div class="header-inner">
+<a class="brand" href="#"><div class="mountain">🏔️</div><div><h1>Nepal News <span class="badge">Top 10</span></h1><p>Your Daily Dose of Nepal &amp; World</p></div></a>
+<div class="search"><span class="search-icon">⌕</span><input id="searchInput" type="search" placeholder="Search news, topics, or keywords..."></div>
+<div class="actions"><div class="lang"><button class="active" id="enBtn">EN</button><button id="npBtn">ने</button></div><button class="action" id="darkBtn">🌙</button><button class="action">☰</button></div>
+</div>
+</header>
+
+<nav class="nav"><div class="nav-inner">
+<a class="active" href="#">⌂ Home</a><a href="#national">🇳🇵 National</a><a href="#politics">🏛️ Politics</a><a href="#business">📈 Business</a><a href="#sports">⚽ Sports</a><a href="#technology">💻 Technology</a><a href="#entertainment">🎬 Entertainment</a><a href="#world">🌐 World</a><a href="#more">▦ More</a>
+</div></nav>
+
+<main class="main">
+<section class="hero-grid">
+<article class="hero"><div class="hero-content"><span class="pill">🔥 Top Story</span><h2 id="heroTitle">Loading today's top story...</h2><p id="heroSummary">Fetching the latest news from Nepal.</p><div class="meta" id="heroMeta">Nepal News Top 10</div><a class="read-btn" id="heroLink" href="#" target="_blank" rel="noopener">Read Original →</a></div></article>
+
+<aside class="top10"><div class="section-head"><h2>⚡ Top 10 Today</h2><span class="view" id="updatedText">Updating...</span></div><ol class="top-list" id="topList"><li><span class="rank hot">1</span>Loading news...</li></ol></aside>
+</section>
+
+<section class="quick-grid" id="more">
+<a class="quick" href="#national"><div class="ico">🇳🇵</div><strong>National</strong><small>Top 10</small></a>
+<a class="quick" href="#politics"><div class="ico">🏛️</div><strong>Politics</strong><small>Top 10</small></a>
+<a class="quick" href="#business"><div class="ico">📈</div><strong>Business</strong><small>Top 10</small></a>
+<a class="quick" href="#sports"><div class="ico">⚽</div><strong>Sports</strong><small>Top 10</small></a>
+<a class="quick" href="#technology"><div class="ico">💻</div><strong>Technology</strong><small>Top 10</small></a>
+<a class="quick" href="#entertainment"><div class="ico">🎬</div><strong>Entertainment</strong><small>Top 10</small></a>
+<a class="quick" href="#world"><div class="ico">🌐</div><strong>World</strong><small>Top 10</small></a>
+<a class="quick" href="#health"><div class="ico">🩺</div><strong>More</strong><small>Categories</small></a>
+</section>
+
+<section class="section" id="latest">
+<div class="section-head"><div><h2>🔥 Latest News</h2><div style="color:var(--muted);font-size:13px">One-sentence summaries from published sources</div></div></div>
+<div class="cards" id="newsCards"><div class="card"><div class="card-body"><h3>Loading latest news...</h3><p>Please wait for the news database.</p></div></div></div>
+</section>
+
+<section class="section">
+<div class="section-head"><div><h2>⭐ Top News by Category</h2><div style="color:var(--muted);font-size:13px">Explore the top 10 stories in each category</div></div></div>
+<div class="category-grid">
+<a class="cat-card" id="national" href="#latest"><div class="cat-img" style="background-image:url('https://images.unsplash.com/photo-1585135497273-1a86c9a5d4a1?auto=format&fit=crop&w=500&q=75')"></div><div class="cat-body"><strong>National</strong><small>10 stories →</small></div></a>
+<a class="cat-card" id="politics" href="#latest"><div class="cat-img" style="background-image:url('https://images.unsplash.com/photo-1555848962-6e79363ec58f?auto=format&fit=crop&w=500&q=75')"></div><div class="cat-body"><strong>Politics</strong><small>10 stories →</small></div></a>
+<a class="cat-card" id="business" href="#latest"><div class="cat-img" style="background-image:url('https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=500&q=75')"></div><div class="cat-body"><strong>Business</strong><small>10 stories →</small></div></a>
+<a class="cat-card" id="sports" href="#latest"><div class="cat-img" style="background-image:url('https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=500&q=75')"></div><div class="cat-body"><strong>Sports</strong><small>10 stories →</small></div></a>
+<a class="cat-card" id="technology" href="#latest"><div class="cat-img" style="background-image:url('https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=500&q=75')"></div><div class="cat-body"><strong>Technology</strong><small>10 stories →</small></div></a>
+<a class="cat-card" id="entertainment" href="#latest"><div class="cat-img" style="background-image:url('https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=500&q=75')"></div><div class="cat-body"><strong>Entertainment</strong><small>10 stories →</small></div></a>
+<a class="cat-card" id="world" href="#latest"><div class="cat-img" style="background-image:url('https://images.unsplash.com/photo-1521295121783-8a321d551ad2?auto=format&fit=crop&w=500&q=75')"></div><div class="cat-body"><strong>World</strong><small>10 stories →</small></div></a>
+<a class="cat-card" id="health" href="#latest"><div class="cat-img" style="background-image:url('https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=500&q=75')"></div><div class="cat-body"><strong>Health</strong><small>10 stories →</small></div></a>
+</div>
+</section>
+
+<section class="trust">
+<div class="trust-item"><div class="trust-icon">🛡️</div><div><strong>Trusted Sources</strong><span>Original publisher shown on every story</span></div></div>
+<div class="trust-item"><div class="trust-icon">⚡</div><div><strong>Auto Updated</strong><span>News database refreshed regularly</span></div></div>
+<div class="trust-item"><div class="trust-icon">📱</div><div><strong>Mobile Friendly</strong><span>Built for phones and desktops</span></div></div>
+<div class="trust-item"><div class="trust-icon">❤️</div><div><strong>For Nepal</strong><span>Simple, useful and easy to read</span></div></div>
+</section>
+</main>
+
+<footer class="footer"><div class="footer-inner">
+<div><h3>🏔️ Nepal News <span class="badge">Top 10</span></h3><p>Reliable. Balanced. For a better Nepal.</p></div>
+<div><h3>Explore</h3><a href="#national">National</a><a href="#politics">Politics</a><a href="#business">Business</a><a href="#sports">Sports</a></div>
+<div><h3>Information</h3><a href="#">About</a><a href="#">Sources</a><a href="#">Contact</a><a href="#">Privacy</a></div>
+</div><div class="footer-inner copy"><span>© 2026 Nepal News Top 10.</span><span>Stay informed. 🇳🇵</span></div></footer>
+
+<button class="to-top" id="toTop">↑</button>
+
+<script>
+const SECTIONS=["national","politics","business","sports","technology","entertainment","world","crime","health","weather"];
+
+function escapeHTML(value){
+  return String(value??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+}
+
+function formatDate(value){
+  if(!value)return "";
+  const d=new Date(value);
+  if(Number.isNaN(d.getTime())) return value;
+  return d.toLocaleString(undefined,{month:"short",day:"numeric",year:"numeric"});
+}
+
+function renderNews(data){
+  const sections=data.sections||{};
+  const all=SECTIONS.flatMap(s=>(sections[s]||[]).map(x=>({...x,section:s})));
+
+  document.getElementById("updatedText").textContent=data.updated
+    ? "Updated "+formatDate(data.updated)
+    : "Latest";
+
+  const top=all.slice(0,10);
+  const topList=document.getElementById("topList");
+  topList.innerHTML=top.length?top.map((n,i)=>`
+    <li>
+      <span class="rank ${i===0?"hot":i===1?"orange":i===2?"green":""}">${i+1}</span>
+      <a href="${escapeHTML(n.link)}" target="_blank" rel="noopener">${escapeHTML(n.title)}</a>
+    </li>`).join(""):"<li><span class='rank'>!</span>No stories available right now.</li>";
+
+  if(top[0]){
+    document.getElementById("heroTitle").textContent=top[0].title;
+    document.getElementById("heroSummary").textContent=top[0].summary||"Read the original article for the latest information.";
+    document.getElementById("heroMeta").textContent=`${formatDate(top[0].published)} • ${top[0].source||"Source"}`;
+    document.getElementById("heroLink").href=top[0].link||"#";
+  }
+
+  const cards=all.slice(0,12);
+  const box=document.getElementById("newsCards");
+  box.innerHTML=cards.length?cards.map(n=>`
+    <article class="card">
+      <div class="card-body">
+        <span class="tag">${escapeHTML(n.section)}</span>
+        <h3>${escapeHTML(n.title)}</h3>
+        <p>${escapeHTML(n.summary||"Read the original article for the latest information.")}</p>
+        <div class="card-foot">
+          <span>${escapeHTML(n.source||"Source")} ${n.published?"• "+escapeHTML(formatDate(n.published)):""}</span>
+          <a href="${escapeHTML(n.link)}" target="_blank" rel="noopener">Read →</a>
+        </div>
+      </div>
+    </article>`).join(""):"<div class='card'><div class='card-body'><h3>No stories available</h3><p>The news updater has not produced articles yet.</p></div></div>";
+}
+
+async function loadNews(){
+  try{
+    const response=await fetch("news.json?"+Date.now(),{cache:"no-store"});
+    if(!response.ok)throw new Error("news.json unavailable");
+    renderNews(await response.json());
+  }catch(error){
+    document.getElementById("updatedText").textContent="Waiting for news";
+    document.getElementById("topList").innerHTML="<li><span class='rank hot'>!</span>News database is not available yet.</li>";
+    document.getElementById("newsCards").innerHTML="<div class='card'><div class='card-body'><h3>News is being prepared</h3><p>Run the GitHub Actions updater, then refresh this page.</p></div></div>";
+  }
+}
+
+document.getElementById("darkBtn").addEventListener("click",()=>{
+  document.body.classList.toggle("dark");
+  document.getElementById("darkBtn").textContent=document.body.classList.contains("dark")?"☀️":"🌙";
+});
+
+document.getElementById("searchInput").addEventListener("input",e=>{
+  const q=e.target.value.toLowerCase().trim();
+  document.querySelectorAll(".card").forEach(card=>{
+    card.style.display=!q||card.textContent.toLowerCase().includes(q)?"":"none";
+  });
+});
+
+document.getElementById("npBtn").addEventListener("click",()=>alert("नेपाली भाषा मोड अर्को चरणमा जोडिनेछ।"));
+document.getElementById("enBtn").addEventListener("click",()=>alert("English mode is active."));
+
+window.addEventListener("scroll",()=>{
+  document.getElementById("toTop").style.display=scrollY>500?"grid":"none";
+});
+document.getElementById("toTop").addEventListener("click",()=>scrollTo({top:0,behavior:"smooth"}));
+
+loadNews();
+</script>
+</body>
+</html>
