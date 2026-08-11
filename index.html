@@ -1,44 +1,52 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nepal News Top 10</title>
-  <meta name="description" content="Top 10 news from Nepal and around the world.">
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }body {
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Nepal News Top 10</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
   font-family: Arial, sans-serif;
   background: #f4f6f8;
   color: #17202a;
-  line-height: 1.5;
 }
 
 header {
   background: #0b3d91;
   color: white;
-  padding: 22px 16px;
+  padding: 25px 15px;
   text-align: center;
 }
 
 header h1 {
+  margin: 0;
   font-size: 28px;
-  margin-bottom: 5px;
 }
 
 header p {
+  margin: 7px 0 0;
   font-size: 14px;
-  opacity: 0.9;
+}
+
+#updated {
+  margin-top: 8px;
+  font-size: 12px;
+  opacity: .8;
 }
 
 nav {
-  background: white;
-  padding: 10px;
   display: flex;
-  gap: 8px;
   overflow-x: auto;
+  gap: 8px;
+  padding: 10px;
+  background: white;
   position: sticky;
   top: 0;
   z-index: 10;
@@ -48,8 +56,8 @@ nav {
 nav a {
   white-space: nowrap;
   text-decoration: none;
+  color: #17324d;
   background: #eef2f7;
-  color: #17202a;
   padding: 8px 12px;
   border-radius: 20px;
   font-size: 13px;
@@ -62,86 +70,89 @@ main {
 }
 
 .section {
-  margin-bottom: 28px;
+  margin-bottom: 30px;
 }
 
 .section-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
   border-left: 5px solid #0b3d91;
   padding-left: 10px;
+  margin-bottom: 12px;
 }
 
 .section-title h2 {
+  margin: 0;
   font-size: 21px;
-}
-
-.section-title span {
-  font-size: 12px;
-  color: #666;
 }
 
 .news-card {
   background: white;
+  padding: 15px;
   margin-bottom: 10px;
-  padding: 14px;
   border-radius: 10px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
 }
 
-.number {
-  font-weight: bold;
+.rank {
   color: #0b3d91;
-  margin-right: 5px;
+  font-weight: bold;
 }
 
 .headline {
   font-size: 17px;
   font-weight: bold;
-  margin-bottom: 6px;
+  margin-bottom: 7px;
 }
 
 .summary {
   font-size: 14px;
   color: #444;
-  margin-bottom: 8px;
+  margin-bottom: 9px;
 }
 
-.source {
+.meta {
   font-size: 12px;
   color: #777;
 }
 
-.source a {
+.meta a {
   color: #0b3d91;
-  text-decoration: none;
   font-weight: bold;
+  text-decoration: none;
+}
+
+.read {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.loading,
+.error {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
 }
 
 footer {
   text-align: center;
-  padding: 25px 15px;
+  padding: 30px 15px;
   color: #777;
   font-size: 12px;
 }
+</style>
+</head>
 
-@media (min-width: 700px) {
-  header h1 {
-    font-size: 36px;
-  }
+<body>
 
-  .news-card {
-    padding: 18px;
-  }
-}
-
-  </style>
-</head><body><header>
+<header>
   <h1>🇳🇵 Nepal News Top 10</h1>
   <p>Important news. Short and simple.</p>
-</header><nav>
+  <div id="updated">Loading latest news...</div>
+</header>
+
+<nav>
   <a href="#national">National</a>
   <a href="#politics">Politics</a>
   <a href="#business">Business</a>
@@ -152,114 +163,195 @@ footer {
   <a href="#crime">Crime</a>
   <a href="#health">Health</a>
   <a href="#weather">Weather</a>
-</nav><main>  <section class="section" id="national">
-    <div class="section-title">
-      <h2>🇳🇵 National</h2>
-      <span>Top 10</span>
-    </div><div class="news-card">
-  <div class="headline"><span class="number">01.</span> Your first news headline</div>
-  <div class="summary">One sentence containing the most important information about the news.</div>
-  <div class="source">Source: <a href="#" target="_blank">News Source</a></div>
-</div>
+</nav>
 
-<div class="news-card">
-  <div class="headline"><span class="number">02.</span> Your second news headline</div>
-  <div class="summary">One sentence containing the most important information about the news.</div>
-  <div class="source">Source: <a href="#" target="_blank">News Source</a></div>
-</div>
+<main id="news">
+  <div class="loading">
+    Loading latest news...
+  </div>
+</main>
 
-  </section>  <section class="section" id="politics">
-    <div class="section-title">
-      <h2>🏛️ Politics</h2>
-      <span>Top 10</span>
-    </div><div class="news-card">
-  <div class="headline"><span class="number">01.</span> Politics headline</div>
-  <div class="summary">One sentence containing the most important information about the political story.</div>
-  <div class="source">Source: <a href="#" target="_blank">News Source</a></div>
-</div>
-
-  </section>  <section class="section" id="business">
-    <div class="section-title">
-      <h2>💰 Business</h2>
-      <span>Top 10</span>
-    </div><div class="news-card">
-  <div class="headline"><span class="number">01.</span> Business headline</div>
-  <div class="summary">One sentence containing the most important information about the business story.</div>
-  <div class="source">Source: <a href="#" target="_blank">News Source</a></div>
-</div>
-
-  </section>  <section class="section" id="sports">
-    <div class="section-title">
-      <h2>⚽ Sports</h2>
-      <span>Top 10</span>
-    </div><div class="news-card">
-  <div class="headline"><span class="number">01.</span> Sports headline</div>
-  <div class="summary">One sentence containing the most important information about the sports story.</div>
-  <div class="source">Source: <a href="#" target="_blank">News Source</a></div>
-</div>
-
-  </section>  <section class="section" id="technology">
-    <div class="section-title">
-      <h2>💻 Technology</h2>
-      <span>Top 10</span>
-    </div><div class="news-card">
-  <div class="headline"><span class="number">01.</span> Technology headline</div>
-  <div class="summary">One sentence containing the most important information about the technology story.</div>
-  <div class="source">Source: <a href="#" target="_blank">News Source</a></div>
-</div>
-
-  </section>  <section class="section" id="entertainment">
-    <div class="section-title">
-      <h2>🎬 Entertainment</h2>
-      <span>Top 10</span>
-    </div><div class="news-card">
-  <div class="headline"><span class="number">01.</span> Entertainment headline</div>
-  <div class="summary">One sentence containing the most important information about the entertainment story.</div>
-  <div class="source">Source: <a href="#" target="_blank">News Source</a></div>
-</div>
-
-  </section>  <section class="section" id="world">
-    <div class="section-title">
-      <h2>🌍 World</h2>
-      <span>Top 10</span>
-    </div><div class="news-card">
-  <div class="headline"><span class="number">01.</span> World news headline</div>
-  <div class="summary">One sentence containing the most important information about the international story.</div>
-  <div class="source">Source: <a href="#" target="_blank">News Source</a></div>
-</div>
-
-  </section>  <section class="section" id="crime">
-    <div class="section-title">
-      <h2>🚨 Crime & Security</h2>
-      <span>Top 10</span>
-    </div><div class="news-card">
-  <div class="headline"><span class="number">01.</span> Crime and security headline</div>
-  <div class="summary">One sentence containing the most important information about the story.</div>
-  <div class="source">Source: <a href="#" target="_blank">News Source</a></div>
-</div>
-
-  </section>  <section class="section" id="health">
-    <div class="section-title">
-      <h2>🩺 Health</h2>
-      <span>Top 10</span>
-    </div><div class="news-card">
-  <div class="headline"><span class="number">01.</span> Health headline</div>
-  <div class="summary">One sentence containing the most important information about the health story.</div>
-  <div class="source">Source: <a href="#" target="_blank">News Source</a></div>
-</div>
-
-  </section>  <section class="section" id="weather">
-    <div class="section-title">
-      <h2>🌦️ Weather</h2>
-      <span>Top 10</span>
-    </div><div class="news-card">
-  <div class="headline"><span class="number">01.</span> Weather headline</div>
-  <div class="summary">One sentence containing the most important information about the weather story.</div>
-  <div class="source">Source: <a href="#" target="_blank">News Source</a></div>
-</div>
-
-  </section></main><footer>
+<footer>
   <p>© 2026 Nepal News Top 10</p>
   <p>News belongs to the respective original publishers.</p>
-</footer></body>
+</footer>
+
+<script>
+
+const sectionNames = {
+  national: "🇳🇵 National",
+  politics: "🏛️ Politics",
+  business: "💰 Business",
+  sports: "⚽ Sports",
+  technology: "💻 Technology",
+  entertainment: "🎬 Entertainment",
+  world: "🌍 World",
+  crime: "🚨 Crime & Security",
+  health: "🩺 Health",
+  weather: "🌦️ Weather"
+};
+
+async function loadNews() {
+
+  const container = document.getElementById("news");
+
+  try {
+
+    const response = await fetch("news.json?time=" + Date.now());
+
+    if (!response.ok) {
+      throw new Error("Could not load news");
+    }
+
+    const data = await response.json();
+
+    container.innerHTML = "";
+
+    if (data.updated) {
+      const date = new Date(data.updated);
+
+      document.getElementById("updated").textContent =
+        "Last updated: " + date.toLocaleString();
+    }
+
+    for (const [section, articles] of Object.entries(data.sections)) {
+
+      const sectionDiv = document.createElement("section");
+
+      sectionDiv.className = "section";
+      sectionDiv.id = section;
+
+      const title = document.createElement("div");
+      title.className = "section-title";
+
+      title.innerHTML =
+        "<h2>" + (sectionNames[section] || section) + "</h2>";
+
+      sectionDiv.appendChild(title);
+
+      if (!articles || articles.length === 0) {
+
+        const empty = document.createElement("div");
+        empty.className = "news-card";
+        empty.textContent = "No news available yet.";
+
+        sectionDiv.appendChild(empty);
+
+      } else {
+
+        articles.slice(0, 10).forEach((article, index) => {
+
+          const card = document.createElement("article");
+          card.className = "news-card";
+
+          const headline = document.createElement("div");
+          headline.className = "headline";
+
+          headline.innerHTML =
+            '<span class="rank">' +
+            String(index + 1).padStart(2, "0") +
+            '.</span> ' +
+            escapeHTML(article.title);
+
+          const summary = document.createElement("div");
+          summary.className = "summary";
+
+          summary.textContent =
+            cleanSummary(article.summary);
+
+          const meta = document.createElement("div");
+          meta.className = "meta";
+
+          meta.innerHTML =
+            "Source: <a href=\"" +
+            safeURL(article.link) +
+            "\" target=\"_blank\" rel=\"noopener noreferrer\">" +
+            escapeHTML(article.source || "Original source") +
+            "</a>";
+
+          if (article.published) {
+            meta.innerHTML +=
+              " · " + escapeHTML(article.published);
+          }
+
+          const read = document.createElement("a");
+          read.className = "read";
+          read.href = safeURL(article.link);
+          read.target = "_blank";
+          read.rel = "noopener noreferrer";
+          read.textContent = "Read original →";
+
+          card.appendChild(headline);
+          card.appendChild(summary);
+          card.appendChild(meta);
+          card.appendChild(read);
+
+          sectionDiv.appendChild(card);
+
+        });
+
+      }
+
+      container.appendChild(sectionDiv);
+    }
+
+  } catch (error) {
+
+    container.innerHTML =
+      '<div class="error">' +
+      '<strong>News could not be loaded.</strong><br>' +
+      'Please try again later.' +
+      '</div>';
+
+    console.error(error);
+  }
+}
+
+function cleanSummary(text) {
+
+  if (!text) {
+    return "Open the original article for the full story.";
+  }
+
+  const temp = document.createElement("div");
+  temp.innerHTML = text;
+
+  let result = temp.textContent || temp.innerText || "";
+
+  result = result.replace(/\s+/g, " ").trim();
+
+  return result;
+}
+
+function escapeHTML(text) {
+
+  const div = document.createElement("div");
+  div.textContent = text || "";
+
+  return div.innerHTML;
+}
+
+function safeURL(url) {
+
+  try {
+
+    const parsed = new URL(url);
+
+    if (
+      parsed.protocol === "http:" ||
+      parsed.protocol === "https:"
+    ) {
+      return parsed.href;
+    }
+
+  } catch (error) {}
+
+  return "#";
+}
+
+loadNews();
+
+</script>
+
+</body>
 </html>
