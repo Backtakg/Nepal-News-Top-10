@@ -104,6 +104,38 @@ main{padding:20px 0 46px}
 .weather{margin-top:28px;background:linear-gradient(135deg,#0b3e83,#0878ef);color:#fff;border-radius:14px;padding:17px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)}
 .weather-left{display:flex;align-items:center;gap:13px}.weather-icon{font-size:39px}.weather h2{font-size:18px;margin:0}.weather p{font-size:11px;margin:3px 0 0;color:#dceaff}.weather-extra{font-size:10px;color:#cfe2ff;margin-top:4px}.weather-temp{font-size:30px;font-weight:800}
 
+/* Expanded Top-10 category panels */
+.category-section{margin-top:28px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow);scroll-margin-top:125px}
+.category-section .block-head{margin-bottom:12px}
+.category-section .block-head a{display:none}
+.headline-list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+.headline-row{display:grid;grid-template-columns:34px minmax(0,1fr) 150px 82px 24px;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--line);min-height:48px}
+.headline-row:last-child{border-bottom:0}
+.headline-row:hover{background:rgba(7,91,215,.06)}
+.headline-rank{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;background:#dfe7ef;color:#172033;font-size:11px;font-weight:900}
+.headline-rank.r1{background:#ef3340;color:#fff}.headline-rank.r2{background:#ff9f1c;color:#fff}.headline-rank.r3{background:#55ad2f;color:#fff}.headline-rank.r4{background:#159bd0;color:#fff}.headline-rank.r5{background:#126fcb;color:#fff}
+.headline-text{font-size:12px;line-height:1.4;font-weight:650;color:var(--text)}
+.headline-source,.headline-time{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.headline-arrow{color:#075bd7;font-weight:900;text-align:center}
+.category-section .block-head h2{font-size:20px}
+.category-section .block-head p{font-size:11px}
+.category-intro{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px;padding:11px 13px;border-radius:11px;background:rgba(7,91,215,.08);color:var(--muted);font-size:11px}
+.category-intro strong{color:var(--text);font-size:12px}
+.dark .category-section,.dark .headline-list{background:#101b2a;border-color:#2b3b50}
+.dark .headline-row{border-color:#26374b}
+.dark .headline-row:hover{background:#16283e}
+.dark .category-intro{background:#132b48}
+.dark .empty{background:#101b2a;color:#aab7c8;border-color:#35475c}
+.dark .news-card{background:#101b2a;color:#edf3fa}
+.dark .news-card p,.dark .card-foot{color:#aab7c8}
+.dark .top10{background:#101b2a;color:#edf3fa}
+.dark .top-list li{border-color:#293b50}
+.dark .quick{background:#101b2a;color:#edf3fa}
+.dark .category-card{background:#101b2a;color:#edf3fa}
+.dark .category-body span{color:#aab7c8}
+@media(max-width:800px){.headline-row{grid-template-columns:30px minmax(0,1fr) 22px}.headline-source,.headline-time{display:none}.headline-text{font-size:11px}}
+@media(max-width:520px){.category-section{padding:11px;border-radius:13px}.headline-row{padding:9px 8px;gap:7px}.headline-rank{width:23px;height:23px}.headline-text{font-size:10.5px}}
+
 .trust{margin-top:28px;background:#f1f5fb;border-radius:13px;padding:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
 .trust-item{display:flex;gap:10px;align-items:center}.trust-icon{width:42px;height:42px;flex:none;border-radius:50%;display:grid;place-items:center;background:#e2ecff;font-size:20px}.trust-item strong{display:block;font-size:12px}.trust-item span{display:block;color:#667085;font-size:10px;margin-top:2px}
 
@@ -113,7 +145,7 @@ footer{background:#071b35;color:#d9e4f2;padding:30px 0 14px;margin-top:0}.footer
 .hidden{display:none!important}
 .to-top{position:fixed;right:18px;bottom:18px;width:42px;height:42px;border:0;border-radius:50%;background:#075bd7;color:#fff;font-size:20px;display:none;place-items:center;box-shadow:var(--shadow);z-index:90}
 
-body.dark{--bg:#0b111b;--card:#131c28;--text:#edf3fa;--muted:#a7b2c0;--line:#293544}
+body.dark{--bg:#08111d;--card:#101b2a;--text:#edf3fa;--muted:#a7b2c0;--line:#293544}
 .dark .header,.dark .nav{background:#111a25}.dark .search input{background:#1a2532;color:#fff;border-color:#2c3949}.dark .menu-btn,.dark .lang{background:#131c28;color:#fff;border-color:#334052}.dark .nav a{color:#c8d2df}.dark .quick,.dark .news-card,.dark .top10,.dark .category-card,.dark .empty{border-color:#293544}.dark .trust{background:#111d2d}.dark .top-list li{border-color:#293544}.dark .category-image,.dark .news-thumb{background:linear-gradient(135deg,#1b2a3b,#24364b)}
 
 @media(max-width:1050px){.hero-layout{grid-template-columns:1fr}.quick-grid{grid-template-columns:repeat(4,1fr)}.category-grid{grid-template-columns:repeat(5,1fr)}.latest-grid{grid-template-columns:repeat(2,1fr)}}
@@ -157,7 +189,7 @@ body.dark{--bg:#0b111b;--card:#131c28;--text:#edf3fa;--muted:#a7b2c0;--line:#293
 .block-head{margin-bottom:13px}
 .block-head h2{font-size:22px}
 .block-head p{font-size:12px}
-#sections .category-section{margin-top:34px!important}
+#sections .category-section{margin-top:28px!important}
 @media(max-width:900px){
  .hero-layout{grid-template-columns:1fr}
  .latest-grid{grid-template-columns:repeat(2,1fr)}
@@ -239,7 +271,7 @@ body.dark{--bg:#0b111b;--card:#131c28;--text:#edf3fa;--muted:#a7b2c0;--line:#293
 </section>
 
 <section class="category-wrap" id="categories">
- <div class="block-head"><div><h2>⭐ Top News by Category</h2><p>Explore the top 10 stories in each category</p></div><a href="#national">View All Categories →</a></div>
+ <div class="block-head"><div><h2>⭐ Top News by Category</h2><p>10 categories • Top 10 stories in each category</p></div><a href="#national">View All Categories →</a></div>
  <div class="category-grid" id="category-grid"></div>
 </section>
 
@@ -267,7 +299,7 @@ body.dark{--bg:#0b111b;--card:#131c28;--text:#edf3fa;--muted:#a7b2c0;--line:#293
 <button class="to-top" id="to-top">↑</button>
 
 <script>
-const SECTIONS=["national","politics","business","sports","technology","entertainment","world","crime","health","weather"];
+const SECTIONS=["weather","national","politics","business","sports","technology","entertainment","world","health","crime"];
 const LABEL={
  national:["🇳🇵","National","राष्ट्रिय"],politics:["🏛️","Politics","राजनीति"],business:["📈","Business","व्यापार"],
  sports:["⚽","Sports","खेलकुद"],technology:["💻","Technology","प्रविधि"],entertainment:["🎬","Entertainment","मनोरञ्जन"],
@@ -309,17 +341,18 @@ function render(){
  const latest=stories.slice(0,4);
  document.getElementById("latest-grid").innerHTML=latest.length?latest.map(newsCard).join(""):`<div class="empty">News is not available yet. Run the GitHub Actions updater.</div>`;
 
- const visibleCats=SECTIONS.slice(0,7);
- document.getElementById("category-grid").innerHTML=visibleCats.map(s=>{
+ const visibleCats=SECTIONS;
+ document.getElementById("category-grid").innerHTML=visibleCats.map((s,i)=>{
   const n=(data?.sections?.[s]||[]).length;
-  return `<a class="category-card" href="#${s}"><div class="category-image" style="background-image:url('${IMAGE[s]}')"><span>${ICON[s]}</span></div><div class="category-body"><strong>${LABEL[s][lang==="ne"?2:1]}</strong><span>${n} stories</span><span class="go">→</span></div></a>`;
- }).join("") + `<a class="category-card" href="#more"><div class="category-image more-image"><span>🏔️</span></div><div class="category-body"><strong>${lang==="ne"?"थप":"More"}</strong><span>${lang==="ne"?"५+ श्रेणी":"3+ categories"}</span><span class="go">→</span></div></a>`;
+  return `<a class="category-card" href="#${s}"><div class="category-image" style="background-image:url('${IMAGE[s]}')"><span>${ICON[s]}</span></div><div class="category-body"><strong>${i+1}. ${LABEL[s][lang==="ne"?2:1]}</strong><span>${Math.min(n,10)} ${lang==="ne"?"समाचार":"stories"}</span><span class="go">→</span></div></a>`;
+ }).join("");
 
  document.getElementById("sections").innerHTML=SECTIONS.map(s=>{
   const list=Array.isArray(data?.sections?.[s])?data.sections[s].slice(0,10):[];
-  return `<section class="category-section" id="${s}" style="margin-top:30px;scroll-margin-top:125px">
-   <div class="block-head"><div><h2>${ICON[s]} ${LABEL[s][lang==="ne"?2:1]}</h2><p>${lang==="ne"?"शीर्ष १० समाचार":"Top 10 stories"}</p></div><a href="#home">↑ Top</a></div>
-   <div class="latest-grid">${list.length?list.map(x=>newsCard({...x,section:s})).join(""):`<div class="empty">No stories available in this category yet.</div>`}</div>
+  return `<section class="category-section" id="${s}">
+   <div class="block-head"><div><h2>${ICON[s]} ${LABEL[s][lang==="ne"?2:1]} <span style="color:#075bd7;font-size:12px;font-weight:700">— Top 10</span></h2><p>${lang==="ne"?"यस श्रेणीका शीर्ष १० समाचार, प्रत्येक एक वाक्यमा":"Top 10 news in this category, summarized in one sentence each"}</p></div></div>
+   <div class="category-intro"><strong>${lang==="ne"?"छोटो र स्पष्ट समाचार":"Short, clear news"}</strong><span>${lang==="ne"?"पूरा समाचारका लागि स्रोत खोल्नुहोस्":"Open the source to read the full story"}</span></div>
+   <div class="headline-list">${list.length?list.map((x,i)=>`<a class="headline-row" href="${esc(x.link||"#")}" target="_blank" rel="noopener"><span class="headline-rank ${i<5?"r"+(i+1):""}">${i+1}</span><span class="headline-text">${esc(x.summary||x.title||"News update")}</span><span class="headline-source">${esc(x.source||"Original source")}</span><span class="headline-time">${esc(timeAgo(x.published))}</span><span class="headline-arrow">›</span></a>`).join(""):`<div class="empty">No stories available in this category yet.</div>`}</div>
   </section>`;
  }).join("");
 
