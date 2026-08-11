@@ -127,6 +127,51 @@ body.dark{--bg:#0b111b;--card:#131c28;--text:#edf3fa;--muted:#a7b2c0;--line:#293
  .trust{grid-template-columns:1fr 1fr;gap:12px}.trust-item{align-items:flex-start}.footer-grid{grid-template-columns:1fr 1fr}.copy{flex-direction:column;gap:6px}
 }
 @media(max-width:420px){.quick-grid{grid-template-columns:repeat(2,1fr)}.trust{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr}.hero h2{font-size:22px}.category-grid{grid-template-columns:repeat(2,1fr)}}
+
+
+/* Reference-style homepage refinements */
+.hero-layout{grid-template-columns:minmax(0,2.1fr) minmax(310px,1fr);gap:20px}
+.hero{min-height:405px;border-radius:14px}
+.hero h2{font-size:31px;max-width:760px}
+.top10{padding:17px 18px;border:1px solid #e8edf4}
+.top10-head h2{font-size:20px}
+.top-list li{padding:7px 0;font-size:12px}
+.top-list a{line-height:1.25}
+.latest-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.news-card{border-radius:13px}
+.news-thumb{height:126px;background-position:center;background-size:cover;position:relative;overflow:hidden}
+.news-thumb span{position:absolute;right:10px;bottom:8px;background:rgba(255,255,255,.9);border-radius:50%;width:30px;height:30px;display:grid;place-items:center;font-size:15px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.news-body{padding:11px 12px 13px}
+.news-card h3{font-size:14px;min-height:34px}
+.category-grid{grid-template-columns:repeat(8,minmax(0,1fr));gap:12px}
+.category-image{height:95px;background-size:cover;background-position:center;position:relative}
+.category-image:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.03),rgba(0,0,0,.22))}
+.category-image span{position:relative;z-index:1;background:rgba(255,255,255,.88);border-radius:50%;width:34px;height:34px;display:grid;place-items:center;font-size:19px}
+.more-image{background-image:url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=700&q=82")}
+.category-body{min-height:60px;padding:9px}
+.category-body strong{font-size:12px}
+.category-body span{font-size:10px}
+.category-body .go{width:25px;height:25px}
+.category-wrap{margin-top:30px}
+#latest{margin-top:31px!important}
+.block-head{margin-bottom:13px}
+.block-head h2{font-size:22px}
+.block-head p{font-size:12px}
+#sections .category-section{margin-top:34px!important}
+@media(max-width:900px){
+ .hero-layout{grid-template-columns:1fr}
+ .latest-grid{grid-template-columns:repeat(2,1fr)}
+ .category-grid{grid-template-columns:repeat(4,1fr)}
+}
+@media(max-width:560px){
+ main{padding-top:14px}
+ .hero{min-height:360px}
+ .hero h2{font-size:24px}
+ .hero-content{padding:18px}
+ .latest-grid{grid-template-columns:1fr}
+ .category-grid{display:grid;grid-template-columns:repeat(2,1fr)}
+ .top10{min-height:0}
+}
 </style>
 </head>
 <body>
@@ -158,7 +203,7 @@ body.dark{--bg:#0b111b;--card:#131c28;--text:#edf3fa;--muted:#a7b2c0;--line:#293
  <a href="#technology" data-en="💻 Technology" data-ne="💻 प्रविधि">💻 Technology</a>
  <a href="#entertainment" data-en="🎬 Entertainment" data-ne="🎬 मनोरञ्जन">🎬 Entertainment</a>
  <a href="#world" data-en="🌐 World" data-ne="🌐 विश्व">🌐 World</a>
- <a href="#more" data-en="▦ More" data-ne="▦ थप">▦ More</a>
+ <a href="#categories" data-en="▦ More" data-ne="▦ थप">▦ More</a>
 </div></nav>
 
 <main id="home">
@@ -182,16 +227,6 @@ body.dark{--bg:#0b111b;--card:#131c28;--text:#edf3fa;--muted:#a7b2c0;--line:#293
  </aside>
 </section>
 
-<section class="quick-grid" id="quick">
- <a class="quick" href="#national"><div class="qicon">🇳🇵</div><strong>National</strong><small>Top 10</small></a>
- <a class="quick" href="#politics"><div class="qicon">🏛️</div><strong>Politics</strong><small>Top 10</small></a>
- <a class="quick" href="#business"><div class="qicon">📈</div><strong>Business</strong><small>Top 10</small></a>
- <a class="quick" href="#sports"><div class="qicon">⚽</div><strong>Sports</strong><small>Top 10</small></a>
- <a class="quick" href="#technology"><div class="qicon">💻</div><strong>Technology</strong><small>Top 10</small></a>
- <a class="quick" href="#entertainment"><div class="qicon">🎬</div><strong>Entertainment</strong><small>Top 10</small></a>
- <a class="quick" href="#world"><div class="qicon">🌐</div><strong>World</strong><small>Top 10</small></a>
- <a class="quick" href="#more"><div class="qicon">▦</div><strong>More</strong><small>Crime • Health • Weather</small></a>
-</section>
 
 <section class="weather" id="weather">
  <div class="weather-left"><div class="weather-icon" id="weather-icon">🌤️</div><div><h2>Kathmandu Weather</h2><p id="weather-desc">Loading current weather...</p><div class="weather-extra" id="weather-extra"></div></div></div>
@@ -239,6 +274,18 @@ const LABEL={
  world:["🌐","World","विश्व"],crime:["🚨","Crime","अपराध"],health:["🩺","Health","स्वास्थ्य"],weather:["🌤️","Weather","मौसम"]
 };
 const ICON={national:"🇳🇵",politics:"🏛️",business:"📈",sports:"⚽",technology:"💻",entertainment:"🎬",world:"🌐",crime:"🚨",health:"🩺",weather:"🌤️"};
+const IMAGE={
+ national:"https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=700&q=82",
+ politics:"https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=700&q=82",
+ business:"https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=700&q=82",
+ sports:"https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=700&q=82",
+ technology:"https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=700&q=82",
+ entertainment:"https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=700&q=82",
+ world:"https://images.unsplash.com/photo-1521292270410-a8c4d716d518?auto=format&fit=crop&w=700&q=82",
+ crime:"https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=700&q=82",
+ health:"https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=700&q=82",
+ weather:"https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?auto=format&fit=crop&w=700&q=82"
+};
 let data=null;
 let lang=localStorage.getItem("nn-lang")||"en";
 
@@ -259,13 +306,14 @@ function render(){
  }
  document.getElementById("top-list").innerHTML=top.length?top.map((x,i)=>`<li><span class="rank ${i===1?"r2":i===2?"r3":i===3?"r4":i===4?"r5":""}">${i+1}</span><a href="${esc(x.link||"#")}" target="_blank" rel="noopener">${esc(x.title)}</a></li>`).join(""):`<li><span class="rank">!</span>No stories available.</li>`;
 
- const latest=stories.slice(0,8);
+ const latest=stories.slice(0,4);
  document.getElementById("latest-grid").innerHTML=latest.length?latest.map(newsCard).join(""):`<div class="empty">News is not available yet. Run the GitHub Actions updater.</div>`;
 
- document.getElementById("category-grid").innerHTML=SECTIONS.map(s=>{
+ const visibleCats=SECTIONS.slice(0,7);
+ document.getElementById("category-grid").innerHTML=visibleCats.map(s=>{
   const n=(data?.sections?.[s]||[]).length;
-  return `<a class="category-card" href="#${s}"><div class="category-image">${ICON[s]}</div><div class="category-body"><strong>${LABEL[s][lang==="ne"?2:1]}</strong><span>${n} stories</span><span class="go">→</span></div></a>`;
- }).join("");
+  return `<a class="category-card" href="#${s}"><div class="category-image" style="background-image:url('${IMAGE[s]}')"><span>${ICON[s]}</span></div><div class="category-body"><strong>${LABEL[s][lang==="ne"?2:1]}</strong><span>${n} stories</span><span class="go">→</span></div></a>`;
+ }).join("") + `<a class="category-card" href="#more"><div class="category-image more-image"><span>🏔️</span></div><div class="category-body"><strong>${lang==="ne"?"थप":"More"}</strong><span>${lang==="ne"?"५+ श्रेणी":"3+ categories"}</span><span class="go">→</span></div></a>`;
 
  document.getElementById("sections").innerHTML=SECTIONS.map(s=>{
   const list=Array.isArray(data?.sections?.[s])?data.sections[s].slice(0,10):[];
@@ -281,8 +329,9 @@ function render(){
 
 function newsCard(x){
  const label=LABEL[x.section]?.[lang==="ne"?2:1]||"News";
+ const image=IMAGE[x.section]||IMAGE.national;
  return `<article class="news-card">
-   <div class="news-thumb">${ICON[x.section]||"📰"}</div>
+   <div class="news-thumb" style="background-image:linear-gradient(180deg,rgba(3,13,29,.02),rgba(3,13,29,.08)),url('${image}')"><span>${ICON[x.section]||"📰"}</span></div>
    <div class="news-body">
     <div class="news-top"><span class="tag">${esc(label)}</span><span class="time">◷ ${esc(timeAgo(x.published))}</span></div>
     <h3>${esc(x.title)}</h3>
