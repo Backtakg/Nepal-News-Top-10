@@ -9,16 +9,16 @@ permissions:
   contents: write
 
 concurrency:
-  group: update-nepal-news
+  group: nepal-news-update
   cancel-in-progress: true
 
 jobs:
   update-news:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v5
         with:
           fetch-depth: 1
@@ -27,29 +27,33 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-          cache: "pip"
 
-      - name: Install packages
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install feedparser requests
+          pip install requests feedparser beautifulsoup4
 
-      - name: Build news database
-        shell: bash
+      - name: Create news updater
         run: |
           cat > update_news.py <<'PY'
-          import feedparser
-          import requests
           import json
           import re
           import hashlib
+          import html
+          import time
           from datetime import datetime, timezone
           from email.utils import parsedate_to_datetime
 
+          import requests
+          import feedparser
+          from bs4 import BeautifulSoup
+
 
           # ============================================================
-          # CONFIGURATION
+          # SETTINGS
           # ============================================================
+
+          OUTPUT_FILE = "news.json"
 
           SECTIONS = [
               "weather",
@@ -65,9 +69,10 @@ jobs:
           ]
 
 
-          # Official/news publisher RSS/Atom feeds.
-          # The workflow tests every feed and automatically ignores
-          # feeds that fail or return no usable articles.
+          # ============================================================
+          # NEWS SOURCES
+          # ============================================================
+
           SOURCES = [
               {
                   "name": "The Kathmandu Post",
@@ -121,29 +126,31 @@ jobs:
 
 
           # ============================================================
-          # CATEGORY KEYWORDS
+          # KEYWORDS
           # ============================================================
 
           KEYWORDS = {
+
               "weather": [
                   "weather",
                   "rain",
                   "rainfall",
                   "flood",
+                  "floods",
                   "flooding",
-                  "storm",
-                  "thunderstorm",
-                  "snow",
-                  "temperature",
                   "monsoon",
                   "landslide",
                   "landslides",
-                  "climate",
+                  "storm",
+                  "storms",
+                  "thunderstorm",
+                  "temperature",
                   "heatwave",
                   "cold wave",
-                  "heavy rain",
+                  "snow",
                   "lightning",
-                  "disaster",
+                  "climate",
+                  "heavy rain",
               ],
 
               "politics": [
@@ -159,9 +166,10 @@ jobs:
                   "president",
                   "coalition",
                   "opposition",
-                  "ruling party",
                   "lawmakers",
+                  "ruling party",
                   "federal",
+                  "provincial assembly",
               ],
 
               "business": [
@@ -181,15 +189,16 @@ jobs:
                   "industry",
                   "tourism",
                   "inflation",
-                  "exports",
-                  "imports",
+                  "export",
+                  "import",
+                  "revenue",
               ],
 
               "sports": [
                   "football",
                   "cricket",
-                  "sport",
                   "sports",
+                  "sport",
                   "tournament",
                   "player",
                   "match",
@@ -202,10 +211,10 @@ jobs:
                   "goal",
                   "wicket",
                   "runs",
+                  "coach",
               ],
 
               "technology": [
-                  "technology",
                   "technology",
                   "tech",
                   "digital",
@@ -218,8 +227,8 @@ jobs:
                   "app",
                   "startup",
                   "smartphone",
-                  "data",
                   "robot",
+                  "data",
                   "innovation",
               ],
 
@@ -236,9 +245,8 @@ jobs:
                   "television",
                   "celebrity",
                   "album",
-                  "festival",
                   "director",
-                  "bollywood",
+                  "festival",
               ],
 
               "world": [
@@ -276,6 +284,7 @@ jobs:
                   "vaccination",
                   "epidemic",
                   "public health",
+                  "surgery",
               ],
 
               "crime": [
@@ -292,123 +301,134 @@ jobs:
                   "robbery",
                   "abuse",
                   "theft",
-                  "killed",
                   "kidnap",
                   "drugs",
+                  "killed",
+                  "shooting",
               ],
           }
 
 
           # ============================================================
-          # HTTP
+          # HTTP SESSION
           # ============================================================
-
-          HEADERS = {
-              "User-Agent": (
-                  "Mozilla/5.0 "
-                  "(compatible; NepalNewsTop10/2.0; "
-                  "+https://github.com/Backtakg/Nepal-News-Top-10)"
-              ),
-              "Accept": (
-                  "application/rss+xml, application/atom+xml, "
-                  "application/xml, text/xml, */*"
-              ),
-          }
-
 
           session = requests.Session()
-          session.headers.update(HEADERS)
+
+          session.headers.update({
+              "User-Agent": (
+                  "Mozilla/5.0 "
+                  "(X11; Linux x86_64) "
+                  "AppleWebKit/537.36 "
+                  "(KHTML, like Gecko) "
+                  "Chrome/131.0 Safari/537.36"
+              ),
+              "Accept": (
+                  "application/rss+xml,"
+                  "application/atom+xml,"
+                  "application/xml,"
+                  "text/xml,"
+                  "text/html,"
+                  "*/*"
+              ),
+              "Accept-Language": "en-US,en;q=0.9",
+              "Connection": "keep-alive",
+          })
 
 
           # ============================================================
-          # HELPERS
+          # TEXT CLEANING
           # ============================================================
 
-          def clean(text):
-              if not text:
+          def clean_text(value):
+
+              if value is None:
                   return ""
 
-              text = str(text)
+              value = str(value)
 
-              text = re.sub(
-                  r"<script.*?</script>",
-                  " ",
-                  text,
-                  flags=re.I | re.S,
+              value = html.unescape(value)
+
+              soup = BeautifulSoup(
+                  value,
+                  "html.parser"
               )
 
-              text = re.sub(
-                  r"<style.*?</style>",
+              for tag in soup(
+                  ["script", "style", "noscript"]
+              ):
+                  tag.decompose()
+
+              value = soup.get_text(
                   " ",
-                  text,
-                  flags=re.I | re.S,
+                  strip=True
               )
 
-              text = re.sub(
-                  r"<[^>]+>",
-                  " ",
-                  text,
-              )
-
-              text = re.sub(
+              value = re.sub(
                   r"\s+",
                   " ",
-                  text,
+                  value
               )
 
-              return text.strip()
+              return value.strip()
 
 
           def normalize_title(title):
-              title = clean(title).lower()
+
+              title = clean_text(title).lower()
 
               title = re.sub(
                   r"[^\w\s]",
                   " ",
-                  title,
-                  flags=re.UNICODE,
+                  title
               )
 
               title = re.sub(
                   r"\s+",
                   " ",
-                  title,
+                  title
               )
 
               return title.strip()
 
 
           def make_id(title):
-              value = normalize_title(title)
 
               return hashlib.sha256(
-                  value.encode("utf-8")
+                  normalize_title(title)
+                  .encode("utf-8")
               ).hexdigest()
 
 
-          def one_sentence(text, fallback_title=""):
-              text = clean(text)
+          # ============================================================
+          # SUMMARY
+          # ============================================================
 
-              if not text:
-                  text = clean(fallback_title)
+          def make_summary(summary, title):
 
-              if not text:
+              summary = clean_text(summary)
+              title = clean_text(title)
+
+              if not summary:
+                  summary = title
+
+              if not summary:
                   return "Latest news update."
 
-              # Remove common feed prefixes.
-              text = re.sub(
-                  r"^(read more|continue reading)\s*:?\s*",
+              # Remove common feed junk.
+              summary = re.sub(
+                  r"^(read more|continue reading)\s*:?",
                   "",
-                  text,
-                  flags=re.I,
-              )
+                  summary,
+                  flags=re.I
+              ).strip()
 
-              parts = re.split(
+              sentences = re.split(
                   r"(?<=[.!?])\s+",
-                  text,
+                  summary
               )
 
-              sentence = parts[0].strip()
+              sentence = sentences[0].strip()
 
               if len(sentence) > 280:
                   sentence = (
@@ -425,67 +445,80 @@ jobs:
               return sentence
 
 
-          def parse_date(item):
-              # Prefer published date, then updated date.
-              for key in (
+          # ============================================================
+          # DATE
+          # ============================================================
+
+          def get_date(item):
+
+              for key in [
                   "published_parsed",
                   "updated_parsed",
-              ):
+              ]:
+
                   value = item.get(key)
 
                   if value:
+
                       try:
-                          from calendar import timegm
+                          import calendar
+
+                          timestamp = calendar.timegm(
+                              value
+                          )
 
                           return datetime.fromtimestamp(
-                              timegm(value),
-                              timezone.utc,
-                          )
+                              timestamp,
+                              timezone.utc
+                          ).isoformat()
+
                       except Exception:
                           pass
 
-              for key in (
+
+              for key in [
                   "published",
                   "updated",
-              ):
+              ]:
+
                   value = item.get(key)
 
                   if not value:
                       continue
 
                   try:
-                      parsed = parsedate_to_datetime(
+
+                      dt = parsedate_to_datetime(
                           value
                       )
 
-                      if parsed.tzinfo is None:
-                          parsed = parsed.replace(
+                      if dt.tzinfo is None:
+                          dt = dt.replace(
                               tzinfo=timezone.utc
                           )
 
-                      return parsed.astimezone(
+                      return dt.astimezone(
                           timezone.utc
-                      )
+                      ).isoformat()
+
                   except Exception:
                       pass
 
-              return None
+              return ""
 
 
-          def date_string(item):
-              dt = parse_date(item)
+          # ============================================================
+          # CATEGORY
+          # ============================================================
 
-              if not dt:
-                  return ""
+          def classify(title, summary, link):
 
-              return dt.isoformat()
-
-
-          def classify(title, summary):
               text = (
-                  clean(title)
+                  clean_text(title)
                   + " "
-                  + clean(summary)
+                  + clean_text(summary)
+                  + " "
+                  + clean_text(link)
               ).lower()
 
               scores = {
@@ -494,14 +527,16 @@ jobs:
               }
 
               for section, words in KEYWORDS.items():
+
                   for word in words:
-                      # Word/phrase matching.
+
                       if word.lower() in text:
                           scores[section] += 1
 
+
               best = max(
                   scores,
-                  key=scores.get,
+                  key=scores.get
               )
 
               if scores[best] == 0:
@@ -510,50 +545,183 @@ jobs:
               return best
 
 
+          # ============================================================
+          # IMPORTANCE
+          # ============================================================
+
           def importance(article):
+
               title = article["title"].lower()
 
               score = 0
 
-              important_words = [
+              important = [
                   "breaking",
                   "latest",
                   "government",
                   "prime minister",
                   "president",
                   "election",
-                  "death",
-                  "dead",
+                  "minister",
                   "major",
-                  "new",
                   "crisis",
                   "decision",
                   "agreement",
                   "earthquake",
                   "flood",
+                  "landslide",
+                  "storm",
                   "war",
                   "victory",
-                  "minister",
-                  "alert",
-                  "warning",
+                  "death",
+                  "killed",
               ]
 
-              for word in important_words:
+              for word in important:
+
                   if word in title:
                       score += 2
 
-              if article.get("published"):
-                  score += 1
-
-              # Small preference for articles that have summaries.
-              if article.get("summary"):
+              if article["published"]:
                   score += 1
 
               return score
 
 
           # ============================================================
-          # FETCH FEEDS
+          # FETCH ONE FEED
+          # ============================================================
+
+          def fetch_feed(source):
+
+              print("")
+              print("=" * 70)
+              print("TESTING:", source["name"])
+              print("URL:", source["url"])
+
+              try:
+
+                  response = session.get(
+                      source["url"],
+                      timeout=25,
+                      allow_redirects=True
+                  )
+
+                  print(
+                      "HTTP:",
+                      response.status_code
+                  )
+
+                  print(
+                      "Content-Type:",
+                      response.headers.get(
+                          "content-type",
+                          ""
+                      )
+                  )
+
+                  response.raise_for_status()
+
+                  if not response.content:
+                      raise RuntimeError(
+                          "Empty response"
+                      )
+
+
+                  # Parse raw response directly.
+                  # This is important because some publishers
+                  # return RSS with an incorrect Content-Type.
+                  feed = feedparser.parse(
+                      response.content
+                  )
+
+                  entries = list(
+                      getattr(
+                          feed,
+                          "entries",
+                          []
+                      )
+                  )
+
+                  print(
+                      "Parsed entries:",
+                      len(entries)
+                  )
+
+
+                  # Some feeds are encoded strangely.
+                  # Try text as a second parser input.
+                  if not entries:
+
+                      text = response.content.decode(
+                          response.encoding
+                          or "utf-8",
+                          errors="replace"
+                      )
+
+                      feed = feedparser.parse(
+                          text
+                      )
+
+                      entries = list(
+                          getattr(
+                              feed,
+                              "entries",
+                              []
+                          )
+                      )
+
+                      print(
+                          "Second parser attempt:",
+                          len(entries)
+                      )
+
+
+                  usable = []
+
+                  for item in entries[:100]:
+
+                      title = clean_text(
+                          item.get(
+                              "title",
+                              ""
+                          )
+                      )
+
+                      link = clean_text(
+                          item.get(
+                              "link",
+                              ""
+                          )
+                      )
+
+                      if title and link:
+                          usable.append(item)
+
+
+                  if not usable:
+
+                      raise RuntimeError(
+                          "Feed returned no usable "
+                          "title/link entries"
+                      )
+
+
+                  print(
+                      "USABLE ARTICLES:",
+                      len(usable)
+                  )
+
+                  return usable, None
+
+
+              except Exception as error:
+
+                  return [], str(error)
+
+
+          # ============================================================
+          # MAIN COLLECTION
           # ============================================================
 
           articles = []
@@ -567,198 +735,153 @@ jobs:
 
           for source in SOURCES:
 
-              print("")
-              print("=" * 70)
-              print("TESTING:", source["name"])
-              print("URL:", source["url"])
+              entries, error = fetch_feed(
+                  source
+              )
 
-              try:
-                  response = session.get(
-                      source["url"],
-                      timeout=20,
-                      allow_redirects=True,
-                  )
-
-                  response.raise_for_status()
-
-                  content_type = (
-                      response.headers
-                      .get("content-type", "")
-                      .lower()
-                  )
-
-                  if not response.content:
-                      raise RuntimeError(
-                          "Empty response"
-                      )
-
-                  feed = feedparser.parse(
-                      response.content
-                  )
-
-                  if getattr(
-                      feed,
-                      "bozo",
-                      False,
-                  ):
-                      print(
-                          "Feed parser warning:",
-                          getattr(
-                              feed,
-                              "bozo_exception",
-                              "unknown",
-                          ),
-                      )
-
-                  entries = feed.entries
-
-                  usable_entries = []
-
-                  for item in entries[:60]:
-
-                      title = clean(
-                          item.get(
-                              "title",
-                              "",
-                          )
-                      )
-
-                      link = clean(
-                          item.get(
-                              "link",
-                              "",
-                          )
-                      )
-
-                      if title and link:
-                          usable_entries.append(item)
-
-                  if not usable_entries:
-                      raise RuntimeError(
-                          "Feed returned zero usable articles"
-                      )
-
-                  working_sources.append(
-                      source["name"]
-                  )
-
-                  print(
-                      "SUCCESS:",
-                      len(usable_entries),
-                      "usable articles",
-                  )
-
-                  for item in usable_entries:
-
-                      title = clean(
-                          item.get(
-                              "title",
-                              "",
-                          )
-                      )
-
-                      summary_raw = clean(
-                          item.get(
-                              "summary",
-                              item.get(
-                                  "description",
-                                  "",
-                              ),
-                          )
-                      )
-
-                      link = clean(
-                          item.get(
-                              "link",
-                              "",
-                          )
-                      )
-
-                      published = date_string(
-                          item
-                      )
-
-                      if not title or not link:
-                          continue
-
-                      normalized = normalize_title(
-                          title
-                      )
-
-                      # URL duplicate.
-                      if link in seen_links:
-                          continue
-
-                      # Title duplicate.
-                      if normalized in seen_titles:
-                          continue
-
-                      seen_links.add(link)
-                      seen_titles.add(normalized)
-
-                      section = classify(
-                          title,
-                          summary_raw,
-                      )
-
-                      articles.append({
-                          "id": make_id(title),
-                          "title": title,
-                          "summary": one_sentence(
-                              summary_raw,
-                              title,
-                          ),
-                          "source": source["name"],
-                          "link": link,
-                          "published": published,
-                          "section": section,
-                      })
-
-              except Exception as error:
+              if error:
 
                   print(
                       "FAILED:",
                       source["name"],
-                  )
-
-                  print(
-                      "Reason:",
-                      repr(error),
+                      "|",
+                      error
                   )
 
                   failed_sources.append({
                       "name": source["name"],
                       "url": source["url"],
-                      "error": str(error),
+                      "error": error,
                   })
 
+                  continue
 
-          # ============================================================
-          # SAFETY CHECK
-          # ============================================================
 
-          if not articles:
-              raise RuntimeError(
-                  "All configured news sources failed. "
-                  "Keeping the existing news.json unchanged."
+              working_sources.append(
+                  source["name"]
               )
 
 
-          # ============================================================
-          # SORT ARTICLES
-          # ============================================================
+              for item in entries:
 
-          articles.sort(
-              key=importance,
-              reverse=True,
+                  title = clean_text(
+                      item.get(
+                          "title",
+                          ""
+                      )
+                  )
+
+                  link = clean_text(
+                      item.get(
+                          "link",
+                          ""
+                      )
+                  )
+
+                  summary = clean_text(
+                      item.get(
+                          "summary",
+                          item.get(
+                              "description",
+                              ""
+                          )
+                      )
+                  )
+
+
+                  if not title or not link:
+                      continue
+
+
+                  normalized = normalize_title(
+                      title
+                  )
+
+
+                  if link in seen_links:
+                      continue
+
+                  if normalized in seen_titles:
+                      continue
+
+
+                  seen_links.add(link)
+                  seen_titles.add(normalized)
+
+
+                  section = classify(
+                      title,
+                      summary,
+                      link
+                  )
+
+
+                  articles.append({
+
+                      "id": make_id(title),
+
+                      "title": title,
+
+                      "summary": make_summary(
+                          summary,
+                          title
+                      ),
+
+                      "source":
+                          source["name"],
+
+                      "link": link,
+
+                      "published":
+                          get_date(item),
+
+                      "section": section,
+
+                  })
+
+
+          print("")
+          print("=" * 70)
+          print(
+              "TOTAL UNIQUE ARTICLES:",
+              len(articles)
           )
 
 
           # ============================================================
-          # BUILD 10 CATEGORIES × UP TO 10 STORIES
+          # NEVER DESTROY GOOD DATA
           # ============================================================
 
-          result = {
+          if not articles:
+
+              print("")
+              print(
+                  "ERROR: No articles were extracted."
+              )
+
+              print(
+                  "Existing news.json will NOT "
+                  "be overwritten."
+              )
+
+              raise SystemExit(1)
+
+
+          # ============================================================
+          # SORT
+          # ============================================================
+
+          articles.sort(
+              key=importance,
+              reverse=True
+          )
+
+
+          # ============================================================
+          # CREATE SECTIONS
+          # ============================================================
+
+          sections = {
               section: []
               for section in SECTIONS
           }
@@ -768,52 +891,99 @@ jobs:
 
               section = article["section"]
 
-              if section not in result:
+              if section not in sections:
                   section = "national"
 
-              if len(result[section]) >= 10:
+              if len(
+                  sections[section]
+              ) >= 10:
                   continue
 
+
               # IMPORTANT:
-              # There is deliberately NO image field here.
-              result[section].append({
-                  "title": article["title"],
-                  "summary": article["summary"],
-                  "source": article["source"],
-                  "link": article["link"],
-                  "published": article["published"],
+              # No image field is created here.
+              sections[section].append({
+
+                  "title":
+                      article["title"],
+
+                  "summary":
+                      article["summary"],
+
+                  "source":
+                      article["source"],
+
+                  "link":
+                      article["link"],
+
+                  "published":
+                      article["published"],
+
               })
 
 
           # ============================================================
-          # OUTPUT
+          # CREATE JSON
           # ============================================================
 
           output = {
-              "updated": datetime.now(
-                  timezone.utc
-              ).isoformat(),
+
+              "updated":
+                  datetime.now(
+                      timezone.utc
+                  ).isoformat(),
 
               "sources": {
-                  "working": working_sources,
-                  "failed": failed_sources,
+
+                  "working":
+                      working_sources,
+
+                  "failed":
+                      failed_sources,
+
               },
 
-              "sections": result,
+              "sections":
+                  sections,
+
           }
 
 
+          # ============================================================
+          # WRITE ATOMICALLY
+          # ============================================================
+
+          temp_file = OUTPUT_FILE + ".tmp"
+
           with open(
-              "news.json",
+              temp_file,
               "w",
-              encoding="utf-8",
-          ) as file:
+              encoding="utf-8"
+          ) as f:
+
               json.dump(
                   output,
-                  file,
+                  f,
                   ensure_ascii=False,
-                  indent=2,
+                  indent=2
               )
+
+          # Validate before replacing the real file.
+          with open(
+              temp_file,
+              "r",
+              encoding="utf-8"
+          ) as f:
+
+              json.load(f)
+
+
+          import os
+
+          os.replace(
+              temp_file,
+              OUTPUT_FILE
+          )
 
 
           # ============================================================
@@ -822,76 +992,74 @@ jobs:
 
           print("")
           print("=" * 70)
-          print("NEWS DATABASE UPDATED")
+          print("NEWS UPDATE SUCCESSFUL")
           print("=" * 70)
 
           print(
-              "Total articles collected:",
-              len(articles),
-          )
-
-          print(
               "Working sources:",
-              len(working_sources),
+              len(working_sources)
           )
 
-          for name in working_sources:
-              print("  ✓", name)
+          for source in working_sources:
+              print(
+                  "  ✓",
+                  source
+              )
+
 
           print("")
           print(
               "Failed sources:",
-              len(failed_sources),
+              len(failed_sources)
           )
 
           for source in failed_sources:
               print(
                   "  ✗",
                   source["name"],
-                  "-",
-                  source["error"],
+                  "|",
+                  source["error"]
               )
 
+
           print("")
-          print("CATEGORY COUNTS")
+          print("CATEGORY COUNTS:")
 
           for section in SECTIONS:
+
               print(
                   f"  {section}: "
-                  f"{len(result[section])}"
+                  f"{len(sections[section])}"
               )
 
           print("")
-          print("news.json successfully generated.")
+          print(
+              "news.json generated successfully."
+          )
+
           PY
 
+      - name: Run news updater
+        run: |
           python update_news.py
 
-
-      - name: Validate news.json
+      - name: Validate generated database
         run: |
-          echo "Validating news.json..."
-
-          test -f news.json
-
-          python -m json.tool news.json > /dev/null
-
           python - <<'PY'
           import json
+          import os
+
+          assert os.path.exists("news.json")
 
           with open(
               "news.json",
-              "r",
               encoding="utf-8"
           ) as f:
               data = json.load(f)
 
-          assert isinstance(data, dict)
-          assert "updated" in data
+          assert data.get("updated")
           assert "sections" in data
           assert "sources" in data
-
-          sections = data["sections"]
 
           required = [
               "weather",
@@ -906,48 +1074,57 @@ jobs:
               "crime",
           ]
 
+          total = 0
+
           for section in required:
-              assert section in sections
+
+              assert section in data["sections"]
+
+              stories = data["sections"][section]
+
               assert isinstance(
-                  sections[section],
+                  stories,
                   list
               )
 
-              assert len(
-                  sections[section]
-              ) <= 10
+              assert len(stories) <= 10
 
-              for article in sections[section]:
-                  assert article.get("title")
-                  assert article.get("summary")
-                  assert article.get("source")
-                  assert article.get("link")
+              total += len(stories)
 
-                  # Make absolutely sure images aren't accidentally
-                  # inserted into the backend news objects.
-                  assert "image" not in article
-                  assert "image_url" not in article
+              for story in stories:
 
-          print("news.json validation PASSED.")
+                  assert story.get("title")
+                  assert story.get("summary")
+                  assert story.get("source")
+                  assert story.get("link")
+
+                  # No images in backend data.
+                  assert "image" not in story
+                  assert "image_url" not in story
+
+          print("")
+          print(
+              "VALIDATION PASSED"
+          )
+
+          print(
+              "Total stories:",
+              total
+          )
+
           print(
               "Working sources:",
               len(
                   data["sources"]["working"]
               )
           )
-
-          for section in required:
-              print(
-                  f"{section}: "
-                  f"{len(sections[section])}"
-              )
           PY
 
-
-      - name: Show news preview
+      - name: Show generated news
         run: |
-          echo ""
-          echo "===== NEWS PREVIEW ====="
+          echo "========================================"
+          echo "GENERATED NEWS"
+          echo "========================================"
 
           python - <<'PY'
           import json
@@ -959,23 +1136,28 @@ jobs:
               data = json.load(f)
 
           for section, stories in data["sections"].items():
+
               print("")
-              print(f"[{section.upper()}]")
+              print(
+                  f"--- {section.upper()} "
+                  f"({len(stories)}) ---"
+              )
 
               for i, story in enumerate(
-                  stories[:3],
+                  stories[:5],
                   1
               ):
+
                   print(
                       f"{i}. {story['title']}"
                   )
+
                   print(
                       f"   {story['source']}"
                   )
           PY
 
-
-      - name: Commit and push news database
+      - name: Commit news.json
         run: |
           git config user.name "Nepal News Bot"
           git config user.email "actions@github.com"
@@ -983,7 +1165,7 @@ jobs:
           git add news.json
 
           if git diff --cached --quiet; then
-            echo "No news changes detected."
+            echo "No changes to commit."
           else
             git commit -m "Update Nepal news"
             git push
