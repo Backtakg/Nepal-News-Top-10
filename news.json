@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-12T15:45:32.619569+00:00",
+  "updated": "2026-08-12T18:42:37.427836+00:00",
   "provider": "GNews",
   "sections": {
     "weather": [
@@ -159,6 +159,15 @@
     "entertainment": [],
     "world": [
       {
+        "id": "c9b6d613d7b7914e74b0bbef3a4a3e1162a9d1440a91fdc925f7f972a8cab1a4",
+        "title": "International News around Iran, US, Russia, Ukraine, Colombia and World Latest Updates Check Here",
+        "summary": "International News Today Latest Live Updates: US President Donald Trump said that Iran is no longer the “bully of the Middle East”, warning that Tehran could face a forceful response if it acts.",
+        "source": "The Indian Express",
+        "link": "https://indianexpress.com/article/world/world-news-live-latest-updates-donald-trump-secret-service-air-force-one-switch-iran-strait-of-hormuz-russia-ukraine-north-korea-missiles-10829194/",
+        "published": "2026-08-12T04:27:51Z",
+        "section": "world"
+      },
+      {
         "id": "a50a5e4902d481d0e72b129f950f4f030c9621455af0dcc69153b30d0488e9f2",
         "title": "World News Briefs: 'War of Endurance' Burns Books, Tensions Flare Globally",
         "summary": "A wide array of global news highlights pressing issues: Ukraine's 'war of endurance' burns millions of books, Bangladesh seeks better relations with India, and Iran views a regional security pact.",
@@ -213,12 +222,12 @@
         "section": "world"
       },
       {
-        "id": "694647638b09ba5441f8a0839d4535e8a4f4aee2c1cd42cb5017a44697ec68a9",
-        "title": "US-Iran War Live: Saudi says more attacks by Iranian proxies imminent as Houthi strike injures 11",
-        "summary": "US-Iran War News Live Updates: Iran has stepped up diplomatic efforts to avert another round of US strikes, warning Gulf states that any attack on its territory would trigger retaliation against energy infrastructure, oil facilities and US-linked assets across the region,...",
-        "source": "India Today",
-        "link": "https://www.indiatoday.in/world/story/us-iran-war-news-live-updates-trump-iran-oman-gulf-states-hormuz-blockade-middle-east-conflict-oil-prices-latest-news-2964679-2026-08-06",
-        "published": "2026-08-05T20:10:11Z",
+        "id": "c6fc9ffa3aa4aedae188c5d737974bd57bf01dafc7614cf5bc3e0c3c1bfc1ce0",
+        "title": "Middle East and north Africa",
+        "summary": "Latest news, sport, business, comment, analysis and reviews from the Guardian, the world's leading liberal voice.",
+        "source": "The Guardian",
+        "link": "https://www.theguardian.com/world/middleeast",
+        "published": "2026-08-12T04:00:20Z",
         "section": "world"
       },
       {
@@ -228,15 +237,6 @@
         "source": "Hindustan Times",
         "link": "https://www.hindustantimes.com/world-news/gulf-states-accept-a-new-normal-in-hormuz-iran-is-in-control-101786442761049.html",
         "published": "2026-08-11T12:06:44Z",
-        "section": "world"
-      },
-      {
-        "id": "02b0877469975e0cc4621822f08e823220a9b1883465d657f1f4480dde1dfcbb",
-        "title": "Iran threatens to hit Gulf states if US launches new strikes as Hormuz talks continue: Report",
-        "summary": "Iran warned Gulf states that any new US attack could trigger retaliation against critical regional energy infrastructure, Reuters reported, citing five sources.",
-        "source": "Hindustan Times",
-        "link": "https://www.hindustantimes.com/world-news/iran-threatens-to-hit-gulf-states-if-us-launches-new-strikes-as-hormuz-talks-continue-report-101785959955827.html",
-        "published": "2026-08-05T20:05:48Z",
         "section": "world"
       },
       {
