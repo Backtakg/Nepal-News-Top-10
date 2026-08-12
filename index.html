@@ -6,186 +6,748 @@
 <meta name="theme-color" content="#071b35">
 <meta name="description" content="Nepal News Top 10 — concise top news from Nepal and around the world.">
 <title>Nepal News Top 10</title>
+
 <style>
 :root{
-  --bg:#071321;--bg2:#0a1a2c;--card:#0e1d30;--card2:#112640;
-  --text:#eef5ff;--muted:#a7b6c9;--line:#243951;
-  --blue:#0878ef;--blue2:#0b4d9a;--red:#ef3340;--green:#20c979;
-  --shadow:0 8px 28px rgba(0,0,0,.25);--radius:14px
+  --navy:#071b35;
+  --blue:#075bd7;
+  --blue2:#0b3e83;
+  --red:#ef3340;
+  --bg:#07111f;
+  --card:#0f1d2d;
+  --card2:#13253a;
+  --text:#edf3fa;
+  --muted:#a7b2c0;
+  --line:#293b50;
+  --shadow:0 8px 24px rgba(0,0,0,.20);
+  --radius:14px;
 }
+
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:linear-gradient(180deg,#071321 0%,#081727 100%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+}
+body.light{
+  --bg:#f7f9fc;
+  --card:#fff;
+  --card2:#f1f5fb;
+  --text:#0d1726;
+  --muted:#667085;
+  --line:#e5eaf1;
+}
 a{text-decoration:none;color:inherit}
-button,input{font:inherit}button{cursor:pointer}
+button,input{font:inherit}
+button{cursor:pointer}
 .wrap{max-width:1180px;margin:auto;padding:0 18px}
 
-.top-strip{height:30px;background:linear-gradient(90deg,#063b78,#075fc1);font-size:11px;color:#fff}
-.top-strip .wrap{height:100%;display:flex;align-items:center;justify-content:space-between}
+/* TOP STRIP */
+.top-strip{
+  min-height:30px;
+  background:linear-gradient(90deg,#063d80,#075fc1);
+  color:#fff;
+  font-size:12px;
+}
+.top-strip .wrap{
+  min-height:30px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
 
-.header{background:#0b1828;border-bottom:1px solid var(--line)}
-.header-row{min-height:82px;display:flex;align-items:center;gap:18px}
-.logo{display:flex;align-items:center;gap:10px;min-width:310px}
-.logo-mark{width:58px;height:48px;position:relative;display:block}
-.logo-mark:before,.logo-mark:after{content:"";position:absolute;bottom:3px;background:#f4f8ff;clip-path:polygon(50% 0,100% 100%,0 100%)}
-.logo-mark:before{width:55px;height:42px;left:0}
-.logo-mark:after{width:31px;height:25px;left:22px;bottom:3px;background:#0b1828}
-.logo-mark i{position:absolute;display:block;width:31px;height:25px;left:25px;bottom:3px;background:#f4f8ff;clip-path:polygon(50% 0,100% 100%,0 100%)}
-.logo h1{font-size:22px;line-height:1.05;margin:0;letter-spacing:-.4px}
-.logo p{margin:4px 0 0;color:var(--muted);font-size:11px}
-.badge{display:inline-block;background:#086de6;color:#fff;padding:4px 8px;border-radius:7px;font-size:13px;vertical-align:3px}
+/* HEADER */
+.header{
+  background:var(--card);
+  border-bottom:1px solid var(--line);
+}
+.header-row{
+  min-height:82px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:310px;
+}
+.logo-mark{
+  width:58px;
+  height:58px;
+  display:grid;
+  place-items:center;
+  font-size:43px;
+}
+.logo h1{
+  font-size:22px;
+  line-height:1.05;
+  margin:0;
+  letter-spacing:-.4px;
+}
+.logo p{
+  margin:4px 0 0;
+  color:var(--muted);
+  font-size:11px;
+}
+.badge{
+  display:inline-block;
+  background:#0b61d8;
+  color:#fff;
+  padding:4px 8px;
+  border-radius:7px;
+  font-size:14px;
+  vertical-align:3px;
+}
 
-.search{position:relative;flex:1;max-width:420px;margin-left:auto}
-.search input{width:100%;height:42px;border:1px solid #30445d;background:#132238;border-radius:24px;padding:0 18px 0 46px;outline:0;color:#fff}
-.search input::placeholder{color:#899bb1}
-.search input:focus{border-color:#2b82ef;box-shadow:0 0 0 3px rgba(8,120,239,.16)}
-.search-icon{position:absolute;left:17px;top:8px;font-size:21px;color:#c8d6e7}
+.search{
+  position:relative;
+  flex:1;
+  max-width:420px;
+  margin-left:auto;
+}
+.search input{
+  width:100%;
+  height:42px;
+  border:1px solid var(--line);
+  background:var(--card2);
+  border-radius:24px;
+  padding:0 18px 0 48px;
+  outline:0;
+  color:var(--text);
+}
+.search input:focus{
+  border-color:#438cf0;
+  box-shadow:0 0 0 3px rgba(7,91,215,.16);
+}
+.search-icon{
+  position:absolute;
+  left:18px;
+  top:8px;
+  font-size:22px;
+  color:var(--muted);
+}
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.lang{
+  display:flex;
+  border:1px solid var(--line);
+  border-radius:24px;
+  overflow:hidden;
+  background:var(--card);
+}
+.lang button{
+  border:0;
+  background:transparent;
+  padding:9px 14px;
+  color:var(--text);
+  font-size:12px;
+}
+.lang .active{
+  background:#0b61d8;
+  color:#fff;
+}
+.icon-btn{
+  width:42px;
+  height:42px;
+  border:0;
+  border-radius:50%;
+  background:#14243b;
+  color:#fff;
+  font-size:18px;
+}
 
-.header-actions{display:flex;align-items:center;gap:8px}
-.lang{display:flex;border:1px solid #304158;border-radius:24px;overflow:hidden;background:#101e30}
-.lang button{border:0;background:transparent;padding:9px 14px;color:#c6d1df;font-size:12px}
-.lang .active{background:#0878ef;color:#fff}
-.icon-btn{width:42px;height:42px;border:0;border-radius:50%;background:#14243a;color:#fff;font-size:18px}
-.menu-btn{display:none!important}
-
-.nav{background:#0b1828;border-bottom:1px solid var(--line)}
-.nav-scroll{display:flex;overflow:auto;white-space:nowrap}
-.nav a{padding:13px 15px 12px;font-size:12px;color:#c7d3e2;border-bottom:3px solid transparent}
-.nav a:hover,.nav a.active{color:#2b8cff;border-bottom-color:#0878ef}
+/* NAV */
+.nav{
+  background:var(--card);
+  border-bottom:1px solid var(--line);
+}
+.nav-scroll{
+  display:flex;
+  overflow:auto;
+  white-space:nowrap;
+}
+.nav a{
+  padding:13px 15px 12px;
+  font-size:12px;
+  color:var(--muted);
+  border-bottom:3px solid transparent;
+}
+.nav a:hover,.nav a.active{
+  color:#2380ff;
+  border-bottom-color:#075bd7;
+}
 .nav .home{font-weight:700}
 
-main{padding:18px 0 46px}
-.hero-layout{display:grid;grid-template-columns:minmax(0,2.05fr) minmax(310px,1fr);gap:18px}
-.hero{min-height:390px;border-radius:14px;overflow:hidden;position:relative;background:
-linear-gradient(0deg,rgba(3,12,24,.97) 0%,rgba(3,12,24,.40) 58%,rgba(3,12,24,.08) 100%),
-url("https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=1500&q=85") center/cover;
-box-shadow:var(--shadow);color:#fff;border:1px solid #29415d}
-.hero-content{position:absolute;left:0;right:0;bottom:0;padding:24px}
-.pill{display:inline-flex;align-items:center;gap:5px;background:#f22d52;border-radius:20px;padding:6px 11px;font-size:11px;font-weight:800}
-.hero h2{font-size:30px;line-height:1.12;max-width:720px;margin:12px 0 8px;letter-spacing:-.6px}
-.hero p{max-width:700px;margin:0;color:#edf5ff;font-size:13px;line-height:1.5}
-.hero-meta{margin-top:13px;font-size:11px;color:#d9e6f5}
-.read-more{display:inline-flex;align-items:center;gap:7px;margin-top:12px;background:#0878ef;color:#fff;border-radius:22px;padding:10px 15px;font-size:12px;font-weight:800}
-.dots{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:flex;gap:6px}
-.dots i{display:block;width:18px;height:5px;background:#fff;border-radius:8px;opacity:.35}
+/* MAIN */
+main{padding:20px 0 46px}
+
+/* HERO + TOP 10 */
+.hero-layout{
+  display:grid;
+  grid-template-columns:minmax(0,2.05fr) minmax(320px,1fr);
+  gap:18px;
+}
+.hero{
+  min-height:405px;
+  border-radius:14px;
+  overflow:hidden;
+  position:relative;
+  background:
+    linear-gradient(0deg,rgba(3,13,29,.96) 0%,rgba(3,13,29,.38) 55%,rgba(3,13,29,.05) 100%),
+    url("https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=1500&q=85")
+    center/cover;
+  box-shadow:var(--shadow);
+  color:#fff;
+}
+.hero-content{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:24px;
+}
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  background:#f22d52;
+  border-radius:20px;
+  padding:6px 11px;
+  font-size:11px;
+  font-weight:800;
+}
+.hero h2{
+  font-size:31px;
+  line-height:1.12;
+  max-width:760px;
+  margin:12px 0 8px;
+  letter-spacing:-.6px;
+}
+.hero p{
+  max-width:700px;
+  margin:0;
+  color:#edf5ff;
+  font-size:13px;
+  line-height:1.5;
+}
+.hero-meta{
+  margin-top:13px;
+  font-size:11px;
+  color:#d9e6f5;
+}
+.read-more{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  margin-top:12px;
+  background:#0878ef;
+  color:#fff;
+  border-radius:22px;
+  padding:10px 15px;
+  font-size:12px;
+  font-weight:800;
+}
+.dots{
+  position:absolute;
+  left:50%;
+  bottom:12px;
+  transform:translateX(-50%);
+  display:flex;
+  gap:6px;
+}
+.dots i{
+  display:block;
+  width:18px;
+  height:5px;
+  background:#fff;
+  border-radius:8px;
+  opacity:.35;
+}
 .dots i:first-child{opacity:1}
 
-.top10{background:#0e1d30;border:1px solid #29415d;border-radius:14px;box-shadow:var(--shadow);padding:16px}
-.top10-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.top10-head h2{margin:0;font-size:19px}
-.top10-head a{font-size:11px;color:#2b8cff;font-weight:800}
-.top-list{list-style:none;margin:0;padding:0}
-.top-list li{display:flex;align-items:center;gap:9px;border-bottom:1px solid #24364c;padding:6px 0;font-size:12px;min-width:0}
+.top10{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  padding:17px 18px;
+}
+.top10-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:8px;
+}
+.top10-head h2{margin:0;font-size:20px}
+.top10-head a{
+  font-size:11px;
+  color:#2380ff;
+  font-weight:800;
+}
+.top-list{
+  list-style:none;
+  margin:0;
+  padding:0;
+}
+.top-list li{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  border-bottom:1px solid var(--line);
+  padding:7px 0;
+  font-size:12px;
+  min-width:0;
+}
 .top-list li:last-child{border-bottom:0}
-.top-list a{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.rank{width:24px;height:24px;display:grid;place-items:center;border-radius:50%;background:#34475c;font-size:11px;font-weight:800;flex:none}
-.rank.r1{background:#ef3340;color:#fff}.rank.r2{background:#ff9f1c;color:#fff}.rank.r3{background:#55ad2f;color:#fff}.rank.r4{background:#20a5ce;color:#fff}.rank.r5{background:#1584d6;color:#fff}
+.top-list a{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.rank{
+  width:24px;
+  height:24px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:#dfe7ef;
+  color:#172033;
+  font-size:11px;
+  font-weight:800;
+  flex:none;
+}
+.rank.r1{background:#ef3340;color:#fff}
+.rank.r2{background:#ff9f1c;color:#fff}
+.rank.r3{background:#55ad2f;color:#fff}
+.rank.r4{background:#20a5ce;color:#fff}
+.rank.r5{background:#1584d6;color:#fff}
 
-.block-head{display:flex;justify-content:space-between;align-items:end;margin:0 0 12px}
-.block-head h2{font-size:22px;margin:0;letter-spacing:-.3px}
-.block-head p{margin:4px 0 0;color:var(--muted);font-size:12px}
-.block-head a{font-size:11px;color:#2b8cff;font-weight:800}
-
-.latest-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
-.news-card{background:#0e1d30;border:1px solid #263c56;border-radius:13px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.16);transition:.18s}
-.news-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
-.news-thumb{height:126px;background-size:cover;background-position:center;position:relative;display:grid;place-items:center}
-.news-thumb:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.03),rgba(0,0,0,.18))}
-.news-thumb span{position:relative;z-index:1;background:rgba(255,255,255,.9);border-radius:50%;width:32px;height:32px;display:grid;place-items:center;font-size:17px}
+/* LATEST */
+.block-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  margin:0 0 13px;
+}
+.block-head h2{
+  font-size:22px;
+  margin:0;
+  letter-spacing:-.3px;
+}
+.block-head p{
+  margin:4px 0 0;
+  color:var(--muted);
+  font-size:12px;
+}
+.block-head a{
+  font-size:11px;
+  color:#2380ff;
+  font-weight:800;
+}
+#latest{margin-top:31px!important}
+.latest-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:14px;
+}
+.news-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:13px;
+  overflow:hidden;
+  box-shadow:0 4px 14px rgba(0,0,0,.12);
+  transition:.18s;
+}
+.news-card:hover{
+  transform:translateY(-2px);
+  box-shadow:var(--shadow);
+}
+.news-thumb{
+  height:126px;
+  background-position:center;
+  background-size:cover;
+  position:relative;
+  overflow:hidden;
+}
+.news-thumb span{
+  position:absolute;
+  right:10px;
+  bottom:8px;
+  background:rgba(255,255,255,.9);
+  color:#172033;
+  border-radius:50%;
+  width:30px;
+  height:30px;
+  display:grid;
+  place-items:center;
+  font-size:15px;
+}
 .news-body{padding:11px 12px 13px}
-.news-top{display:flex;justify-content:space-between;gap:5px;align-items:center}
-.tag{display:inline-block;color:#fff;background:#ef3340;border-radius:15px;padding:4px 9px;font-size:9px;font-weight:800}
-.time{font-size:9px;color:#a7b6c9;white-space:nowrap}
-.news-card h3{font-size:14px;line-height:1.22;margin:8px 0 7px;min-height:34px}
-.news-card p{font-size:11px;color:#a7b6c9;line-height:1.42;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.card-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:11px;font-size:9px;color:#9eb0c5}
-.card-foot span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.card-foot a{color:#2b8cff;font-weight:800;white-space:nowrap}
+.news-top{
+  display:flex;
+  justify-content:space-between;
+  gap:5px;
+  align-items:center;
+}
+.tag{
+  display:inline-block;
+  color:#fff;
+  background:#ef3340;
+  border-radius:15px;
+  padding:4px 9px;
+  font-size:9px;
+  font-weight:800;
+}
+.time{
+  font-size:9px;
+  color:var(--muted);
+  white-space:nowrap;
+}
+.news-card h3{
+  font-size:14px;
+  line-height:1.22;
+  margin:8px 0 7px;
+  min-height:34px;
+}
+.news-card p{
+  font-size:11px;
+  color:var(--muted);
+  line-height:1.42;
+  margin:0;
+  display:-webkit-box;
+  -webkit-line-clamp:3;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.card-foot{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  margin-top:11px;
+  font-size:9px;
+  color:var(--muted);
+}
+.card-foot span{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.card-foot a{
+  color:#2380ff;
+  font-weight:800;
+  white-space:nowrap;
+}
 
-.category-wrap{margin-top:28px}
-.category-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}
-.category-card{background:#0e1d30;border:1px solid #263c56;border-radius:11px;overflow:hidden;box-shadow:0 3px 12px rgba(0,0,0,.14);transition:.18s}
+/* CATEGORY CARDS */
+.category-wrap{margin-top:30px}
+.category-grid{
+  display:grid;
+  grid-template-columns:repeat(10,minmax(0,1fr));
+  gap:9px;
+}
+.category-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:11px;
+  overflow:hidden;
+  box-shadow:0 3px 11px rgba(0,0,0,.10);
+  transition:.18s;
+}
 .category-card:hover{transform:translateY(-2px)}
-.category-image{height:88px;background-size:cover;background-position:center;position:relative;display:grid;place-items:center}
-.category-image:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.38))}
-.category-image span{position:relative;z-index:1;background:rgba(5,18,34,.78);border:1px solid rgba(255,255,255,.12);border-radius:50%;width:34px;height:34px;display:grid;place-items:center;font-size:19px}
-.category-body{min-height:61px;padding:9px}
-.category-body strong{font-size:11px;display:block}
-.category-body span{font-size:9px;color:#9fb0c4}
-.category-body .go{float:right;width:24px;height:24px;border-radius:50%;background:#0878ef;color:#fff;display:grid;place-items:center;font-size:12px;margin-top:-3px}
+.category-image{
+  height:82px;
+  background-size:cover;
+  background-position:center;
+  position:relative;
+  display:grid;
+  place-items:center;
+}
+.category-image:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.03),rgba(0,0,0,.30));
+}
+.category-image span{
+  position:relative;
+  z-index:1;
+  background:rgba(255,255,255,.90);
+  color:#172033;
+  border-radius:50%;
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  font-size:19px;
+}
+.category-body{
+  min-height:62px;
+  padding:8px;
+}
+.category-body strong{
+  font-size:11px;
+  display:block;
+}
+.category-body span{
+  font-size:9px;
+  color:var(--muted);
+}
+.category-body .go{
+  float:right;
+  width:23px;
+  height:23px;
+  border-radius:50%;
+  background:#075bd7;
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-size:12px;
+  margin-top:-3px;
+}
 
-.category-section{margin-top:28px;background:#0b1a2c;border:1px solid #263c56;border-radius:15px;padding:15px;box-shadow:var(--shadow);scroll-margin-top:125px}
-.category-section .block-head{margin-bottom:10px}
-.category-section .block-head a{display:none}
+/* CATEGORY TOP 10 SECTIONS */
+.category-section{
+  margin-top:28px;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:16px;
+  box-shadow:var(--shadow);
+  scroll-margin-top:125px;
+}
+.category-section .block-head{margin-bottom:12px}
 .category-section .block-head h2{font-size:20px}
 .category-section .block-head p{font-size:11px}
-.headline-list{display:flex;flex-direction:column;border:1px solid #263c56;border-radius:11px;overflow:hidden;background:#091727}
-.headline-row{display:grid;grid-template-columns:34px minmax(0,1fr) 150px 82px 24px;align-items:center;gap:10px;padding:8px 11px;border-bottom:1px solid #20344a;min-height:46px}
+.category-top10{
+  color:#2380ff;
+  font-size:12px;
+  font-weight:700;
+}
+.headline-list{
+  display:flex;
+  flex-direction:column;
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+  background:var(--card);
+}
+.headline-row{
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr) 150px 82px 24px;
+  align-items:center;
+  gap:10px;
+  padding:9px 12px;
+  border-bottom:1px solid var(--line);
+  min-height:48px;
+}
 .headline-row:last-child{border-bottom:0}
-.headline-row:hover{background:#102640}
-.headline-rank{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;background:#34475c;color:#edf5ff;font-size:11px;font-weight:900}
-.headline-rank.r1{background:#ef3340}.headline-rank.r2{background:#ff9f1c}.headline-rank.r3{background:#55ad2f}.headline-rank.r4{background:#159bd0}.headline-rank.r5{background:#126fcb}
-.headline-text{font-size:12px;line-height:1.4;font-weight:650;color:#eef5ff}
-.headline-source,.headline-time{font-size:10px;color:#92a5ba;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.headline-arrow{color:#2b8cff;font-weight:900;text-align:center}
+.headline-row:hover{background:rgba(7,91,215,.08)}
+.headline-rank{
+  width:25px;
+  height:25px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#dfe7ef;
+  color:#172033;
+  font-size:11px;
+  font-weight:900;
+}
+.headline-rank.r1{background:#ef3340;color:#fff}
+.headline-rank.r2{background:#ff9f1c;color:#fff}
+.headline-rank.r3{background:#55ad2f;color:#fff}
+.headline-rank.r4{background:#159bd0;color:#fff}
+.headline-rank.r5{background:#126fcb;color:#fff}
+.headline-text{
+  font-size:12px;
+  line-height:1.4;
+  font-weight:650;
+  color:var(--text);
+}
+.headline-source,.headline-time{
+  font-size:10px;
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.headline-arrow{
+  color:#2380ff;
+  font-weight:900;
+  text-align:center;
+}
 
-.trust{margin-top:28px;background:#0d2037;border:1px solid #223b57;border-radius:13px;padding:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-.trust-item{display:flex;gap:10px;align-items:center}
-.trust-icon{width:42px;height:42px;flex:none;border-radius:50%;display:grid;place-items:center;background:#123f73;font-size:20px}
-.trust-item strong{display:block;font-size:12px}
-.trust-item span{display:block;color:#9fb0c4;font-size:10px;margin-top:2px}
+/* TRUST */
+.trust{
+  margin-top:28px;
+  background:var(--card2);
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:18px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+}
+.trust-item{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.trust-icon{
+  width:42px;
+  height:42px;
+  flex:none;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#123c72;
+  font-size:20px;
+}
+.trust-item strong{
+  display:block;
+  font-size:12px;
+}
+.trust-item span{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  margin-top:2px;
+}
 
-
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:200}
-.modal-backdrop.show{display:flex}
-.info-modal{width:min(620px,100%);max-height:85vh;overflow:auto;background:#0e1d30;border:1px solid #2b4563;border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.45);padding:22px;color:#eef5ff;position:relative}
-.info-modal h2{margin:0 36px 10px 0;font-size:22px}
-.info-modal p,.info-modal li{font-size:13px;line-height:1.65;color:#b8c6d8}
-.info-modal ul{padding-left:20px}
-.modal-close{position:absolute;right:14px;top:12px;width:34px;height:34px;border:1px solid #38506a;border-radius:50%;background:#142941;color:#fff;font-size:20px}
-.light .info-modal{background:#fff;color:#0d1726;border-color:#dbe4ee}
-.light .info-modal p,.light .info-modal li{color:#526176}
-.light .modal-close{background:#eef3f8;color:#0d1726;border-color:#d5dee9}
-.footer-link{background:none;border:0;padding:0;color:#9eafc4;font-size:10px;margin:5px 0;text-align:left}
+/* FOOTER */
+footer{
+  background:#06182e;
+  color:#d9e4f2;
+  padding:30px 0 14px;
+}
+.footer-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:25px;
+}
+.footer-brand{
+  font-size:19px;
+  font-weight:800;
+}
+.footer-brand p,.footer-grid p{
+  font-size:11px;
+  color:#a9b8cb;
+  font-weight:400;
+  margin:5px 0;
+}
+.footer h4{
+  margin:0 0 8px;
+  color:#fff;
+  font-size:12px;
+}
+.footer-link{
+  display:block;
+  border:0;
+  background:none;
+  padding:0;
+  color:#9eafc4;
+  font-size:10px;
+  margin:5px 0;
+  cursor:pointer;
+  text-align:left;
+}
 .footer-link:hover{color:#fff}
+.copy{
+  border-top:1px solid #21354f;
+  margin-top:22px;
+  padding-top:13px;
+  display:flex;
+  justify-content:space-between;
+  font-size:10px;
+  color:#94a7bd;
+}
 
-footer{background:#06172b;color:#d9e4f2;padding:27px 0 14px;margin-top:0;border-top:1px solid #20364f}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:25px}
-.footer-brand{font-size:19px;font-weight:800;display:flex;align-items:center;gap:8px}
-.footer-logo{width:42px;height:31px;display:inline-block;position:relative}
-.footer-logo:before{content:"";position:absolute;inset:3px 0 0;background:#fff;clip-path:polygon(50% 0,100% 100%,0 100%)}
-.footer-logo:after{content:"";position:absolute;width:22px;height:17px;left:14px;bottom:0;background:#06172b;clip-path:polygon(50% 0,100% 100%,0 100%)}
-.footer-brand p{font-size:11px;color:#9fb0c4;font-weight:400;margin:5px 0}
-.footer h4{margin:0 0 8px;color:#fff;font-size:12px}
-.footer a,.footer p{display:block;color:#9eafc4;font-size:10px;margin:5px 0}
-.socials{display:flex;gap:9px;justify-content:flex-end;align-items:center}
-.socials a{width:31px;height:31px;border-radius:50%;display:grid;place-items:center;background:#17304d;color:#fff;font-size:13px;margin:0}
-.copy{border-top:1px solid #20354e;margin-top:20px;padding-top:13px;display:flex;justify-content:space-between;font-size:10px;color:#94a7bd}
-.empty{grid-column:1/-1;background:#0e1d30;border:1px dashed #3a4d63;border-radius:12px;padding:22px;text-align:center;color:#9eafc0;font-size:12px}
+/* MODAL */
+.info-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.70);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:9999;
+}
+.info-modal.show{display:flex}
+.info-box{
+  width:min(560px,100%);
+  max-height:85vh;
+  overflow:auto;
+  background:#101b2a;
+  color:#edf3fa;
+  border:1px solid #2b3b50;
+  border-radius:18px;
+  padding:24px;
+  box-shadow:0 20px 70px rgba(0,0,0,.40);
+  position:relative;
+}
+.info-box h2{
+  margin:0 35px 12px 0;
+  font-size:22px;
+}
+.info-box p{
+  color:#aab7c8;
+  line-height:1.65;
+  font-size:13px;
+  margin:8px 0;
+}
+.info-close{
+  position:absolute;
+  right:15px;
+  top:13px;
+  width:34px;
+  height:34px;
+  border:0;
+  border-radius:50%;
+  background:#223249;
+  color:#fff;
+  font-size:20px;
+}
+.info-close:hover{background:#30445f}
+
+/* MISC */
+.empty{
+  grid-column:1/-1;
+  background:var(--card);
+  border:1px dashed #52647a;
+  border-radius:12px;
+  padding:22px;
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+}
 .hidden{display:none!important}
-.to-top{position:fixed;right:18px;bottom:18px;width:42px;height:42px;border:0;border-radius:50%;background:#0878ef;color:#fff;font-size:20px;display:none;place-items:center;box-shadow:var(--shadow);z-index:90}
+.to-top{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  width:42px;
+  height:42px;
+  border:0;
+  border-radius:50%;
+  background:#075bd7;
+  color:#fff;
+  font-size:20px;
+  display:none;
+  place-items:center;
+  box-shadow:var(--shadow);
+  z-index:90;
+}
 
-body.light{--bg:#f7f9fc;--card:#fff;--text:#0d1726;--muted:#667085;--line:#e5eaf1}
-body.light{background:#f7f9fc;color:#0d1726}
-.light .header,.light .nav{background:#fff;border-color:#e5eaf1}
-.light .search input{background:#f7f9fc;color:#0d1726;border-color:#dfe5ed}
-.light .lang{background:#fff;border-color:#dbe2eb}
-.light .lang button{color:#344054}
-.light .icon-btn{background:#14243b}
-.light .top10,.light .news-card,.light .category-card,.light .category-section{background:#fff;border-color:#e5eaf1}
-.light .top-list li{border-color:#eef1f5}
-.light .headline-list{background:#fff;border-color:#e5eaf1}
-.light .headline-row{border-color:#e5eaf1}
-.light .headline-row:hover{background:#f5f9ff}
-.light .headline-text{color:#0d1726}
-.light .headline-source,.light .headline-time{color:#667085}
-.light .trust{background:#f1f5fb;border-color:#e5eaf1}
-.light .empty{background:#fff;color:#667085;border-color:#cbd5e1}
-.light footer{background:#071b35}
-.light .category-image span{background:rgba(255,255,255,.88);color:#0d1726}
-.light .logo-mark:after{background:#fff}
-.light .footer-logo:after{background:#071b35}
-
+/* RESPONSIVE */
 @media(max-width:1050px){
   .hero-layout{grid-template-columns:1fr}
   .category-grid{grid-template-columns:repeat(5,1fr)}
@@ -194,30 +756,42 @@ body.light{background:#f7f9fc;color:#0d1726}
 @media(max-width:800px){
   .headline-row{grid-template-columns:30px minmax(0,1fr) 22px}
   .headline-source,.headline-time{display:none}
+  .headline-text{font-size:11px}
+  .category-grid{grid-template-columns:repeat(4,1fr)}
 }
 @media(max-width:700px){
-  .top-strip{height:32px;font-size:10px}
+  .top-strip{font-size:10px}
   .top-strip .wrap span:last-child{display:none}
   .wrap{padding:0 11px}
-  .header-row{min-height:72px;gap:9px;flex-wrap:wrap;padding:8px 0 9px}
+  .header-row{
+    min-height:72px;
+    gap:9px;
+    flex-wrap:wrap;
+    padding:8px 0 9px;
+  }
   .logo{min-width:0;flex:1}
-  .logo-mark{width:42px;height:36px}
-  .logo-mark:before{width:41px;height:31px}
-  .logo-mark:after{width:23px;height:18px;left:17px}
-  .logo-mark i{width:23px;height:18px;left:19px}
-  .logo h1{font-size:17px}.logo p{font-size:9px}.badge{font-size:11px;padding:3px 5px}
-  .header-actions{gap:4px}.icon-btn{width:36px;height:36px}.lang button{padding:7px 9px}
-  .search{order:4;flex-basis:100%;max-width:none}
+  .logo-mark{font-size:31px;width:38px}
+  .logo h1{font-size:17px}
+  .logo p{font-size:9px}
+  .badge{font-size:11px;padding:3px 5px}
+  .search{
+    order:4;
+    flex-basis:100%;
+    max-width:none;
+  }
+  .icon-btn{width:36px;height:36px}
+  .lang button{padding:7px 9px}
   .nav a{padding:11px 10px;font-size:11px}
   main{padding-top:14px}
-  .hero{min-height:360px}.hero h2{font-size:24px}.hero-content{padding:18px}
+  .hero{min-height:360px}
+  .hero h2{font-size:24px}
+  .hero-content{padding:18px}
   .latest-grid{grid-template-columns:1fr}
+  .news-thumb{height:150px}
   .category-grid{grid-template-columns:repeat(2,1fr)}
-  .category-image{height:95px}
   .trust{grid-template-columns:1fr 1fr;gap:12px}
   .footer-grid{grid-template-columns:1fr 1fr}
   .copy{flex-direction:column;gap:6px}
-  .socials{justify-content:flex-start}
 }
 @media(max-width:420px){
   .trust{grid-template-columns:1fr}
@@ -228,165 +802,418 @@ body.light{background:#f7f9fc;color:#0d1726}
 </head>
 
 <body>
+
 <div class="top-strip">
   <div class="wrap">
-    <span id="top-strip-left">🇳🇵 Reliable News. Better Nepal.</span>
-    <span id="top-strip-right">🟢 Live Updates &nbsp;•&nbsp; Top 10 Stories &nbsp;•&nbsp; From Trusted Sources</span>
+    <span
+      data-en="🇳🇵 Reliable News. Better Nepal."
+      data-ne="🇳🇵 विश्वसनीय समाचार। राम्रो नेपाल।"
+    >🇳🇵 Reliable News. Better Nepal.</span>
+
+    <span
+      data-en="🟢 Live Updates &nbsp;•&nbsp; Top 10 Stories &nbsp;•&nbsp; From Trusted Sources"
+      data-ne="🟢 प्रत्यक्ष अपडेट &nbsp;•&nbsp; शीर्ष १० समाचार &nbsp;•&nbsp; विश्वसनीय स्रोतहरू"
+    >🟢 Live Updates &nbsp;•&nbsp; Top 10 Stories &nbsp;•&nbsp; From Trusted Sources</span>
   </div>
 </div>
 
 <header class="header">
   <div class="wrap header-row">
+
     <a class="logo" href="#home">
-      <div class="logo-mark"><i></i></div>
+      <div class="logo-mark">🏔️</div>
+
       <div>
-        <h1>Nepal News <span class="badge">Top 10</span></h1>
-        <p id="tagline">Your Daily Dose of Nepal &amp; World</p>
+        <h1>
+          Nepal News <span class="badge">Top 10</span>
+        </h1>
+
+        <p id="tagline">
+          Your Daily Dose of Nepal &amp; World
+        </p>
       </div>
     </a>
 
     <div class="search">
       <span class="search-icon">⌕</span>
-      <input id="search" type="search" placeholder="Search news, topics, or keywords...">
+      <input
+        id="search"
+        type="search"
+        placeholder="Search news, topics, or keywords..."
+      >
     </div>
 
     <div class="header-actions">
-      <div class="lang"><button id="en" class="active">EN</button><button id="ne">ने</button></div>
-      <button class="icon-btn" id="theme" aria-label="Theme">☀</button>
-      <!-- Hamburger removed -->
+
+      <div class="lang">
+        <button id="en" class="active">EN</button>
+        <button id="ne">ने</button>
+      </div>
+
+      <button
+        class="icon-btn"
+        id="theme"
+        aria-label="Theme"
+      >☾</button>
+
     </div>
   </div>
 </header>
 
 <nav class="nav">
   <div class="wrap nav-scroll" id="nav">
-    <a class="active home" href="#home" data-en="⌂ Home" data-ne="⌂ गृहपृष्ठ">⌂ Home</a>
-    <a href="#weather" data-en="🌦️ Weather" data-ne="🌦️ मौसम">🌦️ Weather</a>
-    <a href="#national" data-en="🇳🇵 National" data-ne="🇳🇵 राष्ट्रिय">🇳🇵 National</a>
-    <a href="#politics" data-en="🏛️ Politics" data-ne="🏛️ राजनीति">🏛️ Politics</a>
-    <a href="#business" data-en="📈 Business" data-ne="📈 व्यापार">📈 Business</a>
-    <a href="#sports" data-en="⚽ Sports" data-ne="⚽ खेलकुद">⚽ Sports</a>
-    <a href="#technology" data-en="💻 Technology" data-ne="💻 प्रविधि">💻 Technology</a>
-    <a href="#entertainment" data-en="🎬 Entertainment" data-ne="🎬 मनोरञ्जन">🎬 Entertainment</a>
-    <a href="#world" data-en="🌐 World" data-ne="🌐 विश्व">🌐 World</a>
-    <a href="#health" data-en="🩺 Health" data-ne="🩺 स्वास्थ्य">🩺 Health</a>
-    <a href="#crime" data-en="🚨 Crime" data-ne="🚨 अपराध">🚨 Crime</a>
+
+    <a class="active home" href="#home"
+       data-en="⌂ Home" data-ne="⌂ गृहपृष्ठ">⌂ Home</a>
+
+    <a href="#weather"
+       data-en="🌤️ Weather" data-ne="🌤️ मौसम">🌤️ Weather</a>
+
+    <a href="#national"
+       data-en="🇳🇵 National" data-ne="🇳🇵 राष्ट्रिय">🇳🇵 National</a>
+
+    <a href="#politics"
+       data-en="🏛️ Politics" data-ne="🏛️ राजनीति">🏛️ Politics</a>
+
+    <a href="#business"
+       data-en="📈 Business" data-ne="📈 व्यापार">📈 Business</a>
+
+    <a href="#sports"
+       data-en="⚽ Sports" data-ne="⚽ खेलकुद">⚽ Sports</a>
+
+    <a href="#technology"
+       data-en="💻 Technology" data-ne="💻 प्रविधि">💻 Technology</a>
+
+    <a href="#entertainment"
+       data-en="🎬 Entertainment" data-ne="🎬 मनोरञ्जन">🎬 Entertainment</a>
+
+    <a href="#world"
+       data-en="🌐 World" data-ne="🌐 विश्व">🌐 World</a>
+
+    <a href="#health"
+       data-en="🩺 Health" data-ne="🩺 स्वास्थ्य">🩺 Health</a>
+
+    <a href="#crime"
+       data-en="🚨 Crime" data-ne="🚨 अपराध">🚨 Crime</a>
+
   </div>
 </nav>
 
 <main id="home">
+
 <div class="wrap">
 
 <section class="hero-layout">
+
   <article class="hero">
+
     <div class="hero-content">
-      <span class="pill">🔥 <span id="top-story-label">Top Story</span></span>
-      <h2 id="hero-title">Loading today's top story...</h2>
-      <p id="hero-summary">Fetching the latest stories from the news database.</p>
-      <div class="hero-meta" id="hero-meta">Nepal News Top 10</div>
-      <a class="read-more" id="hero-link" href="#" target="_blank" rel="noopener">Read More →</a>
+
+      <span class="pill">
+        🔥
+        <span
+          data-en="Top Story"
+          data-ne="प्रमुख समाचार"
+        >Top Story</span>
+      </span>
+
+      <h2 id="hero-title">
+        Loading today's top story...
+      </h2>
+
+      <p id="hero-summary">
+        Fetching the latest stories from the news database.
+      </p>
+
+      <div class="hero-meta" id="hero-meta">
+        Nepal News Top 10
+      </div>
+
+      <a
+        class="read-more"
+        id="hero-link"
+        href="#"
+        target="_blank"
+        rel="noopener"
+        data-en="Read More →"
+        data-ne="पूरा पढ्नुहोस् →"
+      >Read More →</a>
+
     </div>
-    <div class="dots"><i></i><i></i><i></i></div>
+
+    <div class="dots">
+      <i></i><i></i><i></i>
+    </div>
+
   </article>
 
   <aside class="top10">
+
     <div class="top10-head">
-      <h2 id="top10-title">⚡ Top 10 Today</h2>
-      <a href="#latest" id="view-all-top">View All</a>
+      <h2
+        data-en="⚡ Top 10 Today"
+        data-ne="⚡ आजका शीर्ष १०"
+      >⚡ Top 10 Today</h2>
+
+      <a
+        href="#latest"
+        data-en="View All"
+        data-ne="सबै हेर्नुहोस्"
+      >View All</a>
     </div>
-    <ol class="top-list" id="top-list"><li><span class="rank r1">1</span> ${ui("loadingNews")}</li></ol>
+
+    <ol class="top-list" id="top-list">
+      <li>
+        <span class="rank">1</span>
+        Loading news...
+      </li>
+    </ol>
+
   </aside>
+
 </section>
 
-<!-- No weather forecast card.
-     Weather is a real news category containing rainfall, floods, monsoon,
-     landslides, storms, temperature and other weather-related stories. -->
+<!-- IMPORTANT:
+     There is NO live Kathmandu weather forecast card.
+     Weather is a normal Top-10 NEWS category below.
+-->
 
-<section id="latest" style="margin-top:28px">
+<section id="latest">
+
   <div class="block-head">
+
     <div>
-      <h2 id="latest-title">🔥 Latest News</h2>
-      <p id="latest-subtitle">Stay informed with the latest stories from Nepal and around the world</p>
+      <h2
+        data-en="🔥 Latest News"
+        data-ne="🔥 पछिल्ला समाचार"
+      >🔥 Latest News</h2>
+
+      <p
+        data-en="Stay informed with the latest stories from Nepal and around the world"
+        data-ne="नेपाल र विश्वभरका पछिल्ला समाचारसँग अपडेट रहनुहोस्"
+      >
+        Stay informed with the latest stories from Nepal and around the world
+      </p>
     </div>
-    <a href="#categories" id="view-all-news">View All News →</a>
+
+    <a
+      href="#categories"
+      data-en="View All News →"
+      data-ne="सबै समाचार हेर्नुहोस् →"
+    >View All News →</a>
+
   </div>
+
   <div class="latest-grid" id="latest-grid"></div>
+
 </section>
 
 <section class="category-wrap" id="categories">
+
   <div class="block-head">
+
     <div>
-      <h2 id="category-title">⭐ Top News by Category</h2>
-      <p id="category-subtitle">Explore the top 10 stories in every category</p>
+      <h2
+        data-en="⭐ Top News by Category"
+        data-ne="⭐ वर्गअनुसार शीर्ष समाचार"
+      >⭐ Top News by Category</h2>
+
+      <p
+        data-en="Explore the top 10 stories in each category"
+        data-ne="प्रत्येक वर्गका शीर्ष १० समाचार हेर्नुहोस्"
+      >
+        Explore the top 10 stories in each category
+      </p>
     </div>
-    <a href="#weather" id="view-all-categories">View All Categories →</a>
+
+    <a
+      href="#weather"
+      data-en="View All Categories →"
+      data-ne="सबै वर्ग हेर्नुहोस् →"
+    >View All Categories →</a>
+
   </div>
+
   <div class="category-grid" id="category-grid"></div>
+
 </section>
 
 <div id="sections"></div>
 
 <section class="trust">
-  <div class="trust-item"><div class="trust-icon">🛡️</div><div><strong id="trust-sources">Trusted Sources</strong><span id="trust-sources-sub">News from reliable Nepal &amp; global media</span></div></div>
-  <div class="trust-item"><div class="trust-icon">⚡</div><div><strong id="trust-updated">Updated Daily</strong><span id="trust-updated-sub">Fresh stories every day</span></div></div>
-  <div class="trust-item"><div class="trust-icon">📱</div><div><strong id="trust-mobile">Mobile Friendly</strong><span id="trust-mobile-sub">Perfect on all devices</span></div></div>
-  <div class="trust-item"><div class="trust-icon">❤️</div><div><strong id="trust-nepal">For a Better Nepal</strong><span id="trust-nepal-sub">Informed citizens, stronger nation</span></div></div>
+
+  <div class="trust-item">
+    <div class="trust-icon">🛡️</div>
+    <div>
+      <strong
+        data-en="Trusted Sources"
+        data-ne="विश्वसनीय स्रोतहरू"
+      >Trusted Sources</strong>
+
+      <span
+        data-en="News from reliable Nepal & global media"
+        data-ne="नेपाल तथा विश्वका विश्वसनीय सञ्चारमाध्यमबाट समाचार"
+      >News from reliable Nepal &amp; global media</span>
+    </div>
+  </div>
+
+  <div class="trust-item">
+    <div class="trust-icon">⚡</div>
+    <div>
+      <strong
+        data-en="Updated Daily"
+        data-ne="दैनिक अपडेट"
+      >Updated Daily</strong>
+
+      <span
+        data-en="Fresh stories every day"
+        data-ne="हरेक दिन नयाँ समाचार"
+      >Fresh stories every day</span>
+    </div>
+  </div>
+
+  <div class="trust-item">
+    <div class="trust-icon">📱</div>
+    <div>
+      <strong
+        data-en="Mobile Friendly"
+        data-ne="मोबाइलमैत्री"
+      >Mobile Friendly</strong>
+
+      <span
+        data-en="Perfect on phones and desktops"
+        data-ne="मोबाइल र डेस्कटप दुवैका लागि उपयुक्त"
+      >Perfect on phones and desktops</span>
+    </div>
+  </div>
+
+  <div class="trust-item">
+    <div class="trust-icon">❤️</div>
+    <div>
+      <strong
+        data-en="For a Better Nepal"
+        data-ne="राम्रो नेपालको लागि"
+      >For a Better Nepal</strong>
+
+      <span
+        data-en="Informed citizens, stronger nation"
+        data-ne="जानकार नागरिक, बलियो राष्ट्र"
+      >Informed citizens, stronger nation</span>
+    </div>
+  </div>
+
 </section>
 
 </div>
 </main>
 
 <footer>
-  <div class="wrap footer-grid">
-    <div>
-      <div class="footer-brand"><span class="footer-logo"></span><span>Nepal News <span class="badge">Top 10</span></span></div>
-      <p id="footer-tagline">Reliable. Balanced. For a better Nepal.</p>
-    </div>
-    <div>
-      <h4><button class="footer-link" id="footer-about" data-modal="about">About</button></h4>
-      <button class="footer-link" data-modal="about">Our Mission</button>
-      <button class="footer-link" data-modal="about">How It Works</button>
-    </div>
-    <div>
-      <h4><button class="footer-link" id="footer-sources" data-modal="sources">Sources</button></h4>
-      <button class="footer-link" data-modal="sources">Trusted Media</button>
-      <button class="footer-link" data-modal="sources">News Categories</button>
-    </div>
-    <div>
-      <h4><button class="footer-link" id="footer-privacy" data-modal="privacy">Privacy</button></h4>
-      <button class="footer-link" data-modal="privacy">Data &amp; Cookies</button>
-      <button class="footer-link" data-modal="privacy">Your Choices</button>
-    </div>
-  </div>
-  <div class="wrap copy">
-    <span id="copyright">© 2026 Nepal News Top 10. Made with ❤️ for Nepal.</span>
-    <div class="socials">
-      <a href="#" aria-label="Facebook">f</a>
-      <a href="#" aria-label="X">𝕏</a>
-      <a href="#" aria-label="YouTube">▶</a>
-      <a href="#" aria-label="Instagram">◎</a>
-    </div>
-  </div>
-</footer>
 
-<div class="modal-backdrop" id="info-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-  <div class="info-modal">
-    <button class="modal-close" id="modal-close" aria-label="Close">×</button>
-    <h2 id="modal-title"></h2>
-    <div id="modal-body"></div>
+<div class="wrap footer-grid">
+
+  <div>
+    <div class="footer-brand">
+      🏔️ Nepal News <span class="badge">Top 10</span>
+    </div>
+
+    <p
+      data-en="Reliable. Balanced. For a better Nepal."
+      data-ne="विश्वसनीय। सन्तुलित। राम्रो नेपालको लागि।"
+    >Reliable. Balanced. For a better Nepal.</p>
   </div>
+
+  <div>
+    <h4 data-en="About" data-ne="हाम्रो बारेमा">About</h4>
+
+    <button
+      class="footer-link"
+      onclick="openInfo('about')"
+      data-en="About Nepal News"
+      data-ne="नेपाल न्यूजको बारेमा"
+    >About Nepal News</button>
+  </div>
+
+  <div>
+    <h4 data-en="Sources" data-ne="स्रोतहरू">Sources</h4>
+
+    <button
+      class="footer-link"
+      onclick="openInfo('sources')"
+      data-en="Trusted Sources"
+      data-ne="विश्वसनीय स्रोतहरू"
+    >Trusted Sources</button>
+  </div>
+
+  <div>
+    <h4 data-en="Privacy" data-ne="गोपनीयता">Privacy</h4>
+
+    <button
+      class="footer-link"
+      onclick="openInfo('privacy')"
+      data-en="Privacy Policy"
+      data-ne="गोपनीयता नीति"
+    >Privacy Policy</button>
+  </div>
+
 </div>
 
-<button class="to-top" id="to-top">↑</button>
+<div class="wrap copy">
+
+  <span
+    data-en="© 2026 Nepal News Top 10. Made with ❤️ for Nepal."
+    data-ne="© २०२६ नेपाल न्यूज टप १०। ❤️ सहित नेपालको लागि।"
+  >© 2026 Nepal News Top 10. Made with ❤️ for Nepal.</span>
+
+  <span
+    data-en="Stay informed. Stay connected. 🇳🇵"
+    data-ne="जानकारी राख्नुहोस्। जोडिइरहनुहोस्। 🇳🇵"
+  >Stay informed. Stay connected. 🇳🇵</span>
+
+</div>
+
+</footer>
+
+<!-- FOOTER POPUP -->
+<div class="info-modal" id="info-modal">
+
+  <div class="info-box">
+
+    <button
+      class="info-close"
+      onclick="closeInfo()"
+      aria-label="Close"
+    >×</button>
+
+    <h2 id="info-title"></h2>
+
+    <div id="info-content"></div>
+
+  </div>
+
+</div>
+
+<button class="to-top" id="to-top" aria-label="Back to top">↑</button>
 
 <script>
-const SECTIONS=[
-  "weather","national","politics","business","sports",
-  "technology","entertainment","world","health","crime"
+/* =========================================================
+   CATEGORIES
+========================================================= */
+
+const SECTIONS = [
+  "weather",
+  "national",
+  "politics",
+  "business",
+  "sports",
+  "technology",
+  "entertainment",
+  "world",
+  "health",
+  "crime"
 ];
 
-const LABEL={
-  weather:["🌦️","Weather","मौसम"],
+const LABEL = {
+  weather:["🌤️","Weather","मौसम"],
   national:["🇳🇵","National","राष्ट्रिय"],
   politics:["🏛️","Politics","राजनीति"],
   business:["📈","Business","व्यापार"],
@@ -398,12 +1225,20 @@ const LABEL={
   crime:["🚨","Crime","अपराध"]
 };
 
-const ICON={
-  weather:"🌦️",national:"🇳🇵",politics:"🏛️",business:"📈",sports:"⚽",
-  technology:"💻",entertainment:"🎬",world:"🌐",health:"🩺",crime:"🚨"
+const ICON = {
+  weather:"🌤️",
+  national:"🇳🇵",
+  politics:"🏛️",
+  business:"📈",
+  sports:"⚽",
+  technology:"💻",
+  entertainment:"🎬",
+  world:"🌐",
+  health:"🩺",
+  crime:"🚨"
 };
 
-const IMAGE={
+const IMAGE = {
   weather:"https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?auto=format&fit=crop&w=700&q=82",
   national:"https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=700&q=82",
   politics:"https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=700&q=82",
@@ -416,332 +1251,802 @@ const IMAGE={
   crime:"https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=700&q=82"
 };
 
-let data=null;
-let lang=localStorage.getItem("nn-lang")||"en";
+let data = null;
+let lang = localStorage.getItem("nn-lang") || "en";
+
+/* =========================================================
+   HELPERS
+========================================================= */
 
 function esc(s){
-  return String(s??"").replace(/[&<>"']/g,c=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  return String(s ?? "").replace(/[&<>"']/g,c => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
   }[c]));
 }
 
 function allStories(){
-  return SECTIONS.flatMap(s=>
-    (Array.isArray(data?.sections?.[s])?data.sections[s]:[])
-      .map(x=>({...x,section:s}))
+
+  return SECTIONS.flatMap(section => {
+
+    const stories =
+      Array.isArray(data?.sections?.[section])
+        ? data.sections[section]
+        : [];
+
+    return stories.map(x => ({
+      ...x,
+      section
+    }));
+  });
+}
+
+function fmtDate(s){
+
+  if(!s) return "";
+
+  const d = new Date(s);
+
+  if(Number.isNaN(d.getTime())) return s;
+
+  return d.toLocaleDateString(
+    lang === "ne" ? "ne-NP" : "en-US",
+    {
+      month:"short",
+      day:"numeric",
+      year:"numeric"
+    }
   );
 }
 
 function timeAgo(s){
-  if(!s)return "";
-  const d=new Date(s);
-  if(Number.isNaN(d.getTime()))return "";
-  const m=Math.max(1,Math.floor((Date.now()-d)/60000));
-  return m<60?m+"m ago":m<1440?Math.floor(m/60)+"h ago":Math.floor(m/1440)+"d ago";
+
+  if(!s) return "";
+
+  const d = new Date(s);
+
+  if(Number.isNaN(d.getTime())) return "";
+
+  const m = Math.max(
+    1,
+    Math.floor((Date.now()-d)/60000)
+  );
+
+  if(lang === "ne"){
+
+    if(m < 60) return `${m} मिनेट अघि`;
+
+    if(m < 1440)
+      return `${Math.floor(m/60)} घण्टा अघि`;
+
+    return `${Math.floor(m/1440)} दिन अघि`;
+  }
+
+  if(m < 60) return m+"m ago";
+
+  if(m < 1440)
+    return Math.floor(m/60)+"h ago";
+
+  return Math.floor(m/1440)+"d ago";
 }
 
-function fmtDate(s){
-  if(!s)return "";
-  const d=new Date(s);
-  return Number.isNaN(d.getTime())?s:d.toLocaleDateString(undefined,{
-    month:"short",day:"numeric",year:"numeric"
-  });
+function getTitle(x){
+
+  if(lang === "ne")
+    return x.title_ne || x.title || "";
+
+  return x.title || "";
 }
 
+function getSummary(x){
 
-function storyField(x,field){
-  if(lang!=="ne") return x[field] || "";
-  return x[field+"Ne"] || x[field+"_ne"] || x.ne?.[field] || x[field] || "";
-}
-function storyTitle(x){return storyField(x,"title")||ui("loadingNews");}
-function storySummary(x){return storyField(x,"summary")||storyTitle(x)||ui("original");}
+  if(lang === "ne")
+    return x.summary_ne || x.summary || getTitle(x);
 
-function newsCard(x){
-  const label=LABEL[x.section]?.[lang==="ne"?2:1]||ui("latest");
-  const image=IMAGE[x.section]||IMAGE.national;
-  return `
-  <article class="news-card">
-    <div class="news-thumb" style="background-image:url('${image}')">
-      <span>${ICON[x.section]||"📰"}</span>
-    </div>
-    <div class="news-body">
-      <div class="news-top">
-        <span class="tag">${esc(label)}</span>
-        <span class="time">◷ ${esc(timeAgo(x.published))}</span>
-      </div>
-      <h3>${esc(storyTitle(x))}</h3>
-      <p>${esc(storySummary(x)||ui("original"))}</p>
-      <div class="card-foot">
-        <span>${esc(x.source||ui("original"))}</span>
-        <a href="${esc(x.link||"#")}" target="_blank" rel="noopener">${ui("read")}</a>
-      </div>
-    </div>
-  </article>`;
+  return x.summary || getTitle(x);
 }
+
+/* =========================================================
+   NEWS RENDER
+========================================================= */
 
 function render(){
-  const stories=allStories();
-  const top=stories.slice(0,10);
-  const hero=top[0];
+
+  const stories = allStories();
+
+  const top = stories.slice(0,10);
+
+  const hero = top[0];
+
+  /* HERO */
 
   if(hero){
-    document.getElementById("hero-title").textContent=storyTitle(hero);
-    document.getElementById("hero-summary").textContent=
-      storySummary(hero)||ui("original");
-    document.getElementById("hero-meta").textContent=
-      (hero.published?fmtDate(hero.published)+" • ":"")+(hero.source||"Original source");
-    document.getElementById("hero-link").href=hero.link||"#";
+
+    document.getElementById("hero-title").textContent =
+      getTitle(hero);
+
+    document.getElementById("hero-summary").textContent =
+      getSummary(hero);
+
+    document.getElementById("hero-meta").textContent =
+      (hero.published ? fmtDate(hero.published)+" • " : "") +
+      (hero.source || "Original source");
+
+    document.getElementById("hero-link").href =
+      hero.link || "#";
   }
 
-  document.getElementById("top-list").innerHTML=top.length
-    ? top.map((x,i)=>`
-      <li>
-        <span class="rank ${i===0?"r1":i===1?"r2":i===2?"r3":i===3?"r4":i===4?"r5":""}">${i+1}</span>
-        <a href="${esc(x.link||"#")}" target="_blank" rel="noopener">${esc(storyTitle(x))}</a>
-      </li>`).join("")
-    : `<li><span class="rank r1">!</span>${ui("noStories")}</li>`;
+  /* TOP 10 */
 
-  const latest=stories.slice(0,4);
-  document.getElementById("latest-grid").innerHTML=latest.length
-    ? latest.map(newsCard).join("")
-    : `<div class="empty">${ui("empty")}</div>`;
+  document.getElementById("top-list").innerHTML =
+    top.length
 
-  document.getElementById("category-grid").innerHTML=SECTIONS.map((s,i)=>{
-    const n=(data?.sections?.[s]||[]).length;
-    return `
-      <a class="category-card" href="#${s}">
-        <div class="category-image" style="background-image:url('${IMAGE[s]}')">
-          <span>${ICON[s]}</span>
-        </div>
-        <div class="category-body">
-          <strong>${LABEL[s][lang==="ne"?2:1]}</strong>
-          <span>${Math.min(n,10)} ${lang==="ne"?"समाचार":"stories"}</span>
-          <span class="go">→</span>
-        </div>
-      </a>`;
-  }).join("");
+      ? top.map((x,i) => `
+          <li>
+            <span class="rank ${i<5 ? "r"+(i+1) : ""}">
+              ${i+1}
+            </span>
 
-  document.getElementById("sections").innerHTML=SECTIONS.map(s=>{
-    const list=Array.isArray(data?.sections?.[s])
-      ?data.sections[s].slice(0,10):[];
+            <a
+              href="${esc(x.link || "#")}"
+              target="_blank"
+              rel="noopener"
+            >${esc(getTitle(x))}</a>
+          </li>
+        `).join("")
 
-    const label=LABEL[s][lang==="ne"?2:1];
-
-    return `
-      <section class="category-section" id="${s}">
-        <div class="block-head">
-          <div>
-            <h2>${ICON[s]} ${label}</h2>
-            <p>${
-              s==="weather"
-              ?(lang==="ne"
-                ?"वर्षा, बाढी, मनसुन, पहिरो, तापक्रम, आँधी र अन्य मौसमसम्बन्धी शीर्ष १० समाचार"
-                :"Top 10 weather-related news: rainfall, floods, monsoon, landslides, temperature, storms and more")
-              :(lang==="ne"
-                ?"यस श्रेणीका शीर्ष १० समाचार, प्रत्येक एक वाक्यमा"
-                :"Top 10 news in this category, summarized in one sentence each")
-            }</p>
-          </div>
-        </div>
-
-        <div class="headline-list">
+      : `
+        <li>
+          <span class="rank">!</span>
           ${
-            list.length
-            ?list.map((x,i)=>`
-              <a class="headline-row" href="${esc(x.link||"#")}" target="_blank" rel="noopener">
-                <span class="headline-rank ${i<5?"r"+(i+1):""}">${i+1}</span>
-                <span class="headline-text">${esc(x.summary||x.title||"News update")}</span>
-                <span class="headline-source">${esc(x.source||ui("original"))}</span>
-                <span class="headline-time">${esc(timeAgo(x.published))}</span>
-                <span class="headline-arrow">›</span>
-              </a>`).join("")
-            :`<div class="empty">${ui("noCategory")}</div>`
+            lang === "ne"
+              ? "समाचार उपलब्ध छैन।"
+              : "No stories available."
+          }
+        </li>
+      `;
+
+  /* LATEST */
+
+  const latest = stories.slice(0,4);
+
+  document.getElementById("latest-grid").innerHTML =
+    latest.length
+      ? latest.map(newsCard).join("")
+      : `
+        <div class="empty">
+          ${
+            lang === "ne"
+              ? "समाचार उपलब्ध छैन।"
+              : "News is not available yet."
           }
         </div>
-      </section>`;
-  }).join("");
+      `;
+
+  /* CATEGORY CARDS */
+
+  document.getElementById("category-grid").innerHTML =
+    SECTIONS.map((s,i) => {
+
+      const n =
+        Array.isArray(data?.sections?.[s])
+          ? data.sections[s].length
+          : 0;
+
+      const label =
+        LABEL[s][lang === "ne" ? 2 : 1];
+
+      return `
+        <a
+          class="category-card"
+          href="#${s}"
+        >
+          <div
+            class="category-image"
+            style="background-image:url('${IMAGE[s]}')"
+          >
+            <span>${ICON[s]}</span>
+          </div>
+
+          <div class="category-body">
+
+            <strong>
+              ${i+1}. ${label}
+            </strong>
+
+            <span>
+              ${
+                Math.min(n,10)
+              }
+              ${
+                lang === "ne"
+                  ? "समाचार"
+                  : "stories"
+              }
+            </span>
+
+            <span class="go">→</span>
+
+          </div>
+        </a>
+      `;
+
+    }).join("");
+
+  /* CATEGORY TOP 10 SECTIONS */
+
+  document.getElementById("sections").innerHTML =
+    SECTIONS.map(s => {
+
+      const list =
+        Array.isArray(data?.sections?.[s])
+          ? data.sections[s].slice(0,10)
+          : [];
+
+      const label =
+        LABEL[s][lang === "ne" ? 2 : 1];
+
+      return `
+        <section
+          class="category-section"
+          id="${s}"
+        >
+
+          <div class="block-head">
+
+            <div>
+
+              <h2>
+                ${ICON[s]} ${label}
+                <span class="category-top10">
+                  — Top 10
+                </span>
+              </h2>
+
+              <p>
+                ${
+                  lang === "ne"
+                    ? "यस श्रेणीका शीर्ष १० समाचार, प्रत्येक एक वाक्यमा"
+                    : "Top 10 news in this category, summarized in one sentence each"
+                }
+              </p>
+
+            </div>
+
+          </div>
+
+          <div class="headline-list">
+
+            ${
+              list.length
+
+                ? list.map((x,i) => {
+
+                    return `
+                      <a
+                        class="headline-row"
+                        href="${esc(x.link || "#")}"
+                        target="_blank"
+                        rel="noopener"
+                      >
+
+                        <span
+                          class="headline-rank ${
+                            i<5 ? "r"+(i+1) : ""
+                          }"
+                        >
+                          ${i+1}
+                        </span>
+
+                        <span class="headline-text">
+                          ${esc(getSummary(x))}
+                        </span>
+
+                        <span class="headline-source">
+                          ${esc(x.source || "Original source")}
+                        </span>
+
+                        <span class="headline-time">
+                          ${esc(timeAgo(x.published))}
+                        </span>
+
+                        <span class="headline-arrow">
+                          ›
+                        </span>
+
+                      </a>
+                    `;
+
+                  }).join("")
+
+                : `
+                  <div class="empty">
+                    ${
+                      lang === "ne"
+                        ? "यस श्रेणीमा अहिले कुनै समाचार उपलब्ध छैन।"
+                        : "No stories available in this category yet."
+                    }
+                  </div>
+                `
+            }
+
+          </div>
+
+        </section>
+      `;
+
+    }).join("");
 }
+
+/* =========================================================
+   LATEST NEWS CARD
+========================================================= */
+
+function newsCard(x){
+
+  const label =
+    LABEL[x.section]?.[lang === "ne" ? 2 : 1] ||
+    (lang === "ne" ? "समाचार" : "News");
+
+  const image =
+    IMAGE[x.section] || IMAGE.national;
+
+  return `
+    <article class="news-card">
+
+      <div
+        class="news-thumb"
+        style="
+          background-image:
+            linear-gradient(
+              180deg,
+              rgba(3,13,29,.02),
+              rgba(3,13,29,.20)
+            ),
+            url('${image}')
+        "
+      >
+        <span>
+          ${ICON[x.section] || "📰"}
+        </span>
+      </div>
+
+      <div class="news-body">
+
+        <div class="news-top">
+
+          <span class="tag">
+            ${esc(label)}
+          </span>
+
+          <span class="time">
+            ◷ ${esc(timeAgo(x.published))}
+          </span>
+
+        </div>
+
+        <h3>
+          ${esc(getTitle(x))}
+        </h3>
+
+        <p>
+          ${esc(getSummary(x))}
+        </p>
+
+        <div class="card-foot">
+
+          <span>
+            ${esc(x.source || "Original source")}
+          </span>
+
+          <a
+            href="${esc(x.link || "#")}"
+            target="_blank"
+            rel="noopener"
+            data-en="Read →"
+            data-ne="पढ्नुहोस् →"
+          >
+            ${
+              lang === "ne"
+                ? "पढ्नुहोस् →"
+                : "Read →"
+            }
+          </a>
+
+        </div>
+
+      </div>
+    </article>
+  `;
+}
+
+/* =========================================================
+   LOAD NEWS
+========================================================= */
 
 async function loadNews(){
+
   try{
-    const r=await fetch("news.json?refresh="+Date.now(),{cache:"no-store"});
-    if(!r.ok)throw new Error("HTTP "+r.status);
-    data=await r.json();
+
+    const r = await fetch(
+      "news.json?refresh="+Date.now(),
+      {cache:"no-store"}
+    );
+
+    if(!r.ok)
+      throw new Error("HTTP "+r.status);
+
+    data = await r.json();
+
     render();
+
   }catch(e){
+
     console.error("News load failed:",e);
-    data={sections:Object.fromEntries(SECTIONS.map(s=>[s,[]]))};
+
+    data = {
+      sections:
+        Object.fromEntries(
+          SECTIONS.map(s => [s,[]])
+        )
+    };
+
     render();
   }
 }
 
-
-const UI={
-  en:{
-    topLeft:"🇳🇵 Reliable News. Better Nepal.",
-    topRight:"🟢 Live Updates &nbsp;•&nbsp; Top 10 Stories &nbsp;•&nbsp; From Trusted Sources",
-    tagline:"Your Daily Dose of Nepal & World",
-    search:"Search news, topics, or keywords...",
-    topStory:"Top Story", top10:"⚡ Top 10 Today", viewAll:"View All",
-    latest:"🔥 Latest News", latestSub:"Stay informed with the latest stories from Nepal and around the world",
-    viewAllNews:"View All News →", category:"⭐ Top News by Category",
-    categorySub:"Explore the top 10 stories in every category", viewAllCategories:"View All Categories →",
-    trusted:"Trusted Sources", trustedSub:"News from reliable Nepal & global media",
-    updated:"Updated Daily", updatedSub:"Fresh stories every day",
-    mobile:"Mobile Friendly", mobileSub:"Perfect on all devices",
-    better:"For a Better Nepal", betterSub:"Informed citizens, stronger nation",
-    footerTag:"Reliable. Balanced. For a better Nepal.",
-    about:"About", sources:"Sources", privacy:"Privacy",
-    aboutMission:"Our Mission", aboutHow:"How It Works",
-    sourcesTrusted:"Trusted Media", sourcesCategories:"News Categories",
-    privacyData:"Data & Cookies", privacyChoices:"Your Choices",
-    copyright:"© 2026 Nepal News Top 10. Made with ❤️ for Nepal.",
-    loading:"Loading today's top story...", fetching:"Fetching the latest stories from the news database.",
-    readMore:"Read More →", loadingNews:"Loading news...", noStories:"No stories available.",
-    empty:"News is not available yet. Run the GitHub Actions updater.",
-    noCategory:"No stories available in this category yet.",
-    categorySubLine:"Top 10 news in this category, summarized in one sentence each",
-    weatherSub:"Top 10 weather-related news: rainfall, floods, monsoon, landslides, temperature, storms and more",
-    original:"Original source", read:"Read →",
-    aboutTitle:"About Nepal News Top 10", aboutBody:`<p><strong>Nepal News Top 10</strong> is designed to make important news quick and easy to understand.</p><ul><li>We organize major stories into clear categories.</li><li>Each category highlights up to 10 important stories.</li><li>Short summaries help you decide what to read next.</li><li>Stories link back to their original publishers.</li></ul><p>Our goal is simple: reliable, balanced and useful news for Nepal and the world.</p>`,
-    sourcesTitle:"Our Sources", sourcesBody:`<p>We collect stories from established Nepalese and international news publishers and organize them by topic.</p><ul><li>Original publisher links are preserved whenever available.</li><li>Sources are displayed beside each story.</li><li>Weather news focuses on rainfall, floods, monsoon, landslides, storms and related events.</li><li>This site does not claim ownership of third-party articles.</li></ul>`,
-    privacyTitle:"Privacy", privacyBody:`<p>This website is designed to keep data collection simple.</p><ul><li>Your language and theme preferences may be stored locally in your browser.</li><li>Search text is used only to filter stories on the page.</li><li>We do not intentionally ask for passwords, payment information or sensitive personal data.</li><li>External news links follow the privacy policies of their respective publishers.</li></ul>`
-  },
-  ne:{
-    topLeft:"🇳🇵 विश्वसनीय समाचार। राम्रो नेपाल।",
-    topRight:"🟢 लाइभ अपडेट • शीर्ष १० समाचार • विश्वसनीय स्रोत",
-    tagline:"नेपाल र विश्वका दैनिक प्रमुख समाचार",
-    search:"समाचार, विषय वा शब्द खोज्नुहोस्...",
-    topStory:"प्रमुख समाचार", top10:"⚡ आजका शीर्ष १०", viewAll:"सबै हेर्नुहोस्",
-    latest:"🔥 पछिल्ला समाचार", latestSub:"नेपाल र विश्वका पछिल्ला समाचारसँग अपडेट रहनुहोस्",
-    viewAllNews:"सबै समाचार हेर्नुहोस् →", category:"⭐ श्रेणीअनुसार शीर्ष समाचार",
-    categorySub:"प्रत्येक श्रेणीका शीर्ष १० समाचार हेर्नुहोस्", viewAllCategories:"सबै श्रेणी हेर्नुहोस् →",
-    trusted:"विश्वसनीय स्रोत", trustedSub:"नेपाल तथा विश्वका भरपर्दा सञ्चारमाध्यमका समाचार",
-    updated:"दैनिक अपडेट", updatedSub:"हरेक दिन नयाँ समाचार",
-    mobile:"मोबाइलमैत्री", mobileSub:"फोन र डेस्कटप दुवैका लागि उपयुक्त",
-    better:"राम्रो नेपालका लागि", betterSub:"जानकार नागरिक, बलियो राष्ट्र",
-    footerTag:"विश्वसनीय। सन्तुलित। राम्रो नेपालका लागि।",
-    about:"बारेमा", sources:"स्रोतहरू", privacy:"गोपनीयता",
-    aboutMission:"हाम्रो उद्देश्य", aboutHow:"यसले कसरी काम गर्छ",
-    sourcesTrusted:"विश्वसनीय सञ्चारमाध्यम", sourcesCategories:"समाचार श्रेणीहरू",
-    privacyData:"डाटा र कुकीहरू", privacyChoices:"तपाईंका विकल्पहरू",
-    copyright:"© २०२६ नेपाल न्यूज टप १०। नेपालका लागि ❤️ सहित।",
-    loading:"आजको प्रमुख समाचार लोड हुँदैछ...", fetching:"समाचार डाटाबेसबाट पछिल्ला समाचार ल्याउँदैछौं।",
-    readMore:"पूरा पढ्नुहोस् →", loadingNews:"समाचार लोड हुँदैछ...", noStories:"समाचार उपलब्ध छैन।",
-    empty:"अहिले समाचार उपलब्ध छैन। GitHub Actions updater चलाउनुहोस्।",
-    noCategory:"यस श्रेणीमा अहिले समाचार उपलब्ध छैन।",
-    categorySubLine:"यस श्रेणीका शीर्ष १० समाचार, प्रत्येक एक वाक्यमा",
-    weatherSub:"वर्षा, बाढी, मनसुन, पहिरो, तापक्रम, आँधी तथा अन्य मौसमसम्बन्धी शीर्ष १० समाचार",
-    original:"मूल स्रोत", read:"पढ्नुहोस् →",
-    aboutTitle:"नेपाल न्यूज टप १० बारे", aboutBody:`<p><strong>नेपाल न्यूज टप १०</strong> महत्वपूर्ण समाचारलाई छिटो र सजिलो रूपमा बुझ्नका लागि बनाइएको हो।</p><ul><li>प्रमुख समाचारलाई स्पष्ट श्रेणीमा राखिन्छ।</li><li>प्रत्येक श्रेणीमा बढीमा १० महत्वपूर्ण समाचार देखाइन्छ।</li><li>छोटो सारांशले कुन समाचार पढ्ने भन्ने निर्णय गर्न सजिलो बनाउँछ।</li><li>सम्भव भएसम्म समाचारको मूल प्रकाशकको लिंक दिइन्छ।</li></ul><p>हाम्रो उद्देश्य सरल छ: नेपाल र विश्वका लागि विश्वसनीय, सन्तुलित र उपयोगी समाचार।</p>`,
-    sourcesTitle:"हाम्रा स्रोतहरू", sourcesBody:`<p>हामी नेपाल तथा विश्वका स्थापित समाचार प्रकाशकहरूबाट समाचार संकलन गरी विषयअनुसार व्यवस्थित गर्छौं।</p><ul><li>सम्भव भएसम्म मूल प्रकाशकको लिंक सुरक्षित राखिन्छ।</li><li>प्रत्येक समाचारसँग स्रोतको नाम देखाइन्छ।</li><li>मौसम समाचारमा वर्षा, बाढी, मनसुन, पहिरो, आँधी तथा सम्बन्धित घटनाहरू समेटिन्छन्।</li><li>यो साइटले तेस्रो पक्षका समाचारमा स्वामित्व दाबी गर्दैन।</li></ul>`,
-    privacyTitle:"गोपनीयता", privacyBody:`<p>यो वेबसाइटले डाटा संकलनलाई सकेसम्म सरल राख्ने उद्देश्य राख्छ।</p><ul><li>भाषा र थिमको रोजाइ तपाईंको ब्राउजरमै स्थानीय रूपमा सुरक्षित हुन सक्छ।</li><li>सर्चमा लेखिएको शब्द पेजभित्रका समाचार फिल्टर गर्न मात्र प्रयोग हुन्छ।</li><li>हामी पासवर्ड, भुक्तानी विवरण वा संवेदनशील व्यक्तिगत डाटा माग्ने उद्देश्य राख्दैनौं।</li><li>बाहिरी समाचार लिंकमा सम्बन्धित प्रकाशकको गोपनीयता नीति लागू हुन्छ।</li></ul>`
-  }
-};
-
-function ui(key){return UI[lang]?.[key] ?? UI.en[key] ?? key;}
-
-function setupInfoModal(){
-  const modal=document.getElementById("info-modal");
-  const title=document.getElementById("modal-title");
-  const body=document.getElementById("modal-body");
-  const close=()=>modal.classList.remove("show");
-  document.querySelectorAll("[data-modal]").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      const type=btn.dataset.modal;
-      const map={about:["aboutTitle","aboutBody"],sources:["sourcesTitle","sourcesBody"],privacy:["privacyTitle","privacyBody"]};
-      const keys=map[type];
-      if(!keys)return;
-      title.textContent=ui(keys[0]); body.innerHTML=ui(keys[1]); modal.classList.add("show");
-    });
-  });
-  document.getElementById("modal-close").onclick=close;
-  modal.addEventListener("click",e=>{if(e.target===modal)close();});
-  document.addEventListener("keydown",e=>{if(e.key==="Escape")close();});
-}
-setupInfoModal();
+/* =========================================================
+   LANGUAGE
+========================================================= */
 
 function setLanguage(next){
-  lang=next;
+
+  lang = next;
+
   localStorage.setItem("nn-lang",lang);
-  document.getElementById("en").classList.toggle("active",lang==="en");
-  document.getElementById("ne").classList.toggle("active",lang==="ne");
-  document.documentElement.lang=lang==="ne"?"ne":"en";
-  document.title=lang==="ne"?"नेपाल न्यूज टप १०":"Nepal News Top 10";
-  document.getElementById("top-strip-left").textContent=ui("topLeft");
-  document.getElementById("top-strip-right").innerHTML=ui("topRight");
-  document.getElementById("tagline").textContent=ui("tagline");
-  document.getElementById("search").placeholder=ui("search");
-  document.getElementById("top-story-label").textContent=ui("topStory");
-  document.getElementById("hero-link").textContent=ui("readMore");
-  document.getElementById("top10-title").textContent=ui("top10");
-  document.getElementById("view-all-top").textContent=ui("viewAll");
-  document.getElementById("latest-title").textContent=ui("latest");
-  document.getElementById("latest-subtitle").textContent=ui("latestSub");
-  document.getElementById("view-all-news").textContent=ui("viewAllNews");
-  document.getElementById("category-title").textContent=ui("category");
-  document.getElementById("category-subtitle").textContent=ui("categorySub");
-  document.getElementById("view-all-categories").textContent=ui("viewAllCategories");
-  document.getElementById("trust-sources").textContent=ui("trusted");
-  document.getElementById("trust-sources-sub").textContent=ui("trustedSub");
-  document.getElementById("trust-updated").textContent=ui("updated");
-  document.getElementById("trust-updated-sub").textContent=ui("updatedSub");
-  document.getElementById("trust-mobile").textContent=ui("mobile");
-  document.getElementById("trust-mobile-sub").textContent=ui("mobileSub");
-  document.getElementById("trust-nepal").textContent=ui("better");
-  document.getElementById("trust-nepal-sub").textContent=ui("betterSub");
-  document.getElementById("footer-tagline").textContent=ui("footerTag");
-  document.getElementById("copyright").textContent=ui("copyright");
-  document.getElementById("footer-about").textContent=ui("about");
-  document.getElementById("footer-sources").textContent=ui("sources");
-  document.getElementById("footer-privacy").textContent=ui("privacy");
-  document.querySelectorAll('[data-modal="about"]').forEach((el,i)=>{if(el.id!=="footer-about")el.textContent=i===0?ui("aboutMission"):ui("aboutHow");});
-  document.querySelectorAll('[data-modal="sources"]').forEach((el,i)=>{if(el.id!=="footer-sources")el.textContent=i===0?ui("sourcesTrusted"):ui("sourcesCategories");});
-  document.querySelectorAll('[data-modal="privacy"]').forEach((el,i)=>{if(el.id!=="footer-privacy")el.textContent=i===0?ui("privacyData"):ui("privacyChoices");});
-  document.querySelectorAll(".nav a").forEach(a=>{
-    const en=a.getAttribute("data-en"),ne=a.getAttribute("data-ne");
-    if(en)a.textContent=lang==="ne"?ne:en;
+
+  document.getElementById("en")
+    .classList.toggle("active",lang === "en");
+
+  document.getElementById("ne")
+    .classList.toggle("active",lang === "ne");
+
+  document.documentElement.lang =
+    lang === "ne" ? "ne" : "en";
+
+  /* STATIC PAGE TRANSLATION */
+
+  document.querySelectorAll("[data-en]").forEach(el => {
+
+    const value =
+      lang === "ne"
+        ? el.dataset.ne
+        : el.dataset.en;
+
+    if(value !== undefined)
+      el.innerHTML = value;
   });
-  render();
+
+  /* SEARCH */
+
+  document.getElementById("search").placeholder =
+    lang === "ne"
+      ? "समाचार, विषय वा शब्द खोज्नुहोस्..."
+      : "Search news, topics, or keywords...";
+
+  /* TAGLINE */
+
+  document.getElementById("tagline").textContent =
+    lang === "ne"
+      ? "नेपाल र विश्वका दैनिक प्रमुख समाचार"
+      : "Your Daily Dose of Nepal & World";
+
+  /* DYNAMIC CONTENT */
+
+  if(data)
+    render();
 }
 
-document.getElementById("en").onclick=()=>setLanguage("en");
-document.getElementById("ne").onclick=()=>setLanguage("ne");
+/* =========================================================
+   THEME
+========================================================= */
 
-let theme=localStorage.getItem("nn-theme")||"dark";
+let theme =
+  localStorage.getItem("nn-theme") || "dark";
+
 function setTheme(t){
-  theme=t;
-  document.body.classList.toggle("light",t==="light");
-  document.getElementById("theme").textContent=t==="light"?"☾":"☀";
+
+  theme = t;
+
+  document.body.classList.toggle(
+    "light",
+    t === "light"
+  );
+
+  document.getElementById("theme").textContent =
+    t === "dark" ? "☀" : "☾";
+
   localStorage.setItem("nn-theme",t);
 }
+
 setTheme(theme);
-document.getElementById("theme").onclick=()=>{
-  setTheme(document.body.classList.contains("light")?"dark":"light");
+
+document.getElementById("theme").onclick =
+  () => {
+
+    setTheme(
+      document.body.classList.contains("light")
+        ? "dark"
+        : "light"
+    );
+  };
+
+/* =========================================================
+   LANGUAGE BUTTONS
+========================================================= */
+
+document.getElementById("en").onclick =
+  () => setLanguage("en");
+
+document.getElementById("ne").onclick =
+  () => setLanguage("ne");
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+document.getElementById("search")
+.addEventListener("input",e => {
+
+  const q =
+    e.target.value.toLowerCase().trim();
+
+  document
+    .querySelectorAll(".news-card")
+    .forEach(card => {
+
+      card.classList.toggle(
+        "hidden",
+        q &&
+        !card.textContent
+          .toLowerCase()
+          .includes(q)
+      );
+    });
+});
+
+/* =========================================================
+   BACK TO TOP
+========================================================= */
+
+window.addEventListener("scroll",() => {
+
+  document.getElementById("to-top").style.display =
+    scrollY > 450 ? "grid" : "none";
+});
+
+document.getElementById("to-top").onclick =
+  () => scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+/* =========================================================
+   FOOTER POPUPS
+========================================================= */
+
+const INFO_CONTENT = {
+
+  about:{
+    en:{
+      title:"About Nepal News",
+      html:`
+        <p>
+          Nepal News Top 10 is designed to provide a simple,
+          balanced and easy-to-read overview of important news
+          from Nepal and around the world.
+        </p>
+
+        <p>
+          News is organized into categories so readers can quickly
+          find National, Politics, Business, Sports, Technology,
+          Entertainment, World, Health, Crime and Weather-related news.
+        </p>
+
+        <p>
+          Each category presents up to 10 important stories with
+          concise summaries and links to the original source.
+        </p>
+      `
+    },
+
+    ne:{
+      title:"नेपाल न्यूजको बारेमा",
+      html:`
+        <p>
+          नेपाल न्यूज टप १० नेपाल तथा विश्वभरका महत्वपूर्ण समाचारलाई
+          सरल, सन्तुलित र सजिलै पढ्न सकिने रूपमा प्रस्तुत गर्न बनाइएको हो।
+        </p>
+
+        <p>
+          समाचारलाई राष्ट्रिय, राजनीति, व्यापार, खेलकुद, प्रविधि,
+          मनोरञ्जन, विश्व, स्वास्थ्य, अपराध र मौसमसम्बन्धी समाचार
+          जस्ता वर्गमा विभाजन गरिएको छ।
+        </p>
+
+        <p>
+          प्रत्येक वर्गमा बढीमा १० महत्वपूर्ण समाचार छोटो सारांशसहित
+          प्रस्तुत गरिन्छ र मूल समाचार स्रोतमा जाने लिंक उपलब्ध हुन्छ।
+        </p>
+      `
+    }
+  },
+
+  sources:{
+    en:{
+      title:"Trusted Sources",
+      html:`
+        <p>
+          Nepal News Top 10 collects headlines from trusted
+          news publishers and news feeds.
+        </p>
+
+        <p>
+          The website does not claim ownership of the original
+          articles. Headlines and summaries are provided for
+          informational purposes, and users can open the original
+          publisher's article through the source link.
+        </p>
+
+        <p>
+          Sources may include reliable Nepalese and international
+          news organizations.
+        </p>
+      `
+    },
+
+    ne:{
+      title:"विश्वसनीय स्रोतहरू",
+      html:`
+        <p>
+          नेपाल न्यूज टप १० ले विश्वसनीय समाचार प्रकाशक तथा
+          समाचार फिडहरूबाट समाचार शीर्षकहरू संकलन गर्छ।
+        </p>
+
+        <p>
+          वेबसाइटले मूल समाचारमाथि स्वामित्व दाबी गर्दैन।
+          शीर्षक र छोटो सारांश जानकारीका लागि प्रस्तुत गरिन्छ
+          र स्रोत लिंकबाट प्रयोगकर्ताले मूल समाचार पढ्न सक्छन्।
+        </p>
+
+        <p>
+          स्रोतहरूमा नेपाल तथा अन्तर्राष्ट्रिय विश्वसनीय
+          समाचार संस्थाहरू समावेश हुन सक्छन्।
+        </p>
+      `
+    }
+  },
+
+  privacy:{
+    en:{
+      title:"Privacy Policy",
+      html:`
+        <p>
+          Nepal News Top 10 is designed to minimize the amount
+          of personal information collected from visitors.
+        </p>
+
+        <p>
+          Language and theme preferences may be stored locally
+          in your browser so the website can remember your choices.
+        </p>
+
+        <p>
+          Search terms entered into the website are used to filter
+          news displayed on the current page.
+        </p>
+
+        <p>
+          External news sources and services may have their own
+          privacy policies. Please review those policies when
+          visiting external websites.
+        </p>
+      `
+    },
+
+    ne:{
+      title:"गोपनीयता नीति",
+      html:`
+        <p>
+          नेपाल न्यूज टप १० ले आगन्तुकबाट संकलन गरिने व्यक्तिगत
+          जानकारीलाई न्यूनतम राख्ने उद्देश्य राख्छ।
+        </p>
+
+        <p>
+          भाषा र थिमको प्राथमिकता तपाईंको ब्राउजरमा स्थानीय रूपमा
+          सुरक्षित हुन सक्छ ताकि वेबसाइटले तपाईंको छनोट सम्झन सकोस्।
+        </p>
+
+        <p>
+          वेबसाइटमा राखिएको खोज शब्द हालको पृष्ठमा देखाइएका
+          समाचार फिल्टर गर्न प्रयोग हुन्छ।
+        </p>
+
+        <p>
+          बाह्य समाचार स्रोत तथा सेवाहरूको आफ्नै गोपनीयता नीति
+          हुन सक्छ। बाह्य वेबसाइटमा जाँदा तिनको गोपनीयता नीति
+          हेर्नुहोस्।
+        </p>
+      `
+    }
+  }
 };
 
-document.getElementById("search").addEventListener("input",e=>{
-  const q=e.target.value.toLowerCase().trim();
-  document.querySelectorAll(".news-card").forEach(c=>{
-    c.classList.toggle("hidden",q&&!c.textContent.toLowerCase().includes(q));
+function openInfo(type){
+
+  const item =
+    INFO_CONTENT[type]?.[lang] ||
+    INFO_CONTENT[type]?.en;
+
+  if(!item) return;
+
+  document.getElementById("info-title").textContent =
+    item.title;
+
+  document.getElementById("info-content").innerHTML =
+    item.html;
+
+  document
+    .getElementById("info-modal")
+    .classList.add("show");
+
+  document.body.style.overflow="hidden";
+}
+
+function closeInfo(){
+
+  document
+    .getElementById("info-modal")
+    .classList.remove("show");
+
+  document.body.style.overflow="";
+}
+
+document
+  .getElementById("info-modal")
+  .addEventListener("click",e => {
+
+    if(e.target === e.currentTarget)
+      closeInfo();
   });
+
+document.addEventListener("keydown",e => {
+
+  if(e.key === "Escape")
+    closeInfo();
 });
 
-window.addEventListener("scroll",()=>{
-  document.getElementById("to-top").style.display=scrollY>450?"grid":"none";
-});
-document.getElementById("to-top").onclick=()=>scrollTo({top:0,behavior:"smooth"});
-
-document.querySelectorAll(".nav a").forEach(a=>{
-  a.addEventListener("click",()=>{
-    document.querySelectorAll(".nav a").forEach(x=>x.classList.remove("active"));
-    a.classList.add("active");
-  });
-});
+/* =========================================================
+   INITIAL LOAD
+========================================================= */
 
 setLanguage(lang);
 loadNews();
-setInterval(loadNews,15*60*1000);
+
+/* Refresh news periodically.
+   Weather is NOT fetched because Weather is a news category,
+   not a live weather forecast card. */
+
+setInterval(() => {
+
+  loadNews();
+
+}, 15 * 60 * 1000);
+
 </script>
+
 </body>
 </html>
