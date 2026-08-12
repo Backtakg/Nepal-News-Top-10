@@ -1,1212 +1,599 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Nepal News</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071b35">
+<meta name="description" content="Nepal News Top 10 — concise top news from Nepal and around the world.">
+<title>Nepal News Top 10</title>
 <style>
-:root {
-    --bg: #f5f7fb;
-    --card: #ffffff;
-    --text: #111827;
-    --muted: #6b7280;
-    --border: #e5e7eb;
-    --primary: #dc2626;
-    --primary-dark: #b91c1c;
-    --header: #ffffff;
-    --shadow: 0 8px 30px rgba(0,0,0,.06);
+:root{
+  --bg:#071321;--bg2:#0a1a2c;--card:#0e1d30;--card2:#112640;
+  --text:#eef5ff;--muted:#a7b6c9;--line:#243951;
+  --blue:#0878ef;--blue2:#0b4d9a;--red:#ef3340;--green:#20c979;
+  --shadow:0 8px 28px rgba(0,0,0,.25);--radius:14px
 }
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:linear-gradient(180deg,#071321 0%,#081727 100%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+a{text-decoration:none;color:inherit}
+button,input{font:inherit}button{cursor:pointer}
+.wrap{max-width:1180px;margin:auto;padding:0 18px}
 
-html.dark {
-    --bg: #0b1120;
-    --card: #111827;
-    --text: #f3f4f6;
-    --muted: #9ca3af;
-    --border: #263244;
-    --primary: #ef4444;
-    --primary-dark: #f87171;
-    --header: #111827;
-    --shadow: 0 8px 30px rgba(0,0,0,.28);
+.top-strip{height:30px;background:linear-gradient(90deg,#063b78,#075fc1);font-size:11px;color:#fff}
+.top-strip .wrap{height:100%;display:flex;align-items:center;justify-content:space-between}
+
+.header{background:#0b1828;border-bottom:1px solid var(--line)}
+.header-row{min-height:82px;display:flex;align-items:center;gap:18px}
+.logo{display:flex;align-items:center;gap:10px;min-width:310px}
+.logo-mark{width:58px;height:48px;position:relative;display:block}
+.logo-mark:before,.logo-mark:after{content:"";position:absolute;bottom:3px;background:#f4f8ff;clip-path:polygon(50% 0,100% 100%,0 100%)}
+.logo-mark:before{width:55px;height:42px;left:0}
+.logo-mark:after{width:31px;height:25px;left:22px;bottom:3px;background:#0b1828}
+.logo-mark i{position:absolute;display:block;width:31px;height:25px;left:25px;bottom:3px;background:#f4f8ff;clip-path:polygon(50% 0,100% 100%,0 100%)}
+.logo h1{font-size:22px;line-height:1.05;margin:0;letter-spacing:-.4px}
+.logo p{margin:4px 0 0;color:var(--muted);font-size:11px}
+.badge{display:inline-block;background:#086de6;color:#fff;padding:4px 8px;border-radius:7px;font-size:13px;vertical-align:3px}
+
+.search{position:relative;flex:1;max-width:420px;margin-left:auto}
+.search input{width:100%;height:42px;border:1px solid #30445d;background:#132238;border-radius:24px;padding:0 18px 0 46px;outline:0;color:#fff}
+.search input::placeholder{color:#899bb1}
+.search input:focus{border-color:#2b82ef;box-shadow:0 0 0 3px rgba(8,120,239,.16)}
+.search-icon{position:absolute;left:17px;top:8px;font-size:21px;color:#c8d6e7}
+
+.header-actions{display:flex;align-items:center;gap:8px}
+.lang{display:flex;border:1px solid #304158;border-radius:24px;overflow:hidden;background:#101e30}
+.lang button{border:0;background:transparent;padding:9px 14px;color:#c6d1df;font-size:12px}
+.lang .active{background:#0878ef;color:#fff}
+.icon-btn{width:42px;height:42px;border:0;border-radius:50%;background:#14243a;color:#fff;font-size:18px}
+.menu-btn{display:none!important}
+
+.nav{background:#0b1828;border-bottom:1px solid var(--line)}
+.nav-scroll{display:flex;overflow:auto;white-space:nowrap}
+.nav a{padding:13px 15px 12px;font-size:12px;color:#c7d3e2;border-bottom:3px solid transparent}
+.nav a:hover,.nav a.active{color:#2b8cff;border-bottom-color:#0878ef}
+.nav .home{font-weight:700}
+
+main{padding:18px 0 46px}
+.hero-layout{display:grid;grid-template-columns:minmax(0,2.05fr) minmax(310px,1fr);gap:18px}
+.hero{min-height:390px;border-radius:14px;overflow:hidden;position:relative;background:
+linear-gradient(0deg,rgba(3,12,24,.97) 0%,rgba(3,12,24,.40) 58%,rgba(3,12,24,.08) 100%),
+url("https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=1500&q=85") center/cover;
+box-shadow:var(--shadow);color:#fff;border:1px solid #29415d}
+.hero-content{position:absolute;left:0;right:0;bottom:0;padding:24px}
+.pill{display:inline-flex;align-items:center;gap:5px;background:#f22d52;border-radius:20px;padding:6px 11px;font-size:11px;font-weight:800}
+.hero h2{font-size:30px;line-height:1.12;max-width:720px;margin:12px 0 8px;letter-spacing:-.6px}
+.hero p{max-width:700px;margin:0;color:#edf5ff;font-size:13px;line-height:1.5}
+.hero-meta{margin-top:13px;font-size:11px;color:#d9e6f5}
+.read-more{display:inline-flex;align-items:center;gap:7px;margin-top:12px;background:#0878ef;color:#fff;border-radius:22px;padding:10px 15px;font-size:12px;font-weight:800}
+.dots{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:flex;gap:6px}
+.dots i{display:block;width:18px;height:5px;background:#fff;border-radius:8px;opacity:.35}
+.dots i:first-child{opacity:1}
+
+.top10{background:#0e1d30;border:1px solid #29415d;border-radius:14px;box-shadow:var(--shadow);padding:16px}
+.top10-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.top10-head h2{margin:0;font-size:19px}
+.top10-head a{font-size:11px;color:#2b8cff;font-weight:800}
+.top-list{list-style:none;margin:0;padding:0}
+.top-list li{display:flex;align-items:center;gap:9px;border-bottom:1px solid #24364c;padding:6px 0;font-size:12px;min-width:0}
+.top-list li:last-child{border-bottom:0}
+.top-list a{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank{width:24px;height:24px;display:grid;place-items:center;border-radius:50%;background:#34475c;font-size:11px;font-weight:800;flex:none}
+.rank.r1{background:#ef3340;color:#fff}.rank.r2{background:#ff9f1c;color:#fff}.rank.r3{background:#55ad2f;color:#fff}.rank.r4{background:#20a5ce;color:#fff}.rank.r5{background:#1584d6;color:#fff}
+
+.block-head{display:flex;justify-content:space-between;align-items:end;margin:0 0 12px}
+.block-head h2{font-size:22px;margin:0;letter-spacing:-.3px}
+.block-head p{margin:4px 0 0;color:var(--muted);font-size:12px}
+.block-head a{font-size:11px;color:#2b8cff;font-weight:800}
+
+.latest-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.news-card{background:#0e1d30;border:1px solid #263c56;border-radius:13px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.16);transition:.18s}
+.news-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.news-thumb{height:126px;background-size:cover;background-position:center;position:relative;display:grid;place-items:center}
+.news-thumb:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.03),rgba(0,0,0,.18))}
+.news-thumb span{position:relative;z-index:1;background:rgba(255,255,255,.9);border-radius:50%;width:32px;height:32px;display:grid;place-items:center;font-size:17px}
+.news-body{padding:11px 12px 13px}
+.news-top{display:flex;justify-content:space-between;gap:5px;align-items:center}
+.tag{display:inline-block;color:#fff;background:#ef3340;border-radius:15px;padding:4px 9px;font-size:9px;font-weight:800}
+.time{font-size:9px;color:#a7b6c9;white-space:nowrap}
+.news-card h3{font-size:14px;line-height:1.22;margin:8px 0 7px;min-height:34px}
+.news-card p{font-size:11px;color:#a7b6c9;line-height:1.42;margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:11px;font-size:9px;color:#9eb0c5}
+.card-foot span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card-foot a{color:#2b8cff;font-weight:800;white-space:nowrap}
+
+.category-wrap{margin-top:28px}
+.category-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}
+.category-card{background:#0e1d30;border:1px solid #263c56;border-radius:11px;overflow:hidden;box-shadow:0 3px 12px rgba(0,0,0,.14);transition:.18s}
+.category-card:hover{transform:translateY(-2px)}
+.category-image{height:88px;background-size:cover;background-position:center;position:relative;display:grid;place-items:center}
+.category-image:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.38))}
+.category-image span{position:relative;z-index:1;background:rgba(5,18,34,.78);border:1px solid rgba(255,255,255,.12);border-radius:50%;width:34px;height:34px;display:grid;place-items:center;font-size:19px}
+.category-body{min-height:61px;padding:9px}
+.category-body strong{font-size:11px;display:block}
+.category-body span{font-size:9px;color:#9fb0c4}
+.category-body .go{float:right;width:24px;height:24px;border-radius:50%;background:#0878ef;color:#fff;display:grid;place-items:center;font-size:12px;margin-top:-3px}
+
+.category-section{margin-top:28px;background:#0b1a2c;border:1px solid #263c56;border-radius:15px;padding:15px;box-shadow:var(--shadow);scroll-margin-top:125px}
+.category-section .block-head{margin-bottom:10px}
+.category-section .block-head a{display:none}
+.category-section .block-head h2{font-size:20px}
+.category-section .block-head p{font-size:11px}
+.category-intro{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 10px;padding:10px 12px;border-radius:11px;background:#122d4b;color:#a9b8c9;font-size:11px}
+.category-intro strong{color:#eef5ff;font-size:12px}
+.headline-list{display:flex;flex-direction:column;border:1px solid #263c56;border-radius:11px;overflow:hidden;background:#091727}
+.headline-row{display:grid;grid-template-columns:34px minmax(0,1fr) 150px 82px 24px;align-items:center;gap:10px;padding:8px 11px;border-bottom:1px solid #20344a;min-height:46px}
+.headline-row:last-child{border-bottom:0}
+.headline-row:hover{background:#102640}
+.headline-rank{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;background:#34475c;color:#edf5ff;font-size:11px;font-weight:900}
+.headline-rank.r1{background:#ef3340}.headline-rank.r2{background:#ff9f1c}.headline-rank.r3{background:#55ad2f}.headline-rank.r4{background:#159bd0}.headline-rank.r5{background:#126fcb}
+.headline-text{font-size:12px;line-height:1.4;font-weight:650;color:#eef5ff}
+.headline-source,.headline-time{font-size:10px;color:#92a5ba;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.headline-arrow{color:#2b8cff;font-weight:900;text-align:center}
+
+.trust{margin-top:28px;background:#0d2037;border:1px solid #223b57;border-radius:13px;padding:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.trust-item{display:flex;gap:10px;align-items:center}
+.trust-icon{width:42px;height:42px;flex:none;border-radius:50%;display:grid;place-items:center;background:#123f73;font-size:20px}
+.trust-item strong{display:block;font-size:12px}
+.trust-item span{display:block;color:#9fb0c4;font-size:10px;margin-top:2px}
+
+footer{background:#06172b;color:#d9e4f2;padding:27px 0 14px;margin-top:0;border-top:1px solid #20364f}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:25px}
+.footer-brand{font-size:19px;font-weight:800;display:flex;align-items:center;gap:8px}
+.footer-logo{width:42px;height:31px;display:inline-block;position:relative}
+.footer-logo:before{content:"";position:absolute;inset:3px 0 0;background:#fff;clip-path:polygon(50% 0,100% 100%,0 100%)}
+.footer-logo:after{content:"";position:absolute;width:22px;height:17px;left:14px;bottom:0;background:#06172b;clip-path:polygon(50% 0,100% 100%,0 100%)}
+.footer-brand p{font-size:11px;color:#9fb0c4;font-weight:400;margin:5px 0}
+.footer h4{margin:0 0 8px;color:#fff;font-size:12px}
+.footer a,.footer p{display:block;color:#9eafc4;font-size:10px;margin:5px 0}
+.socials{display:flex;gap:9px;justify-content:flex-end;align-items:center}
+.socials a{width:31px;height:31px;border-radius:50%;display:grid;place-items:center;background:#17304d;color:#fff;font-size:13px;margin:0}
+.copy{border-top:1px solid #20354e;margin-top:20px;padding-top:13px;display:flex;justify-content:space-between;font-size:10px;color:#94a7bd}
+.empty{grid-column:1/-1;background:#0e1d30;border:1px dashed #3a4d63;border-radius:12px;padding:22px;text-align:center;color:#9eafc0;font-size:12px}
+.hidden{display:none!important}
+.to-top{position:fixed;right:18px;bottom:18px;width:42px;height:42px;border:0;border-radius:50%;background:#0878ef;color:#fff;font-size:20px;display:none;place-items:center;box-shadow:var(--shadow);z-index:90}
+
+body.light{--bg:#f7f9fc;--card:#fff;--text:#0d1726;--muted:#667085;--line:#e5eaf1}
+body.light{background:#f7f9fc;color:#0d1726}
+.light .header,.light .nav{background:#fff;border-color:#e5eaf1}
+.light .search input{background:#f7f9fc;color:#0d1726;border-color:#dfe5ed}
+.light .lang{background:#fff;border-color:#dbe2eb}
+.light .lang button{color:#344054}
+.light .icon-btn{background:#14243b}
+.light .top10,.light .news-card,.light .category-card,.light .category-section{background:#fff;border-color:#e5eaf1}
+.light .top-list li{border-color:#eef1f5}
+.light .category-intro{background:#eef5ff;color:#667085}
+.light .category-intro strong{color:#0d1726}
+.light .headline-list{background:#fff;border-color:#e5eaf1}
+.light .headline-row{border-color:#e5eaf1}
+.light .headline-row:hover{background:#f5f9ff}
+.light .headline-text{color:#0d1726}
+.light .headline-source,.light .headline-time{color:#667085}
+.light .trust{background:#f1f5fb;border-color:#e5eaf1}
+.light .empty{background:#fff;color:#667085;border-color:#cbd5e1}
+.light footer{background:#071b35}
+.light .category-image span{background:rgba(255,255,255,.88);color:#0d1726}
+.light .logo-mark:after{background:#fff}
+.light .footer-logo:after{background:#071b35}
+
+@media(max-width:1050px){
+  .hero-layout{grid-template-columns:1fr}
+  .category-grid{grid-template-columns:repeat(5,1fr)}
+  .latest-grid{grid-template-columns:repeat(2,1fr)}
 }
-
-* {
-    box-sizing: border-box;
+@media(max-width:800px){
+  .headline-row{grid-template-columns:30px minmax(0,1fr) 22px}
+  .headline-source,.headline-time{display:none}
 }
-
-html {
-    scroll-behavior: smooth;
+@media(max-width:700px){
+  .top-strip{height:32px;font-size:10px}
+  .top-strip .wrap span:last-child{display:none}
+  .wrap{padding:0 11px}
+  .header-row{min-height:72px;gap:9px;flex-wrap:wrap;padding:8px 0 9px}
+  .logo{min-width:0;flex:1}
+  .logo-mark{width:42px;height:36px}
+  .logo-mark:before{width:41px;height:31px}
+  .logo-mark:after{width:23px;height:18px;left:17px}
+  .logo-mark i{width:23px;height:18px;left:19px}
+  .logo h1{font-size:17px}.logo p{font-size:9px}.badge{font-size:11px;padding:3px 5px}
+  .header-actions{gap:4px}.icon-btn{width:36px;height:36px}.lang button{padding:7px 9px}
+  .search{order:4;flex-basis:100%;max-width:none}
+  .nav a{padding:11px 10px;font-size:11px}
+  main{padding-top:14px}
+  .hero{min-height:360px}.hero h2{font-size:24px}.hero-content{padding:18px}
+  .latest-grid{grid-template-columns:1fr}
+  .category-grid{grid-template-columns:repeat(2,1fr)}
+  .category-image{height:95px}
+  .trust{grid-template-columns:1fr 1fr;gap:12px}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .copy{flex-direction:column;gap:6px}
+  .socials{justify-content:flex-start}
 }
-
-body {
-    margin: 0;
-    font-family:
-        Inter,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    transition: background .25s ease, color .25s ease;
-}
-
-/* HEADER */
-
-header {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    background: var(--header);
-    border-bottom: 1px solid var(--border);
-    backdrop-filter: blur(14px);
-}
-
-.header-inner {
-    max-width: 1200px;
-    margin: auto;
-    min-height: 76px;
-    padding: 12px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    text-decoration: none;
-    color: var(--text);
-    min-width: 190px;
-}
-
-.logo-mark {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #dc2626, #991b1b);
-    color: white;
-    display: grid;
-    place-items: center;
-    font-size: 25px;
-    font-weight: 900;
-    box-shadow: 0 8px 20px rgba(220,38,38,.25);
-}
-
-.logo-text strong {
-    display: block;
-    font-size: 20px;
-    line-height: 1;
-}
-
-.logo-text span {
-    display: block;
-    margin-top: 5px;
-    color: var(--muted);
-    font-size: 11px;
-}
-
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.icon-btn,
-.lang-btn {
-    border: 1px solid var(--border);
-    background: var(--card);
-    color: var(--text);
-    min-width: 42px;
-    height: 42px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: 700;
-}
-
-.icon-btn:hover,
-.lang-btn:hover {
-    border-color: var(--primary);
-}
-
-nav {
-    max-width: 1200px;
-    margin: auto;
-    padding: 0 20px 12px;
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-}
-
-nav::-webkit-scrollbar {
-    display: none;
-}
-
-.nav-link {
-    flex: 0 0 auto;
-    border: 0;
-    background: transparent;
-    color: var(--muted);
-    padding: 9px 13px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 700;
-}
-
-.nav-link:hover,
-.nav-link.active {
-    background: rgba(220,38,38,.1);
-    color: var(--primary);
-}
-
-/* MAIN */
-
-main {
-    max-width: 1200px;
-    margin: auto;
-    padding: 28px 20px 60px;
-}
-
-/* HERO */
-
-.hero {
-    background:
-        radial-gradient(circle at top right, rgba(220,38,38,.16), transparent 40%),
-        var(--card);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 30px;
-    box-shadow: var(--shadow);
-    margin-bottom: 28px;
-}
-
-.hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 7px 11px;
-    border-radius: 999px;
-    background: rgba(220,38,38,.1);
-    color: var(--primary);
-    font-size: 12px;
-    font-weight: 800;
-}
-
-.hero h1 {
-    margin: 15px 0 8px;
-    font-size: clamp(30px, 5vw, 52px);
-    line-height: 1.05;
-    letter-spacing: -1.5px;
-}
-
-.hero p {
-    margin: 0;
-    color: var(--muted);
-    max-width: 700px;
-    line-height: 1.7;
-}
-
-/* LATEST */
-
-.section-title {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin: 34px 0 15px;
-}
-
-.section-title h2 {
-    margin: 0;
-    font-size: 23px;
-}
-
-.section-title span {
-    color: var(--muted);
-    font-size: 13px;
-}
-
-.latest-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-}
-
-.latest-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 19px;
-    box-shadow: var(--shadow);
-    min-height: 190px;
-}
-
-.latest-card h3 {
-    margin: 9px 0;
-    font-size: 17px;
-    line-height: 1.35;
-}
-
-.latest-card p {
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.55;
-    margin: 0;
-}
-
-.meta {
-    color: var(--muted);
-    font-size: 11px;
-    font-weight: 700;
-}
-
-.source {
-    color: var(--primary);
-}
-
-/* CATEGORY */
-
-.category-block {
-    margin-top: 38px;
-}
-
-.category-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 14px;
-}
-
-.category-heading h2 {
-    margin: 0;
-    font-size: 24px;
-}
-
-.category-heading button {
-    border: 1px solid var(--border);
-    background: var(--card);
-    color: var(--primary);
-    border-radius: 10px;
-    padding: 8px 12px;
-    cursor: pointer;
-    font-weight: 800;
-}
-
-.news-list {
-    display: grid;
-    gap: 10px;
-}
-
-.news-item {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 17px;
-    display: grid;
-    grid-template-columns: 38px 1fr;
-    gap: 14px;
-    box-shadow: var(--shadow);
-    transition: transform .2s ease, border-color .2s ease;
-}
-
-.news-item:hover {
-    transform: translateY(-2px);
-    border-color: rgba(220,38,38,.45);
-}
-
-.news-number {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
-    background: rgba(220,38,38,.1);
-    color: var(--primary);
-    display: grid;
-    place-items: center;
-    font-weight: 900;
-}
-
-.news-item h3 {
-    margin: 0 0 7px;
-    font-size: 16px;
-    line-height: 1.4;
-}
-
-.news-item p {
-    margin: 0 0 9px;
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.55;
-}
-
-.news-footer {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 9px;
-}
-
-.read-link {
-    color: var(--primary);
-    text-decoration: none;
-    font-weight: 800;
-    font-size: 12px;
-}
-
-.read-link:hover {
-    text-decoration: underline;
-}
-
-/* EMPTY */
-
-.empty {
-    padding: 30px;
-    text-align: center;
-    color: var(--muted);
-    background: var(--card);
-    border: 1px dashed var(--border);
-    border-radius: 16px;
-}
-
-/* FOOTER */
-
-footer {
-    border-top: 1px solid var(--border);
-    background: var(--card);
-    margin-top: 30px;
-}
-
-.footer-inner {
-    max-width: 1200px;
-    margin: auto;
-    padding: 35px 20px;
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 30px;
-}
-
-.footer-brand h3 {
-    margin: 0 0 8px;
-}
-
-.footer-brand p {
-    margin: 0;
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.6;
-}
-
-.footer-column h4 {
-    margin: 0 0 10px;
-}
-
-.footer-column a {
-    display: block;
-    color: var(--muted);
-    text-decoration: none;
-    margin: 7px 0;
-    font-size: 13px;
-}
-
-.footer-column a:hover {
-    color: var(--primary);
-}
-
-.footer-bottom {
-    border-top: 1px solid var(--border);
-    padding: 15px 20px;
-    text-align: center;
-    color: var(--muted);
-    font-size: 12px;
-}
-
-/* LOADING */
-
-.loading {
-    padding: 40px;
-    text-align: center;
-    color: var(--muted);
-}
-
-.spinner {
-    width: 30px;
-    height: 30px;
-    border: 3px solid var(--border);
-    border-top-color: var(--primary);
-    border-radius: 50%;
-    margin: 0 auto 12px;
-    animation: spin .8s linear infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-/* MOBILE */
-
-@media (max-width: 900px) {
-    .latest-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .footer-inner {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-
-@media (max-width: 600px) {
-    .header-inner {
-        min-height: 66px;
-        padding: 9px 14px;
-    }
-
-    .logo-mark {
-        width: 42px;
-        height: 42px;
-    }
-
-    .logo-text strong {
-        font-size: 17px;
-    }
-
-    nav {
-        padding: 0 14px 10px;
-    }
-
-    main {
-        padding: 18px 14px 45px;
-    }
-
-    .hero {
-        padding: 23px;
-        border-radius: 20px;
-    }
-
-    .latest-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .footer-inner {
-        grid-template-columns: 1fr;
-    }
-
-    .category-heading h2 {
-        font-size: 20px;
-    }
-
-    .news-item {
-        padding: 14px;
-    }
+@media(max-width:420px){
+  .trust{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .hero h2{font-size:22px}
 }
 </style>
 </head>
 
 <body>
+<div class="top-strip">
+  <div class="wrap">
+    <span>🇳🇵 Reliable News. Better Nepal.</span>
+    <span>🟢 Live Updates &nbsp;•&nbsp; Top 10 Stories &nbsp;•&nbsp; From Trusted Sources</span>
+  </div>
+</div>
 
-<header>
-    <div class="header-inner">
+<header class="header">
+  <div class="wrap header-row">
+    <a class="logo" href="#home">
+      <div class="logo-mark"><i></i></div>
+      <div>
+        <h1>Nepal News <span class="badge">Top 10</span></h1>
+        <p id="tagline">Your Daily Dose of Nepal &amp; World</p>
+      </div>
+    </a>
 
-        <a href="#" class="logo" onclick="showHome(); return false;">
-            <div class="logo-mark">🇳🇵</div>
-
-            <div class="logo-text">
-                <strong>Nepal News</strong>
-                <span>Latest news from Nepal</span>
-            </div>
-        </a>
-
-        <div class="header-actions">
-            <button class="lang-btn" id="langBtn" onclick="toggleLanguage()">
-                नेपाली
-            </button>
-
-            <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle theme">
-                🌙
-            </button>
-        </div>
-
+    <div class="search">
+      <span class="search-icon">⌕</span>
+      <input id="search" type="search" placeholder="Search news, topics, or keywords...">
     </div>
 
-    <nav id="navigation"></nav>
+    <div class="header-actions">
+      <div class="lang"><button id="en" class="active">EN</button><button id="ne">ने</button></div>
+      <button class="icon-btn" id="theme" aria-label="Theme">☀</button>
+      <!-- Hamburger removed -->
+    </div>
+  </div>
 </header>
 
-<main>
+<nav class="nav">
+  <div class="wrap nav-scroll" id="nav">
+    <a class="active home" href="#home">⌂ Home</a>
+    <a href="#weather">🌦️ Weather</a>
+    <a href="#national">🇳🇵 National</a>
+    <a href="#politics">🏛️ Politics</a>
+    <a href="#business">📈 Business</a>
+    <a href="#sports">⚽ Sports</a>
+    <a href="#technology">💻 Technology</a>
+    <a href="#entertainment">🎬 Entertainment</a>
+    <a href="#world">🌐 World</a>
+    <a href="#health">🩺 Health</a>
+    <a href="#crime">🚨 Crime</a>
+  </div>
+</nav>
 
-    <section class="hero">
-        <span class="hero-badge">
-            🔴 <span data-en="LIVE NEWS" data-ne="ताजा समाचार">LIVE NEWS</span>
-        </span>
+<main id="home">
+<div class="wrap">
 
-        <h1 data-en="Nepal News Today" data-ne="आजको नेपाल समाचार">
-            Nepal News Today
-        </h1>
+<section class="hero-layout">
+  <article class="hero">
+    <div class="hero-content">
+      <span class="pill">🔥 <span id="top-story-label">Top Story</span></span>
+      <h2 id="hero-title">Loading today's top story...</h2>
+      <p id="hero-summary">Fetching the latest stories from the news database.</p>
+      <div class="hero-meta" id="hero-meta">Nepal News Top 10</div>
+      <a class="read-more" id="hero-link" href="#" target="_blank" rel="noopener">Read More →</a>
+    </div>
+    <div class="dots"><i></i><i></i><i></i></div>
+  </article>
 
-        <p
-            data-en="The latest important stories from Nepal and around the world, organized by category."
-            data-ne="नेपाल तथा विश्वभरका महत्वपूर्ण पछिल्ला समाचारहरू श्रेणीअनुसार।">
-            The latest important stories from Nepal and around the world,
-            organized by category.
-        </p>
-    </section>
+  <aside class="top10">
+    <div class="top10-head">
+      <h2>⚡ Top 10 Today</h2>
+      <a href="#latest">View All</a>
+    </div>
+    <ol class="top-list" id="top-list"><li><span class="rank r1">1</span> Loading news...</li></ol>
+  </aside>
+</section>
 
-    <section>
-        <div class="section-title">
-            <h2 data-en="Latest News" data-ne="पछिल्ला समाचार">
-                Latest News
-            </h2>
+<!-- No weather forecast card.
+     Weather is a real news category containing rainfall, floods, monsoon,
+     landslides, storms, temperature and other weather-related stories. -->
 
-            <span id="updatedText"></span>
-        </div>
+<section id="latest" style="margin-top:28px">
+  <div class="block-head">
+    <div>
+      <h2>🔥 Latest News</h2>
+      <p>Stay informed with the latest stories from Nepal and around the world</p>
+    </div>
+    <a href="#categories">View All News →</a>
+  </div>
+  <div class="latest-grid" id="latest-grid"></div>
+</section>
 
-        <div id="latestGrid" class="latest-grid">
-            <div class="loading">
-                <div class="spinner"></div>
-                Loading news...
-            </div>
-        </div>
-    </section>
+<section class="category-wrap" id="categories">
+  <div class="block-head">
+    <div>
+      <h2>⭐ Top News by Category</h2>
+      <p>Explore the top 10 stories in every category</p>
+    </div>
+    <a href="#weather">View All Categories →</a>
+  </div>
+  <div class="category-grid" id="category-grid"></div>
+</section>
 
-    <section>
-        <div class="section-title">
-            <h2
-                data-en="Top News by Category"
-                data-ne="श्रेणीअनुसार प्रमुख समाचार">
-                Top News by Category
-            </h2>
-        </div>
+<div id="sections"></div>
 
-        <div id="categories"></div>
-    </section>
+<section class="trust">
+  <div class="trust-item"><div class="trust-icon">🛡️</div><div><strong>Trusted Sources</strong><span>News from reliable Nepal &amp; global media</span></div></div>
+  <div class="trust-item"><div class="trust-icon">⚡</div><div><strong>Updated Daily</strong><span>Fresh stories every day</span></div></div>
+  <div class="trust-item"><div class="trust-icon">📱</div><div><strong>Mobile Friendly</strong><span>Perfect on all devices</span></div></div>
+  <div class="trust-item"><div class="trust-icon">❤️</div><div><strong>For a Better Nepal</strong><span>Informed citizens, stronger nation</span></div></div>
+</section>
 
+</div>
 </main>
 
 <footer>
-    <div class="footer-inner">
-
-        <div class="footer-brand">
-            <h3>🇳🇵 Nepal News</h3>
-
-            <p
-                data-en="Your simple destination for the latest Nepal news, organized in one place."
-                data-ne="नेपालका पछिल्ला समाचारहरू एउटै स्थानमा सरल रूपमा।">
-                Your simple destination for the latest Nepal news,
-                organized in one place.
-            </p>
-        </div>
-
-        <div class="footer-column">
-            <h4 data-en="Categories" data-ne="श्रेणीहरू">
-                Categories
-            </h4>
-
-            <div id="footerCategories"></div>
-        </div>
-
-        <div class="footer-column">
-            <h4 data-en="About" data-ne="हाम्रो बारेमा">
-                About
-            </h4>
-
-            <a href="#" onclick="showHome(); return false;">
-                Home
-            </a>
-
-            <a href="#">
-                Nepal News
-            </a>
-        </div>
-
+  <div class="wrap footer-grid">
+    <div>
+      <div class="footer-brand"><span class="footer-logo"></span><span>Nepal News <span class="badge">Top 10</span></span></div>
+      <p>Reliable. Balanced. For a better Nepal.</p>
     </div>
-
-    <div class="footer-bottom">
-        © <span id="year"></span> Nepal News · All rights reserved.
+    <div><h4>About</h4><a href="#home">Home</a><a href="#categories">Categories</a><a href="#weather">Weather</a></div>
+    <div><h4>Sources</h4><a href="#latest">Latest News</a><a href="#national">National</a><a href="#world">World</a></div>
+    <div><h4>More</h4><a href="#technology">Technology</a><a href="#health">Health</a><a href="#crime">Crime</a></div>
+  </div>
+  <div class="wrap copy">
+    <span>© 2026 Nepal News Top 10. Made with ❤️ for Nepal.</span>
+    <div class="socials">
+      <a href="#" aria-label="Facebook">f</a>
+      <a href="#" aria-label="X">𝕏</a>
+      <a href="#" aria-label="YouTube">▶</a>
+      <a href="#" aria-label="Instagram">◎</a>
     </div>
+  </div>
 </footer>
 
-<script>
-/*
-    Nepal News Frontend
-    Reads:
-        ./news.json
-*/
+<button class="to-top" id="to-top">↑</button>
 
-const CATEGORY_ORDER = [
-    "weather",
-    "national",
-    "politics",
-    "business",
-    "sports",
-    "technology",
-    "entertainment",
-    "world",
-    "health",
-    "crime"
+<script>
+const SECTIONS=[
+  "weather","national","politics","business","sports",
+  "technology","entertainment","world","health","crime"
 ];
 
-const CATEGORY_NAMES = {
-    weather: {
-        en: "Weather",
-        ne: "मौसम"
-    },
-    national: {
-        en: "National",
-        ne: "राष्ट्रिय"
-    },
-    politics: {
-        en: "Politics",
-        ne: "राजनीति"
-    },
-    business: {
-        en: "Business",
-        ne: "व्यवसाय"
-    },
-    sports: {
-        en: "Sports",
-        ne: "खेलकुद"
-    },
-    technology: {
-        en: "Technology",
-        ne: "प्रविधि"
-    },
-    entertainment: {
-        en: "Entertainment",
-        ne: "मनोरञ्जन"
-    },
-    world: {
-        en: "World",
-        ne: "विश्व"
-    },
-    health: {
-        en: "Health",
-        ne: "स्वास्थ्य"
-    },
-    crime: {
-        en: "Crime",
-        ne: "अपराध"
-    }
+const LABEL={
+  weather:["🌦️","Weather","मौसम"],
+  national:["🇳🇵","National","राष्ट्रिय"],
+  politics:["🏛️","Politics","राजनीति"],
+  business:["📈","Business","व्यापार"],
+  sports:["⚽","Sports","खेलकुद"],
+  technology:["💻","Technology","प्रविधि"],
+  entertainment:["🎬","Entertainment","मनोरञ्जन"],
+  world:["🌐","World","विश्व"],
+  health:["🩺","Health","स्वास्थ्य"],
+  crime:["🚨","Crime","अपराध"]
 };
 
-let newsData = null;
-let language = localStorage.getItem("language") || "en";
+const ICON={
+  weather:"🌦️",national:"🇳🇵",politics:"🏛️",business:"📈",sports:"⚽",
+  technology:"💻",entertainment:"🎬",world:"🌐",health:"🩺",crime:"🚨"
+};
 
-/* THEME */
+const IMAGE={
+  weather:"https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?auto=format&fit=crop&w=700&q=82",
+  national:"https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=700&q=82",
+  politics:"https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=700&q=82",
+  business:"https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=700&q=82",
+  sports:"https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=700&q=82",
+  technology:"https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=700&q=82",
+  entertainment:"https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=700&q=82",
+  world:"https://images.unsplash.com/photo-1521292270410-a8c4d716d518?auto=format&fit=crop&w=700&q=82",
+  health:"https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=700&q=82",
+  crime:"https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=700&q=82"
+};
 
-function applyTheme() {
-    const saved = localStorage.getItem("theme");
+let data=null;
+let lang=localStorage.getItem("nn-lang")||"en";
 
-    if (saved === "dark") {
-        document.documentElement.classList.add("dark");
-        document.getElementById("themeBtn").textContent = "☀️";
-    } else {
-        document.documentElement.classList.remove("dark");
-        document.getElementById("themeBtn").textContent = "🌙";
-    }
+function esc(s){
+  return String(s??"").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
 }
 
-function toggleTheme() {
-    const dark =
-        document.documentElement.classList.toggle("dark");
-
-    localStorage.setItem(
-        "theme",
-        dark ? "dark" : "light"
-    );
-
-    document.getElementById("themeBtn").textContent =
-        dark ? "☀️" : "🌙";
+function allStories(){
+  return SECTIONS.flatMap(s=>
+    (Array.isArray(data?.sections?.[s])?data.sections[s]:[])
+      .map(x=>({...x,section:s}))
+  );
 }
 
-/* LANGUAGE */
-
-function applyLanguage() {
-
-    document.documentElement.lang =
-        language === "ne" ? "ne" : "en";
-
-    document.querySelectorAll("[data-en]").forEach(el => {
-
-        const value =
-            language === "ne"
-                ? el.dataset.ne
-                : el.dataset.en;
-
-        if (value) {
-            el.textContent = value;
-        }
-    });
-
-    document.getElementById("langBtn").textContent =
-        language === "en"
-            ? "नेपाली"
-            : "English";
-
-    renderNavigation();
-    renderFooterCategories();
-
-    if (newsData) {
-        renderLatest(newsData);
-        renderCategories(newsData);
-    }
+function timeAgo(s){
+  if(!s)return "";
+  const d=new Date(s);
+  if(Number.isNaN(d.getTime()))return "";
+  const m=Math.max(1,Math.floor((Date.now()-d)/60000));
+  return m<60?m+"m ago":m<1440?Math.floor(m/60)+"h ago":Math.floor(m/1440)+"d ago";
 }
 
-function toggleLanguage() {
-    language =
-        language === "en"
-            ? "ne"
-            : "en";
-
-    localStorage.setItem(
-        "language",
-        language
-    );
-
-    applyLanguage();
+function fmtDate(s){
+  if(!s)return "";
+  const d=new Date(s);
+  return Number.isNaN(d.getTime())?s:d.toLocaleDateString(undefined,{
+    month:"short",day:"numeric",year:"numeric"
+  });
 }
 
-/* NAVIGATION */
-
-function renderNavigation() {
-
-    const nav =
-        document.getElementById("navigation");
-
-    nav.innerHTML = "";
-
-    const home = document.createElement("button");
-
-    home.className = "nav-link active";
-
-    home.textContent =
-        language === "en"
-            ? "Home"
-            : "गृह";
-
-    home.onclick = showHome;
-
-    nav.appendChild(home);
-
-    CATEGORY_ORDER.forEach(category => {
-
-        const button =
-            document.createElement("button");
-
-        button.className = "nav-link";
-
-        button.textContent =
-            CATEGORY_NAMES[category][language];
-
-        button.onclick = () =>
-            scrollToCategory(category);
-
-        nav.appendChild(button);
-    });
+function newsCard(x){
+  const label=LABEL[x.section]?.[lang==="ne"?2:1]||"News";
+  const image=IMAGE[x.section]||IMAGE.national;
+  return `
+  <article class="news-card">
+    <div class="news-thumb" style="background-image:url('${image}')">
+      <span>${ICON[x.section]||"📰"}</span>
+    </div>
+    <div class="news-body">
+      <div class="news-top">
+        <span class="tag">${esc(label)}</span>
+        <span class="time">◷ ${esc(timeAgo(x.published))}</span>
+      </div>
+      <h3>${esc(x.title)}</h3>
+      <p>${esc(x.summary||"Read the original article for the latest information.")}</p>
+      <div class="card-foot">
+        <span>${esc(x.source||"Original source")}</span>
+        <a href="${esc(x.link||"#")}" target="_blank" rel="noopener">Read →</a>
+      </div>
+    </div>
+  </article>`;
 }
 
-/* LATEST NEWS */
+function render(){
+  const stories=allStories();
+  const top=stories.slice(0,10);
+  const hero=top[0];
 
-function getAllNews(data) {
+  if(hero){
+    document.getElementById("hero-title").textContent=hero.title;
+    document.getElementById("hero-summary").textContent=
+      hero.summary||"Read the original article for the complete story.";
+    document.getElementById("hero-meta").textContent=
+      (hero.published?fmtDate(hero.published)+" • ":"")+(hero.source||"Original source");
+    document.getElementById("hero-link").href=hero.link||"#";
+  }
 
-    const all = [];
+  document.getElementById("top-list").innerHTML=top.length
+    ? top.map((x,i)=>`
+      <li>
+        <span class="rank ${i===0?"r1":i===1?"r2":i===2?"r3":i===3?"r4":i===4?"r5":""}">${i+1}</span>
+        <a href="${esc(x.link||"#")}" target="_blank" rel="noopener">${esc(x.title)}</a>
+      </li>`).join("")
+    : `<li><span class="rank r1">!</span>No stories available.</li>`;
 
-    CATEGORY_ORDER.forEach(category => {
+  const latest=stories.slice(0,4);
+  document.getElementById("latest-grid").innerHTML=latest.length
+    ? latest.map(newsCard).join("")
+    : `<div class="empty">News is not available yet. Run the GitHub Actions updater.</div>`;
 
-        const stories =
-            data.sections?.[category] || [];
+  document.getElementById("category-grid").innerHTML=SECTIONS.map((s,i)=>{
+    const n=(data?.sections?.[s]||[]).length;
+    return `
+      <a class="category-card" href="#${s}">
+        <div class="category-image" style="background-image:url('${IMAGE[s]}')">
+          <span>${ICON[s]}</span>
+        </div>
+        <div class="category-body">
+          <strong>${LABEL[s][lang==="ne"?2:1]}</strong>
+          <span>${Math.min(n,10)} ${lang==="ne"?"समाचार":"stories"}</span>
+          <span class="go">→</span>
+        </div>
+      </a>`;
+  }).join("");
 
-        stories.forEach(story => {
+  document.getElementById("sections").innerHTML=SECTIONS.map(s=>{
+    const list=Array.isArray(data?.sections?.[s])
+      ?data.sections[s].slice(0,10):[];
 
-            all.push({
-                ...story,
-                category
-            });
-        });
-    });
-
-    return all;
-}
-
-function renderLatest(data) {
-
-    const container =
-        document.getElementById("latestGrid");
-
-    const all =
-        getAllNews(data).slice(0, 4);
-
-    if (!all.length) {
-
-        container.innerHTML =
-            `<div class="empty">
-                No latest news available.
-             </div>`;
-
-        return;
-    }
-
-    container.innerHTML = "";
-
-    all.forEach(story => {
-
-        const card =
-            document.createElement("article");
-
-        card.className = "latest-card";
-
-        card.innerHTML = `
-            <div class="meta">
-                ${escapeHTML(story.source || "")}
-            </div>
-
-            <h3>
-                ${escapeHTML(story.title)}
-            </h3>
-
-            <p>
-                ${escapeHTML(story.summary || "")}
-            </p>
-
-            <div style="margin-top:14px">
-                <a
-                    class="read-link"
-                    href="${safeURL(story.link)}"
-                    target="_blank"
-                    rel="noopener noreferrer">
-                    Read full story →
-                </a>
-            </div>
-        `;
-
-        container.appendChild(card);
-    });
-}
-
-/* CATEGORY SECTIONS */
-
-function renderCategories(data) {
-
-    const container =
-        document.getElementById("categories");
-
-    container.innerHTML = "";
-
-    CATEGORY_ORDER.forEach(category => {
-
-        const stories =
-            data.sections?.[category] || [];
-
-        const block =
-            document.createElement("section");
-
-        block.className =
-            "category-block";
-
-        block.id =
-            "category-" + category;
-
-        const title =
-            CATEGORY_NAMES[category][language];
-
-        block.innerHTML = `
-            <div class="category-heading">
-                <h2>${title}</h2>
-
-                <button
-                    onclick="scrollToTop()">
-                    ↑
-                </button>
-            </div>
-
-            <div class="news-list">
-                ${
-                    stories.length
-                    ? stories.slice(0, 10).map(
-                        (story, index) =>
-                        createNewsItem(
-                            story,
-                            index + 1
-                        )
-                    ).join("")
-                    : `
-                        <div class="empty">
-                            ${
-                                language === "ne"
-                                ? "यस श्रेणीमा समाचार उपलब्ध छैन।"
-                                : "No news available in this category."
-                            }
-                        </div>
-                    `
-                }
-            </div>
-        `;
-
-        container.appendChild(block);
-    });
-}
-
-function createNewsItem(story, number) {
+    const label=LABEL[s][lang==="ne"?2:1];
 
     return `
-        <article class="news-item">
+      <section class="category-section" id="${s}">
+        <div class="block-head">
+          <div>
+            <h2>${ICON[s]} ${label}</h2>
+            <p>${
+              s==="weather"
+              ?(lang==="ne"
+                ?"वर्षा, बाढी, मनसुन, पहिरो, तापक्रम, आँधी र अन्य मौसमसम्बन्धी शीर्ष १० समाचार"
+                :"Top 10 weather-related news: rainfall, floods, monsoon, landslides, temperature, storms and more")
+              :(lang==="ne"
+                ?"यस श्रेणीका शीर्ष १० समाचार, प्रत्येक एक वाक्यमा"
+                :"Top 10 news in this category, summarized in one sentence each")
+            }</p>
+          </div>
+        </div>
 
-            <div class="news-number">
-                ${number}
-            </div>
+        <div class="category-intro">
+          <strong>${lang==="ne"?"छोटो र स्पष्ट समाचार":"Short, clear news"}</strong>
+          <span>${lang==="ne"?"पूरा समाचारका लागि स्रोत खोल्नुहोस्":"Open the source to read the full story"}</span>
+        </div>
 
-            <div>
-
-                <h3>
-                    ${escapeHTML(story.title || "")}
-                </h3>
-
-                <p>
-                    ${escapeHTML(story.summary || "")}
-                </p>
-
-                <div class="news-footer">
-
-                    <span class="meta">
-                        <span class="source">
-                            ${escapeHTML(story.source || "")}
-                        </span>
-
-                        ${
-                            story.published
-                            ? " · " +
-                              escapeHTML(
-                                  story.published
-                              )
-                            : ""
-                        }
-                    </span>
-
-                    <a
-                        class="read-link"
-                        href="${safeURL(story.link)}"
-                        target="_blank"
-                        rel="noopener noreferrer">
-                        ${
-                            language === "ne"
-                            ? "पूरा समाचार →"
-                            : "Read full story →"
-                        }
-                    </a>
-
-                </div>
-
-            </div>
-
-        </article>
-    `;
+        <div class="headline-list">
+          ${
+            list.length
+            ?list.map((x,i)=>`
+              <a class="headline-row" href="${esc(x.link||"#")}" target="_blank" rel="noopener">
+                <span class="headline-rank ${i<5?"r"+(i+1):""}">${i+1}</span>
+                <span class="headline-text">${esc(x.summary||x.title||"News update")}</span>
+                <span class="headline-source">${esc(x.source||"Original source")}</span>
+                <span class="headline-time">${esc(timeAgo(x.published))}</span>
+                <span class="headline-arrow">›</span>
+              </a>`).join("")
+            :`<div class="empty">No stories available in this category yet.</div>`
+          }
+        </div>
+      </section>`;
+  }).join("");
 }
 
-/* FOOTER */
-
-function renderFooterCategories() {
-
-    const container =
-        document.getElementById(
-            "footerCategories"
-        );
-
-    container.innerHTML = "";
-
-    CATEGORY_ORDER.forEach(category => {
-
-        const link =
-            document.createElement("a");
-
-        link.href =
-            "#category-" + category;
-
-        link.textContent =
-            CATEGORY_NAMES[category][language];
-
-        link.onclick = () =>
-            scrollToCategory(category);
-
-        container.appendChild(link);
-    });
+async function loadNews(){
+  try{
+    const r=await fetch("news.json?refresh="+Date.now(),{cache:"no-store"});
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    data=await r.json();
+    render();
+  }catch(e){
+    console.error("News load failed:",e);
+    data={sections:Object.fromEntries(SECTIONS.map(s=>[s,[]]))};
+    render();
+  }
 }
 
-/* NAVIGATION HELPERS */
-
-function scrollToCategory(category) {
-
-    const element =
-        document.getElementById(
-            "category-" + category
-        );
-
-    if (element) {
-
-        element.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-    }
+function setLanguage(next){
+  lang=next;
+  localStorage.setItem("nn-lang",lang);
+  document.getElementById("en").classList.toggle("active",lang==="en");
+  document.getElementById("ne").classList.toggle("active",lang==="ne");
+  document.documentElement.lang=lang==="ne"?"ne":"en";
+  document.getElementById("tagline").textContent=
+    lang==="ne"?"नेपाल र विश्वका दैनिक प्रमुख समाचार":"Your Daily Dose of Nepal & World";
+  document.getElementById("search").placeholder=
+    lang==="ne"?"समाचार, विषय वा शब्द खोज्नुहोस्...":"Search news, topics, or keywords...";
+  document.getElementById("top-story-label").textContent=
+    lang==="ne"?"प्रमुख समाचार":"Top Story";
+  render();
 }
 
-function showHome() {
+document.getElementById("en").onclick=()=>setLanguage("en");
+document.getElementById("ne").onclick=()=>setLanguage("ne");
 
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
+let theme=localStorage.getItem("nn-theme")||"dark";
+function setTheme(t){
+  theme=t;
+  document.body.classList.toggle("light",t==="light");
+  document.getElementById("theme").textContent=t==="light"?"☾":"☀";
+  localStorage.setItem("nn-theme",t);
 }
+setTheme(theme);
+document.getElementById("theme").onclick=()=>{
+  setTheme(document.body.classList.contains("light")?"dark":"light");
+};
 
-function scrollToTop() {
+document.getElementById("search").addEventListener("input",e=>{
+  const q=e.target.value.toLowerCase().trim();
+  document.querySelectorAll(".news-card").forEach(c=>{
+    c.classList.toggle("hidden",q&&!c.textContent.toLowerCase().includes(q));
+  });
+});
 
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
-}
+window.addEventListener("scroll",()=>{
+  document.getElementById("to-top").style.display=scrollY>450?"grid":"none";
+});
+document.getElementById("to-top").onclick=()=>scrollTo({top:0,behavior:"smooth"});
 
-/* SECURITY */
+document.querySelectorAll(".nav a").forEach(a=>{
+  a.addEventListener("click",()=>{
+    document.querySelectorAll(".nav a").forEach(x=>x.classList.remove("active"));
+    a.classList.add("active");
+  });
+});
 
-function escapeHTML(value) {
-
-    const div =
-        document.createElement("div");
-
-    div.textContent =
-        value == null ? "" : value;
-
-    return div.innerHTML;
-}
-
-function safeURL(url) {
-
-    try {
-
-        const parsed =
-            new URL(url);
-
-        if (
-            parsed.protocol === "http:" ||
-            parsed.protocol === "https:"
-        ) {
-            return parsed.href;
-        }
-
-    } catch (error) {}
-
-    return "#";
-}
-
-/* LOAD NEWS */
-
-async function loadNews() {
-
-    const container =
-        document.getElementById("latestGrid");
-
-    try {
-
-        /*
-            Cache-busting is important because
-            GitHub Pages/CDNs can otherwise show
-            an old news.json.
-        */
-
-        const response =
-            await fetch(
-                "./news.json?t=" +
-                Date.now(),
-                {
-                    cache: "no-store"
-                }
-            );
-
-        if (!response.ok) {
-            throw new Error(
-                "news.json returned " +
-                response.status
-            );
-        }
-
-        newsData =
-            await response.json();
-
-        if (
-            !newsData ||
-            !newsData.sections
-        ) {
-            throw new Error(
-                "Invalid news.json format"
-            );
-        }
-
-        renderLatest(newsData);
-        renderCategories(newsData);
-
-        const updated =
-            document.getElementById(
-                "updatedText"
-            );
-
-        if (newsData.updated) {
-
-            const date =
-                new Date(newsData.updated);
-
-            updated.textContent =
-                language === "ne"
-                ? "अन्तिम अपडेट: " +
-                  date.toLocaleString("ne-NP")
-                : "Updated: " +
-                  date.toLocaleString();
-        }
-
-    } catch (error) {
-
-        console.error(
-            "News loading failed:",
-            error
-        );
-
-        container.innerHTML = `
-            <div class="empty">
-                <strong>
-                    Unable to load news.
-                </strong>
-                <br><br>
-                Make sure <b>news.json</b>
-                is in the same folder as
-                <b>index.html</b>.
-            </div>
-        `;
-    }
-}
-
-/* START */
-
-document.getElementById("year")
-    .textContent =
-    new Date().getFullYear();
-
-applyTheme();
-applyLanguage();
+setLanguage(lang);
 loadNews();
-
-/*
-    Automatically refresh the displayed
-    news every 5 minutes.
-
-    Your GitHub Action can continue
-    updating news.json every 3 hours.
-*/
-
-setInterval(
-    loadNews,
-    5 * 60 * 1000
-);
+setInterval(loadNews,15*60*1000);
 </script>
-
 </body>
 </html>
