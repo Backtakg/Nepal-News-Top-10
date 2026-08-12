@@ -1591,8 +1591,7 @@ function newsCard(x){
     LABEL[x.section]?.[lang === "ne" ? 2 : 1] ||
     (lang === "ne" ? "समाचार" : "News");
 
-  const image =
-    IMAGE[x.section] || IMAGE.national;
+  const image=x.image||IMAGE[x.section]||IMAGE.national;
 
   return `
     <article class="news-card">
