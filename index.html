@@ -119,8 +119,6 @@ box-shadow:var(--shadow);color:#fff;border:1px solid #29415d}
 .category-section .block-head a{display:none}
 .category-section .block-head h2{font-size:20px}
 .category-section .block-head p{font-size:11px}
-.category-intro{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 10px;padding:10px 12px;border-radius:11px;background:#122d4b;color:#a9b8c9;font-size:11px}
-.category-intro strong{color:#eef5ff;font-size:12px}
 .headline-list{display:flex;flex-direction:column;border:1px solid #263c56;border-radius:11px;overflow:hidden;background:#091727}
 .headline-row{display:grid;grid-template-columns:34px minmax(0,1fr) 150px 82px 24px;align-items:center;gap:10px;padding:8px 11px;border-bottom:1px solid #20344a;min-height:46px}
 .headline-row:last-child{border-bottom:0}
@@ -136,6 +134,20 @@ box-shadow:var(--shadow);color:#fff;border:1px solid #29415d}
 .trust-icon{width:42px;height:42px;flex:none;border-radius:50%;display:grid;place-items:center;background:#123f73;font-size:20px}
 .trust-item strong{display:block;font-size:12px}
 .trust-item span{display:block;color:#9fb0c4;font-size:10px;margin-top:2px}
+
+
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:20px;z-index:200}
+.modal-backdrop.show{display:flex}
+.info-modal{width:min(620px,100%);max-height:85vh;overflow:auto;background:#0e1d30;border:1px solid #2b4563;border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.45);padding:22px;color:#eef5ff;position:relative}
+.info-modal h2{margin:0 36px 10px 0;font-size:22px}
+.info-modal p,.info-modal li{font-size:13px;line-height:1.65;color:#b8c6d8}
+.info-modal ul{padding-left:20px}
+.modal-close{position:absolute;right:14px;top:12px;width:34px;height:34px;border:1px solid #38506a;border-radius:50%;background:#142941;color:#fff;font-size:20px}
+.light .info-modal{background:#fff;color:#0d1726;border-color:#dbe4ee}
+.light .info-modal p,.light .info-modal li{color:#526176}
+.light .modal-close{background:#eef3f8;color:#0d1726;border-color:#d5dee9}
+.footer-link{background:none;border:0;padding:0;color:#9eafc4;font-size:10px;margin:5px 0;text-align:left}
+.footer-link:hover{color:#fff}
 
 footer{background:#06172b;color:#d9e4f2;padding:27px 0 14px;margin-top:0;border-top:1px solid #20364f}
 .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:25px}
@@ -162,8 +174,6 @@ body.light{background:#f7f9fc;color:#0d1726}
 .light .icon-btn{background:#14243b}
 .light .top10,.light .news-card,.light .category-card,.light .category-section{background:#fff;border-color:#e5eaf1}
 .light .top-list li{border-color:#eef1f5}
-.light .category-intro{background:#eef5ff;color:#667085}
-.light .category-intro strong{color:#0d1726}
 .light .headline-list{background:#fff;border-color:#e5eaf1}
 .light .headline-row{border-color:#e5eaf1}
 .light .headline-row:hover{background:#f5f9ff}
@@ -220,8 +230,8 @@ body.light{background:#f7f9fc;color:#0d1726}
 <body>
 <div class="top-strip">
   <div class="wrap">
-    <span>🇳🇵 Reliable News. Better Nepal.</span>
-    <span>🟢 Live Updates &nbsp;•&nbsp; Top 10 Stories &nbsp;•&nbsp; From Trusted Sources</span>
+    <span id="top-strip-left">🇳🇵 Reliable News. Better Nepal.</span>
+    <span id="top-strip-right">🟢 Live Updates &nbsp;•&nbsp; Top 10 Stories &nbsp;•&nbsp; From Trusted Sources</span>
   </div>
 </div>
 
@@ -250,17 +260,17 @@ body.light{background:#f7f9fc;color:#0d1726}
 
 <nav class="nav">
   <div class="wrap nav-scroll" id="nav">
-    <a class="active home" href="#home">⌂ Home</a>
-    <a href="#weather">🌦️ Weather</a>
-    <a href="#national">🇳🇵 National</a>
-    <a href="#politics">🏛️ Politics</a>
-    <a href="#business">📈 Business</a>
-    <a href="#sports">⚽ Sports</a>
-    <a href="#technology">💻 Technology</a>
-    <a href="#entertainment">🎬 Entertainment</a>
-    <a href="#world">🌐 World</a>
-    <a href="#health">🩺 Health</a>
-    <a href="#crime">🚨 Crime</a>
+    <a class="active home" href="#home" data-en="⌂ Home" data-ne="⌂ गृहपृष्ठ">⌂ Home</a>
+    <a href="#weather" data-en="🌦️ Weather" data-ne="🌦️ मौसम">🌦️ Weather</a>
+    <a href="#national" data-en="🇳🇵 National" data-ne="🇳🇵 राष्ट्रिय">🇳🇵 National</a>
+    <a href="#politics" data-en="🏛️ Politics" data-ne="🏛️ राजनीति">🏛️ Politics</a>
+    <a href="#business" data-en="📈 Business" data-ne="📈 व्यापार">📈 Business</a>
+    <a href="#sports" data-en="⚽ Sports" data-ne="⚽ खेलकुद">⚽ Sports</a>
+    <a href="#technology" data-en="💻 Technology" data-ne="💻 प्रविधि">💻 Technology</a>
+    <a href="#entertainment" data-en="🎬 Entertainment" data-ne="🎬 मनोरञ्जन">🎬 Entertainment</a>
+    <a href="#world" data-en="🌐 World" data-ne="🌐 विश्व">🌐 World</a>
+    <a href="#health" data-en="🩺 Health" data-ne="🩺 स्वास्थ्य">🩺 Health</a>
+    <a href="#crime" data-en="🚨 Crime" data-ne="🚨 अपराध">🚨 Crime</a>
   </div>
 </nav>
 
@@ -281,10 +291,10 @@ body.light{background:#f7f9fc;color:#0d1726}
 
   <aside class="top10">
     <div class="top10-head">
-      <h2>⚡ Top 10 Today</h2>
-      <a href="#latest">View All</a>
+      <h2 id="top10-title">⚡ Top 10 Today</h2>
+      <a href="#latest" id="view-all-top">View All</a>
     </div>
-    <ol class="top-list" id="top-list"><li><span class="rank r1">1</span> Loading news...</li></ol>
+    <ol class="top-list" id="top-list"><li><span class="rank r1">1</span> ${ui("loadingNews")}</li></ol>
   </aside>
 </section>
 
@@ -295,10 +305,10 @@ body.light{background:#f7f9fc;color:#0d1726}
 <section id="latest" style="margin-top:28px">
   <div class="block-head">
     <div>
-      <h2>🔥 Latest News</h2>
-      <p>Stay informed with the latest stories from Nepal and around the world</p>
+      <h2 id="latest-title">🔥 Latest News</h2>
+      <p id="latest-subtitle">Stay informed with the latest stories from Nepal and around the world</p>
     </div>
-    <a href="#categories">View All News →</a>
+    <a href="#categories" id="view-all-news">View All News →</a>
   </div>
   <div class="latest-grid" id="latest-grid"></div>
 </section>
@@ -306,10 +316,10 @@ body.light{background:#f7f9fc;color:#0d1726}
 <section class="category-wrap" id="categories">
   <div class="block-head">
     <div>
-      <h2>⭐ Top News by Category</h2>
-      <p>Explore the top 10 stories in every category</p>
+      <h2 id="category-title">⭐ Top News by Category</h2>
+      <p id="category-subtitle">Explore the top 10 stories in every category</p>
     </div>
-    <a href="#weather">View All Categories →</a>
+    <a href="#weather" id="view-all-categories">View All Categories →</a>
   </div>
   <div class="category-grid" id="category-grid"></div>
 </section>
@@ -317,10 +327,10 @@ body.light{background:#f7f9fc;color:#0d1726}
 <div id="sections"></div>
 
 <section class="trust">
-  <div class="trust-item"><div class="trust-icon">🛡️</div><div><strong>Trusted Sources</strong><span>News from reliable Nepal &amp; global media</span></div></div>
-  <div class="trust-item"><div class="trust-icon">⚡</div><div><strong>Updated Daily</strong><span>Fresh stories every day</span></div></div>
-  <div class="trust-item"><div class="trust-icon">📱</div><div><strong>Mobile Friendly</strong><span>Perfect on all devices</span></div></div>
-  <div class="trust-item"><div class="trust-icon">❤️</div><div><strong>For a Better Nepal</strong><span>Informed citizens, stronger nation</span></div></div>
+  <div class="trust-item"><div class="trust-icon">🛡️</div><div><strong id="trust-sources">Trusted Sources</strong><span id="trust-sources-sub">News from reliable Nepal &amp; global media</span></div></div>
+  <div class="trust-item"><div class="trust-icon">⚡</div><div><strong id="trust-updated">Updated Daily</strong><span id="trust-updated-sub">Fresh stories every day</span></div></div>
+  <div class="trust-item"><div class="trust-icon">📱</div><div><strong id="trust-mobile">Mobile Friendly</strong><span id="trust-mobile-sub">Perfect on all devices</span></div></div>
+  <div class="trust-item"><div class="trust-icon">❤️</div><div><strong id="trust-nepal">For a Better Nepal</strong><span id="trust-nepal-sub">Informed citizens, stronger nation</span></div></div>
 </section>
 
 </div>
@@ -330,14 +340,26 @@ body.light{background:#f7f9fc;color:#0d1726}
   <div class="wrap footer-grid">
     <div>
       <div class="footer-brand"><span class="footer-logo"></span><span>Nepal News <span class="badge">Top 10</span></span></div>
-      <p>Reliable. Balanced. For a better Nepal.</p>
+      <p id="footer-tagline">Reliable. Balanced. For a better Nepal.</p>
     </div>
-    <div><h4>About</h4><a href="#home">Home</a><a href="#categories">Categories</a><a href="#weather">Weather</a></div>
-    <div><h4>Sources</h4><a href="#latest">Latest News</a><a href="#national">National</a><a href="#world">World</a></div>
-    <div><h4>More</h4><a href="#technology">Technology</a><a href="#health">Health</a><a href="#crime">Crime</a></div>
+    <div>
+      <h4><button class="footer-link" id="footer-about" data-modal="about">About</button></h4>
+      <button class="footer-link" data-modal="about">Our Mission</button>
+      <button class="footer-link" data-modal="about">How It Works</button>
+    </div>
+    <div>
+      <h4><button class="footer-link" id="footer-sources" data-modal="sources">Sources</button></h4>
+      <button class="footer-link" data-modal="sources">Trusted Media</button>
+      <button class="footer-link" data-modal="sources">News Categories</button>
+    </div>
+    <div>
+      <h4><button class="footer-link" id="footer-privacy" data-modal="privacy">Privacy</button></h4>
+      <button class="footer-link" data-modal="privacy">Data &amp; Cookies</button>
+      <button class="footer-link" data-modal="privacy">Your Choices</button>
+    </div>
   </div>
   <div class="wrap copy">
-    <span>© 2026 Nepal News Top 10. Made with ❤️ for Nepal.</span>
+    <span id="copyright">© 2026 Nepal News Top 10. Made with ❤️ for Nepal.</span>
     <div class="socials">
       <a href="#" aria-label="Facebook">f</a>
       <a href="#" aria-label="X">𝕏</a>
@@ -346,6 +368,14 @@ body.light{background:#f7f9fc;color:#0d1726}
     </div>
   </div>
 </footer>
+
+<div class="modal-backdrop" id="info-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="info-modal">
+    <button class="modal-close" id="modal-close" aria-label="Close">×</button>
+    <h2 id="modal-title"></h2>
+    <div id="modal-body"></div>
+  </div>
+</div>
 
 <button class="to-top" id="to-top">↑</button>
 
@@ -418,8 +448,16 @@ function fmtDate(s){
   });
 }
 
+
+function storyField(x,field){
+  if(lang!=="ne") return x[field] || "";
+  return x[field+"Ne"] || x[field+"_ne"] || x.ne?.[field] || x[field] || "";
+}
+function storyTitle(x){return storyField(x,"title")||ui("loadingNews");}
+function storySummary(x){return storyField(x,"summary")||storyTitle(x)||ui("original");}
+
 function newsCard(x){
-  const label=LABEL[x.section]?.[lang==="ne"?2:1]||"News";
+  const label=LABEL[x.section]?.[lang==="ne"?2:1]||ui("latest");
   const image=IMAGE[x.section]||IMAGE.national;
   return `
   <article class="news-card">
@@ -431,11 +469,11 @@ function newsCard(x){
         <span class="tag">${esc(label)}</span>
         <span class="time">◷ ${esc(timeAgo(x.published))}</span>
       </div>
-      <h3>${esc(x.title)}</h3>
-      <p>${esc(x.summary||"Read the original article for the latest information.")}</p>
+      <h3>${esc(storyTitle(x))}</h3>
+      <p>${esc(storySummary(x)||ui("original"))}</p>
       <div class="card-foot">
-        <span>${esc(x.source||"Original source")}</span>
-        <a href="${esc(x.link||"#")}" target="_blank" rel="noopener">Read →</a>
+        <span>${esc(x.source||ui("original"))}</span>
+        <a href="${esc(x.link||"#")}" target="_blank" rel="noopener">${ui("read")}</a>
       </div>
     </div>
   </article>`;
@@ -447,9 +485,9 @@ function render(){
   const hero=top[0];
 
   if(hero){
-    document.getElementById("hero-title").textContent=hero.title;
+    document.getElementById("hero-title").textContent=storyTitle(hero);
     document.getElementById("hero-summary").textContent=
-      hero.summary||"Read the original article for the complete story.";
+      storySummary(hero)||ui("original");
     document.getElementById("hero-meta").textContent=
       (hero.published?fmtDate(hero.published)+" • ":"")+(hero.source||"Original source");
     document.getElementById("hero-link").href=hero.link||"#";
@@ -459,14 +497,14 @@ function render(){
     ? top.map((x,i)=>`
       <li>
         <span class="rank ${i===0?"r1":i===1?"r2":i===2?"r3":i===3?"r4":i===4?"r5":""}">${i+1}</span>
-        <a href="${esc(x.link||"#")}" target="_blank" rel="noopener">${esc(x.title)}</a>
+        <a href="${esc(x.link||"#")}" target="_blank" rel="noopener">${esc(storyTitle(x))}</a>
       </li>`).join("")
-    : `<li><span class="rank r1">!</span>No stories available.</li>`;
+    : `<li><span class="rank r1">!</span>${ui("noStories")}</li>`;
 
   const latest=stories.slice(0,4);
   document.getElementById("latest-grid").innerHTML=latest.length
     ? latest.map(newsCard).join("")
-    : `<div class="empty">News is not available yet. Run the GitHub Actions updater.</div>`;
+    : `<div class="empty">${ui("empty")}</div>`;
 
   document.getElementById("category-grid").innerHTML=SECTIONS.map((s,i)=>{
     const n=(data?.sections?.[s]||[]).length;
@@ -506,11 +544,6 @@ function render(){
           </div>
         </div>
 
-        <div class="category-intro">
-          <strong>${lang==="ne"?"छोटो र स्पष्ट समाचार":"Short, clear news"}</strong>
-          <span>${lang==="ne"?"पूरा समाचारका लागि स्रोत खोल्नुहोस्":"Open the source to read the full story"}</span>
-        </div>
-
         <div class="headline-list">
           ${
             list.length
@@ -518,11 +551,11 @@ function render(){
               <a class="headline-row" href="${esc(x.link||"#")}" target="_blank" rel="noopener">
                 <span class="headline-rank ${i<5?"r"+(i+1):""}">${i+1}</span>
                 <span class="headline-text">${esc(x.summary||x.title||"News update")}</span>
-                <span class="headline-source">${esc(x.source||"Original source")}</span>
+                <span class="headline-source">${esc(x.source||ui("original"))}</span>
                 <span class="headline-time">${esc(timeAgo(x.published))}</span>
                 <span class="headline-arrow">›</span>
               </a>`).join("")
-            :`<div class="empty">No stories available in this category yet.</div>`
+            :`<div class="empty">${ui("noCategory")}</div>`
           }
         </div>
       </section>`;
@@ -542,18 +575,133 @@ async function loadNews(){
   }
 }
 
+
+const UI={
+  en:{
+    topLeft:"🇳🇵 Reliable News. Better Nepal.",
+    topRight:"🟢 Live Updates &nbsp;•&nbsp; Top 10 Stories &nbsp;•&nbsp; From Trusted Sources",
+    tagline:"Your Daily Dose of Nepal & World",
+    search:"Search news, topics, or keywords...",
+    topStory:"Top Story", top10:"⚡ Top 10 Today", viewAll:"View All",
+    latest:"🔥 Latest News", latestSub:"Stay informed with the latest stories from Nepal and around the world",
+    viewAllNews:"View All News →", category:"⭐ Top News by Category",
+    categorySub:"Explore the top 10 stories in every category", viewAllCategories:"View All Categories →",
+    trusted:"Trusted Sources", trustedSub:"News from reliable Nepal & global media",
+    updated:"Updated Daily", updatedSub:"Fresh stories every day",
+    mobile:"Mobile Friendly", mobileSub:"Perfect on all devices",
+    better:"For a Better Nepal", betterSub:"Informed citizens, stronger nation",
+    footerTag:"Reliable. Balanced. For a better Nepal.",
+    about:"About", sources:"Sources", privacy:"Privacy",
+    aboutMission:"Our Mission", aboutHow:"How It Works",
+    sourcesTrusted:"Trusted Media", sourcesCategories:"News Categories",
+    privacyData:"Data & Cookies", privacyChoices:"Your Choices",
+    copyright:"© 2026 Nepal News Top 10. Made with ❤️ for Nepal.",
+    loading:"Loading today's top story...", fetching:"Fetching the latest stories from the news database.",
+    readMore:"Read More →", loadingNews:"Loading news...", noStories:"No stories available.",
+    empty:"News is not available yet. Run the GitHub Actions updater.",
+    noCategory:"No stories available in this category yet.",
+    categorySubLine:"Top 10 news in this category, summarized in one sentence each",
+    weatherSub:"Top 10 weather-related news: rainfall, floods, monsoon, landslides, temperature, storms and more",
+    original:"Original source", read:"Read →",
+    aboutTitle:"About Nepal News Top 10", aboutBody:`<p><strong>Nepal News Top 10</strong> is designed to make important news quick and easy to understand.</p><ul><li>We organize major stories into clear categories.</li><li>Each category highlights up to 10 important stories.</li><li>Short summaries help you decide what to read next.</li><li>Stories link back to their original publishers.</li></ul><p>Our goal is simple: reliable, balanced and useful news for Nepal and the world.</p>`,
+    sourcesTitle:"Our Sources", sourcesBody:`<p>We collect stories from established Nepalese and international news publishers and organize them by topic.</p><ul><li>Original publisher links are preserved whenever available.</li><li>Sources are displayed beside each story.</li><li>Weather news focuses on rainfall, floods, monsoon, landslides, storms and related events.</li><li>This site does not claim ownership of third-party articles.</li></ul>`,
+    privacyTitle:"Privacy", privacyBody:`<p>This website is designed to keep data collection simple.</p><ul><li>Your language and theme preferences may be stored locally in your browser.</li><li>Search text is used only to filter stories on the page.</li><li>We do not intentionally ask for passwords, payment information or sensitive personal data.</li><li>External news links follow the privacy policies of their respective publishers.</li></ul>`
+  },
+  ne:{
+    topLeft:"🇳🇵 विश्वसनीय समाचार। राम्रो नेपाल।",
+    topRight:"🟢 लाइभ अपडेट • शीर्ष १० समाचार • विश्वसनीय स्रोत",
+    tagline:"नेपाल र विश्वका दैनिक प्रमुख समाचार",
+    search:"समाचार, विषय वा शब्द खोज्नुहोस्...",
+    topStory:"प्रमुख समाचार", top10:"⚡ आजका शीर्ष १०", viewAll:"सबै हेर्नुहोस्",
+    latest:"🔥 पछिल्ला समाचार", latestSub:"नेपाल र विश्वका पछिल्ला समाचारसँग अपडेट रहनुहोस्",
+    viewAllNews:"सबै समाचार हेर्नुहोस् →", category:"⭐ श्रेणीअनुसार शीर्ष समाचार",
+    categorySub:"प्रत्येक श्रेणीका शीर्ष १० समाचार हेर्नुहोस्", viewAllCategories:"सबै श्रेणी हेर्नुहोस् →",
+    trusted:"विश्वसनीय स्रोत", trustedSub:"नेपाल तथा विश्वका भरपर्दा सञ्चारमाध्यमका समाचार",
+    updated:"दैनिक अपडेट", updatedSub:"हरेक दिन नयाँ समाचार",
+    mobile:"मोबाइलमैत्री", mobileSub:"फोन र डेस्कटप दुवैका लागि उपयुक्त",
+    better:"राम्रो नेपालका लागि", betterSub:"जानकार नागरिक, बलियो राष्ट्र",
+    footerTag:"विश्वसनीय। सन्तुलित। राम्रो नेपालका लागि।",
+    about:"बारेमा", sources:"स्रोतहरू", privacy:"गोपनीयता",
+    aboutMission:"हाम्रो उद्देश्य", aboutHow:"यसले कसरी काम गर्छ",
+    sourcesTrusted:"विश्वसनीय सञ्चारमाध्यम", sourcesCategories:"समाचार श्रेणीहरू",
+    privacyData:"डाटा र कुकीहरू", privacyChoices:"तपाईंका विकल्पहरू",
+    copyright:"© २०२६ नेपाल न्यूज टप १०। नेपालका लागि ❤️ सहित।",
+    loading:"आजको प्रमुख समाचार लोड हुँदैछ...", fetching:"समाचार डाटाबेसबाट पछिल्ला समाचार ल्याउँदैछौं।",
+    readMore:"पूरा पढ्नुहोस् →", loadingNews:"समाचार लोड हुँदैछ...", noStories:"समाचार उपलब्ध छैन।",
+    empty:"अहिले समाचार उपलब्ध छैन। GitHub Actions updater चलाउनुहोस्।",
+    noCategory:"यस श्रेणीमा अहिले समाचार उपलब्ध छैन।",
+    categorySubLine:"यस श्रेणीका शीर्ष १० समाचार, प्रत्येक एक वाक्यमा",
+    weatherSub:"वर्षा, बाढी, मनसुन, पहिरो, तापक्रम, आँधी तथा अन्य मौसमसम्बन्धी शीर्ष १० समाचार",
+    original:"मूल स्रोत", read:"पढ्नुहोस् →",
+    aboutTitle:"नेपाल न्यूज टप १० बारे", aboutBody:`<p><strong>नेपाल न्यूज टप १०</strong> महत्वपूर्ण समाचारलाई छिटो र सजिलो रूपमा बुझ्नका लागि बनाइएको हो।</p><ul><li>प्रमुख समाचारलाई स्पष्ट श्रेणीमा राखिन्छ।</li><li>प्रत्येक श्रेणीमा बढीमा १० महत्वपूर्ण समाचार देखाइन्छ।</li><li>छोटो सारांशले कुन समाचार पढ्ने भन्ने निर्णय गर्न सजिलो बनाउँछ।</li><li>सम्भव भएसम्म समाचारको मूल प्रकाशकको लिंक दिइन्छ।</li></ul><p>हाम्रो उद्देश्य सरल छ: नेपाल र विश्वका लागि विश्वसनीय, सन्तुलित र उपयोगी समाचार।</p>`,
+    sourcesTitle:"हाम्रा स्रोतहरू", sourcesBody:`<p>हामी नेपाल तथा विश्वका स्थापित समाचार प्रकाशकहरूबाट समाचार संकलन गरी विषयअनुसार व्यवस्थित गर्छौं।</p><ul><li>सम्भव भएसम्म मूल प्रकाशकको लिंक सुरक्षित राखिन्छ।</li><li>प्रत्येक समाचारसँग स्रोतको नाम देखाइन्छ।</li><li>मौसम समाचारमा वर्षा, बाढी, मनसुन, पहिरो, आँधी तथा सम्बन्धित घटनाहरू समेटिन्छन्।</li><li>यो साइटले तेस्रो पक्षका समाचारमा स्वामित्व दाबी गर्दैन।</li></ul>`,
+    privacyTitle:"गोपनीयता", privacyBody:`<p>यो वेबसाइटले डाटा संकलनलाई सकेसम्म सरल राख्ने उद्देश्य राख्छ।</p><ul><li>भाषा र थिमको रोजाइ तपाईंको ब्राउजरमै स्थानीय रूपमा सुरक्षित हुन सक्छ।</li><li>सर्चमा लेखिएको शब्द पेजभित्रका समाचार फिल्टर गर्न मात्र प्रयोग हुन्छ।</li><li>हामी पासवर्ड, भुक्तानी विवरण वा संवेदनशील व्यक्तिगत डाटा माग्ने उद्देश्य राख्दैनौं।</li><li>बाहिरी समाचार लिंकमा सम्बन्धित प्रकाशकको गोपनीयता नीति लागू हुन्छ।</li></ul>`
+  }
+};
+
+function ui(key){return UI[lang]?.[key] ?? UI.en[key] ?? key;}
+
+function setupInfoModal(){
+  const modal=document.getElementById("info-modal");
+  const title=document.getElementById("modal-title");
+  const body=document.getElementById("modal-body");
+  const close=()=>modal.classList.remove("show");
+  document.querySelectorAll("[data-modal]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const type=btn.dataset.modal;
+      const map={about:["aboutTitle","aboutBody"],sources:["sourcesTitle","sourcesBody"],privacy:["privacyTitle","privacyBody"]};
+      const keys=map[type];
+      if(!keys)return;
+      title.textContent=ui(keys[0]); body.innerHTML=ui(keys[1]); modal.classList.add("show");
+    });
+  });
+  document.getElementById("modal-close").onclick=close;
+  modal.addEventListener("click",e=>{if(e.target===modal)close();});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")close();});
+}
+setupInfoModal();
+
 function setLanguage(next){
   lang=next;
   localStorage.setItem("nn-lang",lang);
   document.getElementById("en").classList.toggle("active",lang==="en");
   document.getElementById("ne").classList.toggle("active",lang==="ne");
   document.documentElement.lang=lang==="ne"?"ne":"en";
-  document.getElementById("tagline").textContent=
-    lang==="ne"?"नेपाल र विश्वका दैनिक प्रमुख समाचार":"Your Daily Dose of Nepal & World";
-  document.getElementById("search").placeholder=
-    lang==="ne"?"समाचार, विषय वा शब्द खोज्नुहोस्...":"Search news, topics, or keywords...";
-  document.getElementById("top-story-label").textContent=
-    lang==="ne"?"प्रमुख समाचार":"Top Story";
+  document.title=lang==="ne"?"नेपाल न्यूज टप १०":"Nepal News Top 10";
+  document.getElementById("top-strip-left").textContent=ui("topLeft");
+  document.getElementById("top-strip-right").innerHTML=ui("topRight");
+  document.getElementById("tagline").textContent=ui("tagline");
+  document.getElementById("search").placeholder=ui("search");
+  document.getElementById("top-story-label").textContent=ui("topStory");
+  document.getElementById("hero-link").textContent=ui("readMore");
+  document.getElementById("top10-title").textContent=ui("top10");
+  document.getElementById("view-all-top").textContent=ui("viewAll");
+  document.getElementById("latest-title").textContent=ui("latest");
+  document.getElementById("latest-subtitle").textContent=ui("latestSub");
+  document.getElementById("view-all-news").textContent=ui("viewAllNews");
+  document.getElementById("category-title").textContent=ui("category");
+  document.getElementById("category-subtitle").textContent=ui("categorySub");
+  document.getElementById("view-all-categories").textContent=ui("viewAllCategories");
+  document.getElementById("trust-sources").textContent=ui("trusted");
+  document.getElementById("trust-sources-sub").textContent=ui("trustedSub");
+  document.getElementById("trust-updated").textContent=ui("updated");
+  document.getElementById("trust-updated-sub").textContent=ui("updatedSub");
+  document.getElementById("trust-mobile").textContent=ui("mobile");
+  document.getElementById("trust-mobile-sub").textContent=ui("mobileSub");
+  document.getElementById("trust-nepal").textContent=ui("better");
+  document.getElementById("trust-nepal-sub").textContent=ui("betterSub");
+  document.getElementById("footer-tagline").textContent=ui("footerTag");
+  document.getElementById("copyright").textContent=ui("copyright");
+  document.getElementById("footer-about").textContent=ui("about");
+  document.getElementById("footer-sources").textContent=ui("sources");
+  document.getElementById("footer-privacy").textContent=ui("privacy");
+  document.querySelectorAll('[data-modal="about"]').forEach((el,i)=>{if(el.id!=="footer-about")el.textContent=i===0?ui("aboutMission"):ui("aboutHow");});
+  document.querySelectorAll('[data-modal="sources"]').forEach((el,i)=>{if(el.id!=="footer-sources")el.textContent=i===0?ui("sourcesTrusted"):ui("sourcesCategories");});
+  document.querySelectorAll('[data-modal="privacy"]').forEach((el,i)=>{if(el.id!=="footer-privacy")el.textContent=i===0?ui("privacyData"):ui("privacyChoices");});
+  document.querySelectorAll(".nav a").forEach(a=>{
+    const en=a.getAttribute("data-en"),ne=a.getAttribute("data-ne");
+    if(en)a.textContent=lang==="ne"?ne:en;
+  });
   render();
 }
 
