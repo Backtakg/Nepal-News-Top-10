@@ -2,82 +2,51 @@ name: Update Nepal News
 
 on:
   schedule:
-    # Every 3 hours
     - cron: "0 */3 * * *"
-
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  scrape-news:
-
+  update-news:
     runs-on: ubuntu-latest
 
     steps:
-
       # --------------------------------------------------
       # Checkout repository
       # --------------------------------------------------
-
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
 
       # --------------------------------------------------
       # Setup Python
       # --------------------------------------------------
-
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: "pip"
-
 
       # --------------------------------------------------
-      # Install scraper dependencies
+      # Install dependencies
       # --------------------------------------------------
-
-      - name: Install dependencies
+      - name: Install packages
         run: |
           python -m pip install --upgrade pip
-
-          pip install \
-            requests \
-            beautifulsoup4 \
-            feedparser \
-            lxml
-
+          pip install requests feedparser beautifulsoup4
 
       # --------------------------------------------------
-      # Check scraper exists
+      # Run news scraper
       # --------------------------------------------------
-
-      - name: Check scraper
-        run: |
-          test -f scraper.py
-          echo "scraper.py found."
-
-
-      # --------------------------------------------------
-      # Run scraper
-      # --------------------------------------------------
-
       - name: Run scraper
-  env:
-    NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
-  run: |
-    python scraper.py
-
+        env:
+          NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
+        run: |
+          python scraper.py
 
       # --------------------------------------------------
       # Validate generated news.json
       # --------------------------------------------------
-
       - name: Validate news database
         run: |
           test -f news.json
@@ -94,10 +63,12 @@ jobs:
           if not isinstance(data, dict):
               raise SystemExit("news.json is not a JSON object")
 
-          sections = data.get("sections", {})
+          if "sections" not in data:
+              raise SystemExit("news.json is missing 'sections'")
 
-          required = [
-              "weather",
+          sections = data["sections"]
+
+          expected = [
               "national",
               "politics",
               "business",
@@ -105,82 +76,67 @@ jobs:
               "technology",
               "entertainment",
               "world",
+              "crime",
               "health",
-              "crime"
+              "weather"
           ]
 
-          missing = [
-              section
-              for section in required
-              if section not in sections
-          ]
-
-          if missing:
-              raise SystemExit(
-                  "Missing sections: " + ", ".join(missing)
-              )
+          for section in expected:
+              if section not in sections:
+                  raise SystemExit(
+                      f"Missing section: {section}"
+                  )
 
           total = sum(
-              len(sections.get(section, []))
-              for section in required
+              len(items)
+              for items in sections.values()
+              if isinstance(items, list)
           )
 
-          print("Total stories:", total)
-
-          for section in required:
-              print(
-                  f"{section}: "
-                  f"{len(sections.get(section, []))}"
-              )
+          print(f"Total stories: {total}")
 
           if total == 0:
               raise SystemExit(
-                  "ERROR: Scraper produced zero stories."
+                  "ERROR: scraper produced zero news stories"
               )
 
-          print("news.json validation successful.")
+          print("news.json validation successful")
           PY
 
-
       # --------------------------------------------------
-      # Show scraper output
+      # Show generated database
       # --------------------------------------------------
-
-      - name: Show news database
+      - name: Show news summary
         run: |
-          echo "----------------------------------------"
-          echo "Generated news.json"
-          echo "----------------------------------------"
+          echo "======================================"
+          echo "Generated news database"
+          echo "======================================"
 
-          python -m json.tool news.json | head -n 120
+          python - <<'PY'
+          import json
 
-          echo ""
-          echo "File size:"
-          wc -c news.json
+          with open("news.json", "r", encoding="utf-8") as f:
+              data = json.load(f)
 
+          print("Updated:", data.get("updated", ""))
+
+          for section, stories in data["sections"].items():
+              print(f"{section}: {len(stories)} stories")
+          PY
 
       # --------------------------------------------------
-      # Commit changes
+      # Commit updated news.json
       # --------------------------------------------------
-
-      - name: Commit news update
+      - name: Commit updated news
         run: |
-
           git config user.name "Nepal News Bot"
-
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.email "actions@github.com"
 
           git add news.json
 
           if git diff --cached --quiet; then
-
-            echo "No news changes detected."
-
+            echo "No changes to commit."
           else
-
-            git commit \
-              -m "Auto update Nepal news"
-
+            git commit -m "Update Nepal news"
             git push
-
           fi
