@@ -201,7 +201,7 @@ main{padding:20px 0 46px}
   position:relative;
   background:
     linear-gradient(0deg,rgba(3,13,29,.96) 0%,rgba(3,13,29,.38) 55%,rgba(3,13,29,.05) 100%),
-    url("https://images.unsplash.com/photo-1605649487212-47bdab064df7?auto=format&fit=crop&w=1500&q=85")
+    url("https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1500&q=85")
     center/cover;
   box-shadow:var(--shadow);
   color:#fff;
@@ -254,6 +254,8 @@ main{padding:20px 0 46px}
   font-size:12px;
   font-weight:800;
 }
+.hero-dot{width:8px;height:8px;border:0;border-radius:50%;padding:0;background:rgba(255,255,255,.45);transition:all .2s ease}
+.hero-dot.active{width:22px;border-radius:8px;background:#fff}
 .dots{
   position:absolute;
   left:50%;
@@ -1353,30 +1355,49 @@ function getSummary(x){
    NEWS RENDER
 ========================================================= */
 
+let heroStories = [];
+let heroIndex = 0;
+let heroTimer = null;
+
+function showHero(index){
+  if(!heroStories.length) return;
+  heroIndex = (index + heroStories.length) % heroStories.length;
+  const x = heroStories[heroIndex];
+  const image = x.image || IMAGE[x.section] || IMAGE.national;
+  const hero = document.querySelector(".hero");
+
+  hero.style.backgroundImage =
+    `linear-gradient(0deg,rgba(3,13,29,.96) 0%,rgba(3,13,29,.38) 55%,rgba(3,13,29,.05) 100%),url("${String(image).replace(/"/g,'\\\"')}")`;
+
+  document.getElementById("hero-title").textContent = getTitle(x);
+  document.getElementById("hero-summary").textContent = getSummary(x);
+  document.getElementById("hero-meta").textContent =
+    (x.published ? fmtDate(x.published)+" • " : "") + (x.source || "Original source");
+  document.getElementById("hero-link").href = x.link || "#";
+
+  document.querySelector(".dots").innerHTML = heroStories.map((_,i) =>
+    `<button class="hero-dot ${i===heroIndex ? "active":""}" aria-label="Story ${i+1}" onclick="showHero(${i})"></button>`
+  ).join("");
+}
+
+function startHeroSlider(){
+  clearInterval(heroTimer);
+  if(heroStories.length > 1) heroTimer = setInterval(() => showHero(heroIndex + 1), 6500);
+}
+
 function render(){
 
   const stories = allStories();
 
-  const top = stories.slice(0,10);
+  const top = Array.isArray(data?.latest) && data.latest.length
+    ? data.latest.slice(0,10)
+    : stories.slice(0,10);
 
-  const hero = top[0];
+  heroStories = top;
 
-  /* HERO */
-
-  if(hero){
-
-    document.getElementById("hero-title").textContent =
-      getTitle(hero);
-
-    document.getElementById("hero-summary").textContent =
-      getSummary(hero);
-
-    document.getElementById("hero-meta").textContent =
-      (hero.published ? fmtDate(hero.published)+" • " : "") +
-      (hero.source || "Original source");
-
-    document.getElementById("hero-link").href =
-      hero.link || "#";
+  if(heroStories.length){
+    showHero(0);
+    startHeroSlider();
   }
 
   /* TOP 10 */
@@ -1411,7 +1432,7 @@ function render(){
 
   /* LATEST */
 
-  const latest = stories.slice(0,4);
+  const latest = stories.slice(0,10);
 
   document.getElementById("latest-grid").innerHTML =
     latest.length
@@ -1446,7 +1467,7 @@ function render(){
         >
           <div
             class="category-image"
-            style="background-image:url('${IMAGE[s]}')"
+            style="background-image:url('${(data?.sections?.[s]?.[0]?.image || IMAGE[s])}')"
           >
             <span>${ICON[s]}</span>
           </div>
