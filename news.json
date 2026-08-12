@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-12T07:14:45.214398+00:00",
+  "updated": "2026-08-12T09:50:53.356289+00:00",
   "provider": "GNews",
   "sections": {
     "weather": [
@@ -168,6 +168,15 @@
         "section": "world"
       },
       {
+        "id": "fc31aa94e087c1a2ef3145ef5e589f0ae64c67303cecb7a88932c4f034f80726",
+        "title": "Russia Warns Of Retaliation Over Growing NATO Presence In Finland",
+        "summary": "Russia has expressed strong concerns regarding NATO's increasing military presence in Finland, labeling it as a destabilizing factor for Northern Europe., World News, Times Now.",
+        "source": "Times Now",
+        "link": "https://www.timesnownews.com/world/russia-warns-of-retaliation-over-growing-nato-presence-in-finland-article-155595582",
+        "published": "2026-08-11T19:24:11Z",
+        "section": "world"
+      },
+      {
         "id": "15e108c385f2b19b136498a129a90fd013dccdb1a6fbc567c95e2e2d85ee3c64",
         "title": "'Biggest attack since World War II': What stopped massive US strike on Iran? Trump reveals",
         "summary": "US News: US President Donald Trump said that the United States was on the verge of launching what he described as the \\\"biggest attack since World War II\\\" on Ir.",
@@ -210,15 +219,6 @@
         "source": "Hindustan Times",
         "link": "https://www.hindustantimes.com/world-news/gulf-states-accept-a-new-normal-in-hormuz-iran-is-in-control-101786442761049.html",
         "published": "2026-08-11T12:06:44Z",
-        "section": "world"
-      },
-      {
-        "id": "c6fc9ffa3aa4aedae188c5d737974bd57bf01dafc7614cf5bc3e0c3c1bfc1ce0",
-        "title": "Middle East and north Africa",
-        "summary": "Latest news, sport, business, comment, analysis and reviews from the Guardian, the world's leading liberal voice.",
-        "source": "The Guardian",
-        "link": "https://www.theguardian.com/world/middleeast",
-        "published": "2026-08-10T20:45:52Z",
         "section": "world"
       },
       {
