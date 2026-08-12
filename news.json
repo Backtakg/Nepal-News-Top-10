@@ -1,15 +1,282 @@
 {
-  "updated": "",
+  "updated": "2026-08-12T07:14:45.214398+00:00",
+  "provider": "GNews",
   "sections": {
-    "national": [],
+    "weather": [
+      {
+        "id": "8b4031bb8d11ef7e8ae828796cbfddba5c453c68ca2675e5f8d17da7e7d257b1",
+        "title": "South Asia updates: Dhaka outreach, Nepal shifts, China typhoon red alert",
+        "summary": "Sunday's developments spanned Bangladesh-India outreach, Nepal's political moves, China's typhoon alarm and security incidents elsewhere.",
+        "source": "India Today",
+        "link": "https://www.indiatoday.in/world/story/south-asia-updates-bangladesh-india-ties-nepal-politics-china-typhoon-red-alert-ptag-2967150-2026-08-09",
+        "published": "2026-08-09T12:00:34Z",
+        "section": "weather"
+      },
+      {
+        "id": "a838032792d4a9f43f3a6fb872c8d0c4daeab9288406275fe01db8f1c43f7ee6",
+        "title": "Crowds, Climate Change and the Future of Climbing",
+        "summary": "Harpreet S Grover, a former Everest aspirant, reflects on the mountain's overcrowding, environmental issues, and Nepal's efforts to regulate climbing.",
+        "source": "Forbes India",
+        "link": "https://www.forbesindia.com/article/life/scaling-up-what-a-record-number-of-summiteers-mean-for-mt-everest/2995924/1",
+        "published": "2026-07-16T07:44:22Z",
+        "section": "weather"
+      }
+    ],
+    "national": [
+      {
+        "id": "98bc6e8539f725ffa55ebd4a363720ad0d8602943ac03bf2312491ee799dc6f7",
+        "title": "Chinese nationals top Nepal’s deportation list",
+        "summary": "Chinese nationals top Nepal’s deportation list - Kathmandu, Aug 10 Nepal deported the largest number of Chinese nationals for violating the country's immigration laws over ...",
+        "source": "Lokmat Times",
+        "link": "https://www.lokmattimes.com/international/chinese-nationals-top-nepals-deportation-list/",
+        "published": "2026-08-10T06:04:31Z",
+        "section": "national"
+      },
+      {
+        "id": "f7493ef502753f81e864b292bf77944432bc39136e7e6d6bfcbdd0c67f5996d6",
+        "title": "Nepal wants to become vibrant bridge connecting India, China: FM Khanal",
+        "summary": "KATHMANDU, Aug 7 : Nepal wants to transform itself from a landlocked country into a 'vibrant, dynamic bridge' connecting India and China, Foreign Minister Shisir Khanal said here on Friday.",
+        "source": "Daily Excelsior",
+        "link": "https://www.dailyexcelsior.com/nepal-wants-to-become-vibrant-bridge-connecting-india-china-fm-khanal/",
+        "published": "2026-08-07T22:36:25Z",
+        "section": "national"
+      },
+      {
+        "id": "774b7ef2efc378b25b8f3c187d5dcf3247bb6b984552a08180d61fa7e24a2f98",
+        "title": "​10 foods Nepalese families eat on a regular basis",
+        "summary": "Nepal’s food culture is shaped by its mountains, fertile plains and remarkable ethnic diversity, but everyday meals remain surprisingly simple.",
+        "source": "Times of India",
+        "link": "https://timesofindia.indiatimes.com/life-style/food-news/10-foods-nepalese-families-eat-on-a-regular-basis/photostory/133021478.cms",
+        "published": "2026-08-07T08:30:00Z",
+        "section": "national"
+      },
+      {
+        "id": "5227f661c882481cca53474ba9371d814a864df6ff94a362bc24750d978f60cd",
+        "title": "Broad Peak avalanche wipes out a generation of Nepal's climbing greatsBroad Peak avalanche wipes out a generation of Nepal's climbing greats",
+        "summary": "KATHMANDU: When a massive avalanche swept down Pakistan's 8,051-metre Broad Peak on Thursday morning, it did more than claim six Nepali lives.",
+        "source": "The Star",
+        "link": "https://www.thestar.com.my/aseanplus/aseanplus-news/2026/08/02/broad-peak-avalanche-wipes-out-a-generation-of-nepal039s-climbing-greatsbroad-peak-avalanche-wipes-out-a-generation-of-nepal039s-climbing-greats",
+        "published": "2026-08-02T05:34:00Z",
+        "section": "national"
+      },
+      {
+        "id": "7afaac4f7e88c3b2652aba81fdae9b514373fd78d0dad69cd94ad5c7dea0b1db",
+        "title": "President to former monarch, Nepal leaders urge unity as violence in southern plains claims two lives in five days",
+        "summary": "Amid the continued violence that had spiralled and gripped Nepal's southern plains, the country's top political figures, including President Ram Chandra Paudel, CPN-UML Chairman KP Sharma Oli and former King Gyanendra Shah, have appealed for calm, unity and restraint, warning...",
+        "source": "The Tribune",
+        "link": "https://www.tribuneindia.com/news/world/president-to-former-monarch-nepal-leaders-urge-unity-as-violence-in-southern-plains-claims-two-lives-in-five-days/",
+        "published": "2026-07-30T14:18:04Z",
+        "section": "national"
+      },
+      {
+        "id": "667b2f17a45c07cc076bab9ce7fabd602578b7df5433a66a041e321bcc7b6b51",
+        "title": "Sandeep Lamichhane returns as Nepal ODI captain, replaces Rohit Paudel",
+        "summary": "Cricket News: Nepal have made a major leadership change ahead of the ACC Men’s Premier Cup, with leg-spinner Sandeep Lamichhane returning as the country’s ODI capta.",
+        "source": "Times of India",
+        "link": "https://timesofindia.indiatimes.com/sports/cricket/news/sandeep-lamichhane-returns-as-nepal-odi-captain-replaces-rohit-paudel/articleshow/133118738.cms",
+        "published": "2026-08-10T16:34:00Z",
+        "section": "national"
+      },
+      {
+        "id": "e3f8befd861401a11b0b2be89d0b34ec404da17b4ce5ead727571bcb8da8ea48",
+        "title": "'Your legacy will live forever': Nepal mourns climber Nirmal Purja",
+        "summary": "Tributes are pouring out across Nepal after an avalanche killed some of the country's best mountaineers.",
+        "source": "BBC News",
+        "link": "https://www.bbc.com/news/articles/c07rvy4e7mno",
+        "published": "2026-08-03T05:31:55Z",
+        "section": "national"
+      },
+      {
+        "id": "dd4cd3a1c726c65e7b9c4119119267ccccc3f7525df856799df5b98655dcd11f",
+        "title": "Pakistan teams search on foot for remains of climbers as weather grounds helicopters",
+        "summary": "Teams in Pakistan are searching on foot for the remains of 10 climbers killed in an avalanche on the world’s 12th-highest mountain.",
+        "source": "The Atlanta Journal-Constitution",
+        "link": "https://www.ajc.com/news/2026/08/pakistan-teams-search-on-foot-for-remains-of-climbers-as-weather-grounds-helicopters/",
+        "published": "2026-08-04T09:32:44Z",
+        "section": "national"
+      },
+      {
+        "id": "1578ac27aa24897c16a1d8ba0efe59f983039a2a42da751bdf1cc7c4cfea22bd",
+        "title": "Hunt for a ‘global toolkit’: Republic blamed everyone from US deep state to Greta Thunberg for CJP stir",
+        "summary": "As the Cockroach Janata Party (CJP)-led youth protests gained momentum across the country last month, an alleged ‘global toolkit’ behind the movement became the latest subject of ‘investigation’ for Republic Network.",
+        "source": "Alt News",
+        "link": "https://www.altnews.in/hunt-for-a-global-toolkit-republic-blamed-everyone-from-us-deep-state-to-greta-thunberg-for-cjp-stir/",
+        "published": "2026-08-04T07:08:09Z",
+        "section": "national"
+      }
+    ],
     "politics": [],
-    "business": [],
+    "business": [
+      {
+        "id": "3e69c6e479463aac050ade92820acccdc03d6f30696a4d4ca469b7f670803fa5",
+        "title": "Nepal Govt Withdraws 3% Equity Tax On Private Education, Health Sectors After Public Backlash",
+        "summary": "Nepal’s government withdrew the 3% equity tax on private education and health sectors after public criticism, Prime Minister Balendra Shah said.",
+        "source": "Free Press Journal",
+        "link": "https://www.freepressjournal.in/world/nepal-govt-withdraws-3-equity-tax-on-private-education-health-sectors-after-public-backlash",
+        "published": "2026-07-21T18:56:11Z",
+        "section": "business"
+      }
+    ],
     "sports": [],
-    "technology": [],
+    "technology": [
+      {
+        "id": "5173b8a3983083441e289c5e3416ed8d9241e08b5aa20230c017b2269425d410",
+        "title": "Physical activity, sleep pattern and problematic internet use in undergraduate health-sciences students of Nepal - A cross-sectional study",
+        "summary": "Author summary This study addresses the relationship between digital technology use and the well-being of students.",
+        "source": "PLOS (Public Library of Science)",
+        "link": "https://journals.plos.org/digitalhealth/article?id=10.1371%2Fjournal.pdig.0000797",
+        "published": "2026-07-23T00:00:00Z",
+        "section": "technology"
+      },
+      {
+        "id": "9b2d54cdc9401491a798811af464722ebc5a4602b992ae7e142b7a8d9b251194",
+        "title": "Supervised machine learning-based prediction of modern contraceptive use among sexually active women in Nepal",
+        "summary": "Author summary A range of personal, social, and cultural factors influences decisions about contraceptive use.",
+        "source": "PLOS (Public Library of Science)",
+        "link": "https://journals.plos.org/digitalhealth/article?id=10.1371%2Fjournal.pdig.0001578",
+        "published": "2026-07-13T00:00:00Z",
+        "section": "technology"
+      },
+      {
+        "id": "a8a0800435c9e300af4e3e2f537644e288c5af2c13c2ed30af20cb26cfb56fb4",
+        "title": "No, This Video Does Not Show Youth Destroying 'Illegal' Mosques in Nepal",
+        "summary": "Fact-check: A video is being shared on the internet, falsely claiming to show the youth of Nepal destroying 'illegally' constructed mosques.",
+        "source": "The Quint",
+        "link": "https://www.thequint.com/news/webqoof/old-video-of-vandalism-of-mosque-in-new-delhi-goes-viral-again-false-claim-fact-check",
+        "published": "2026-08-05T10:47:13Z",
+        "section": "technology"
+      }
+    ],
     "entertainment": [],
-    "world": [],
-    "crime": [],
-    "health": [],
-    "weather": []
+    "world": [
+      {
+        "id": "a50a5e4902d481d0e72b129f950f4f030c9621455af0dcc69153b30d0488e9f2",
+        "title": "World News Briefs: 'War of Endurance' Burns Books, Tensions Flare Globally",
+        "summary": "A wide array of global news highlights pressing issues: Ukraine's 'war of endurance' burns millions of books, Bangladesh seeks better relations with India, and Iran views a regional security pact.",
+        "source": "Devdiscourse",
+        "link": "https://www.devdiscourse.com/article/politics/3962010-world-news-briefs-war-of-endurance-burns-books-tensions-flare-globally",
+        "published": "2026-08-10T12:58:33Z",
+        "section": "world"
+      },
+      {
+        "id": "cbbfbf4ed96dc004321f91047e4135318faeacc9ec4548a3402868800035726f",
+        "title": "Indian EdTech Company Edubex Expands Global Footprint with AI-Enabled Learning, International University Partnerships and 200 plus Career Programmes",
+        "summary": "Kerala [India], August 10: India has emerged as one of the world's leading exporters of education, technology, and skilled talent.",
+        "source": "ANI (Asian News International)",
+        "link": "https://www.aninews.in/news/business/indian-edtech-company-edubex-expands-global-footprint-with-ai-enabled-learning-international-university-partnerships-and-200-plus-career-programmes20260810164506/",
+        "published": "2026-08-10T11:15:06Z",
+        "section": "world"
+      },
+      {
+        "id": "15e108c385f2b19b136498a129a90fd013dccdb1a6fbc567c95e2e2d85ee3c64",
+        "title": "'Biggest attack since World War II': What stopped massive US strike on Iran? Trump reveals",
+        "summary": "US News: US President Donald Trump said that the United States was on the verge of launching what he described as the \\\"biggest attack since World War II\\\" on Ir.",
+        "source": "Times of India",
+        "link": "https://timesofindia.indiatimes.com/world/us/biggest-attack-since-world-war-ii-what-stopped-massive-us-strike-on-iran-trump-reveals/articleshow/132978997.cms",
+        "published": "2026-08-06T01:35:00Z",
+        "section": "world"
+      },
+      {
+        "id": "a98bee8d263ddd8c0a0eae551146de4f49e0801e56ceeb7180518b3c65765d5c",
+        "title": "Current World News Briefs: Key Highlights",
+        "summary": "The world news briefs cover various global events, including Spain's efforts to identify and bury migrants in Ceuta, a deadly school shooting in Thailand, tensions between the Philippines and China, Taiwan's military exercises, and the ongoing challenges faced by the Trump...",
+        "source": "Devdiscourse",
+        "link": "https://www.devdiscourse.com/article/law-order/3961160-current-world-news-briefs-key-highlights",
+        "published": "2026-08-07T13:01:26Z",
+        "section": "world"
+      },
+      {
+        "id": "975a7c72ac0d0b59099a7c16e3114d21ae930233f6f6b3cb75df4efb5021e6ba",
+        "title": "Enabled Learning, International University Partnerships and 200 plus Career Programmes",
+        "summary": "Kerala [India], August 10: India has emerged as one of the world's leading exporters of education, technology, and skilled talent.",
+        "source": "The Tribune",
+        "link": "https://www.tribuneindia.com/news/business/indian-edtech-company-edubex-expands-global-footprint-with-ai-enabled-learning-international-university-partnerships-and-200-plus-career-programmes/",
+        "published": "2026-08-10T11:18:43Z",
+        "section": "world"
+      },
+      {
+        "id": "694647638b09ba5441f8a0839d4535e8a4f4aee2c1cd42cb5017a44697ec68a9",
+        "title": "US-Iran War Live: Saudi says more attacks by Iranian proxies imminent as Houthi strike injures 11",
+        "summary": "US-Iran War News Live Updates: Iran has stepped up diplomatic efforts to avert another round of US strikes, warning Gulf states that any attack on its territory would trigger retaliation against energy infrastructure, oil facilities and US-linked assets across the region,...",
+        "source": "India Today",
+        "link": "https://www.indiatoday.in/world/story/us-iran-war-news-live-updates-trump-iran-oman-gulf-states-hormuz-blockade-middle-east-conflict-oil-prices-latest-news-2964679-2026-08-06",
+        "published": "2026-08-05T20:10:11Z",
+        "section": "world"
+      },
+      {
+        "id": "1f070e6548d41d9fe506e1889fea72efec2b53473d6770208ced73be188315de",
+        "title": "Gulf States Accept a New Normal in Hormuz: Iran Is in Control",
+        "summary": "Some of the world’s largest energy exporters dislike the emerging deal to reopen the waterway but fear going back to war would be worse.",
+        "source": "Hindustan Times",
+        "link": "https://www.hindustantimes.com/world-news/gulf-states-accept-a-new-normal-in-hormuz-iran-is-in-control-101786442761049.html",
+        "published": "2026-08-11T12:06:44Z",
+        "section": "world"
+      },
+      {
+        "id": "c6fc9ffa3aa4aedae188c5d737974bd57bf01dafc7614cf5bc3e0c3c1bfc1ce0",
+        "title": "Middle East and north Africa",
+        "summary": "Latest news, sport, business, comment, analysis and reviews from the Guardian, the world's leading liberal voice.",
+        "source": "The Guardian",
+        "link": "https://www.theguardian.com/world/middleeast",
+        "published": "2026-08-10T20:45:52Z",
+        "section": "world"
+      },
+      {
+        "id": "02b0877469975e0cc4621822f08e823220a9b1883465d657f1f4480dde1dfcbb",
+        "title": "Iran threatens to hit Gulf states if US launches new strikes as Hormuz talks continue: Report",
+        "summary": "Iran warned Gulf states that any new US attack could trigger retaliation against critical regional energy infrastructure, Reuters reported, citing five sources.",
+        "source": "Hindustan Times",
+        "link": "https://www.hindustantimes.com/world-news/iran-threatens-to-hit-gulf-states-if-us-launches-new-strikes-as-hormuz-talks-continue-report-101785959955827.html",
+        "published": "2026-08-05T20:05:48Z",
+        "section": "world"
+      },
+      {
+        "id": "20021e9a48e39d752ac98633c262b7a71d9cc81a91cff7c6c66da025c5137509",
+        "title": "Saudi Crown Prince Mohammed bin Salman's $450 million superyacht hides a secret sea cabin deep inside the hull, designed to reduce seasickness and ensure peaceful sleep during rough voyages",
+        "summary": "Rest of World News: To escape the scorching summer heat of the Middle East, Saudi Crown Prince Mohammed bin Salman Al Saud equipped his $450 million superyacht Serene wit.",
+        "source": "Times of India",
+        "link": "https://timesofindia.indiatimes.com/world/rest-of-world/saudi-crown-prince-mohammed-bin-salmans-450-million-superyacht-hides-a-secret-sea-cabin-deep-inside-the-hull-designed-to-reduce-seasickness-and-ensure-peaceful-sleep-during-rough-voyages/articleshow/133010407.cms",
+        "published": "2026-08-06T17:21:00Z",
+        "section": "world"
+      }
+    ],
+    "health": [
+      {
+        "id": "3a65897334036af995e8386e772f196956b46286355b7027d238cfeca33ec675",
+        "title": "Nepal's Central Zoo Reopens After Bird Flu Outbreak Shutdown",
+        "summary": "Nepal's Central Zoo has reopened after a nearly month-long closure due to a bird flu outbreak.",
+        "source": "Devdiscourse",
+        "link": "https://www.devdiscourse.com/article/international/3952112-nepals-central-zoo-reopens-after-bird-flu-outbreak-shutdown",
+        "published": "2026-07-17T17:34:16Z",
+        "section": "health"
+      },
+      {
+        "id": "4ee825a94130df816b1160572ff89c1b19b78cd87ba129ceb1ae9d3c4d139654",
+        "title": "ming back: Nepal's Central Zoo welcomes visitors after 27 days of Bird Flu closure",
+        "summary": "The zoo has been shut down since June 19 following an outbreak of the bird flu virus among vultures, owls, swans and other rare birds, as well as a jungle cat and civets kept at the facility.",
+        "source": "The Tribune",
+        "link": "https://www.tribuneindia.com/news/world/zoo-ming-back-nepals-central-zoo-welcomes-visitors-after-27-days-of-bird-flu-closure/",
+        "published": "2026-07-17T17:33:01Z",
+        "section": "health"
+      }
+    ],
+    "crime": []
+  },
+  "diagnostics": {
+    "successful_categories": [
+      "weather",
+      "national",
+      "politics",
+      "business",
+      "sports",
+      "technology",
+      "entertainment",
+      "world",
+      "health",
+      "crime"
+    ],
+    "failed_categories": [],
+    "api_articles": 28,
+    "final_articles": 27
   }
 }
