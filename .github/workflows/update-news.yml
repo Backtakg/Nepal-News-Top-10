@@ -10,21 +10,15 @@ on:
 permissions:
   contents: write
 
-concurrency:
-  group: update-nepal-news
-  cancel-in-progress: true
-
 jobs:
-  update-news:
+  scrape-news:
 
     runs-on: ubuntu-latest
-
-    timeout-minutes: 15
 
     steps:
 
       # --------------------------------------------------
-      # CHECKOUT
+      # Checkout repository
       # --------------------------------------------------
 
       - name: Checkout repository
@@ -34,7 +28,7 @@ jobs:
 
 
       # --------------------------------------------------
-      # PYTHON
+      # Setup Python
       # --------------------------------------------------
 
       - name: Setup Python
@@ -45,62 +39,63 @@ jobs:
 
 
       # --------------------------------------------------
-      # INSTALL
+      # Install scraper dependencies
       # --------------------------------------------------
 
-      - name: Install scraper dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+
           pip install \
-            feedparser \
             requests \
-            beautifulsoup4
+            beautifulsoup4 \
+            feedparser \
+            lxml
 
 
       # --------------------------------------------------
-      # RUN SCRAPER
+      # Check scraper exists
       # --------------------------------------------------
 
-      - name: Scrape and build news database
+      - name: Check scraper
+        run: |
+          test -f scraper.py
+          echo "scraper.py found."
+
+
+      # --------------------------------------------------
+      # Run scraper
+      # --------------------------------------------------
+
+      - name: Run news scraper
         run: |
           python scraper.py
 
 
       # --------------------------------------------------
-      # VALIDATE JSON
+      # Validate generated news.json
       # --------------------------------------------------
 
-      - name: Validate news.json
+      - name: Validate news database
         run: |
+          test -f news.json
+
           python - <<'PY'
           import json
           from pathlib import Path
 
           path = Path("news.json")
 
-          if not path.exists():
-              raise SystemExit("ERROR: news.json was not created")
-
-          with path.open(
-              "r",
-              encoding="utf-8"
-          ) as f:
+          with path.open("r", encoding="utf-8") as f:
               data = json.load(f)
 
+          if not isinstance(data, dict):
+              raise SystemExit("news.json is not a JSON object")
+
+          sections = data.get("sections", {})
+
           required = [
-              "updated",
-              "top10",
-              "sections",
-              "sources"
-          ]
-
-          for key in required:
-              if key not in data:
-                  raise SystemExit(
-                      f"ERROR: missing key: {key}"
-                  )
-
-          sections = [
+              "weather",
               "national",
               "politics",
               "business",
@@ -108,121 +103,82 @@ jobs:
               "technology",
               "entertainment",
               "world",
-              "crime",
               "health",
-              "weather"
+              "crime"
           ]
 
-          for section in sections:
+          missing = [
+              section
+              for section in required
+              if section not in sections
+          ]
 
-              if section not in data["sections"]:
-                  raise SystemExit(
-                      f"ERROR: missing section: {section}"
-                  )
-
-              count = len(
-                  data["sections"][section]
+          if missing:
+              raise SystemExit(
+                  "Missing sections: " + ", ".join(missing)
               )
 
+          total = sum(
+              len(sections.get(section, []))
+              for section in required
+          )
+
+          print("Total stories:", total)
+
+          for section in required:
               print(
-                  f"{section}: {count} articles"
+                  f"{section}: "
+                  f"{len(sections.get(section, []))}"
               )
 
-          print("")
-          print("news.json validation PASSED")
-          print(
-              "Overall Top 10:",
-              len(data["top10"])
-          )
-
-          print(
-              "Working sources:",
-              len(
-                  data["sources"]["working"]
+          if total == 0:
+              raise SystemExit(
+                  "ERROR: Scraper produced zero stories."
               )
-          )
 
-          print(
-              "Failed sources:",
-              len(
-                  data["sources"]["failed"]
-              )
-          )
+          print("news.json validation successful.")
           PY
 
 
       # --------------------------------------------------
-      # SHOW NEWS PREVIEW IN ACTION LOG
+      # Show scraper output
       # --------------------------------------------------
 
-      - name: Show generated news
+      - name: Show news database
         run: |
-          echo "======================================"
-          echo "GENERATED NEWS PREVIEW"
-          echo "======================================"
+          echo "----------------------------------------"
+          echo "Generated news.json"
+          echo "----------------------------------------"
 
-          python - <<'PY'
-          import json
+          python -m json.tool news.json | head -n 120
 
-          with open(
-              "news.json",
-              encoding="utf-8"
-          ) as f:
-              data = json.load(f)
-
-          print("")
-          print("UPDATED:")
-          print(data["updated"])
-
-          print("")
-          print("TOP 10:")
-          print("")
-
-          for i, item in enumerate(
-              data["top10"],
-              1
-          ):
-              print(
-                  f"{i}. {item['title']}"
-              )
-              print(
-                  f"   {item['source']}"
-              )
-
-          print("")
-          print("CATEGORIES:")
-          print("")
-
-          for section, items in data[
-              "sections"
-          ].items():
-
-              print(
-                  f"{section}: {len(items)}"
-              )
-          PY
+          echo ""
+          echo "File size:"
+          wc -c news.json
 
 
       # --------------------------------------------------
-      # COMMIT
+      # Commit changes
       # --------------------------------------------------
 
-      - name: Commit updated news
+      - name: Commit news update
         run: |
 
           git config user.name "Nepal News Bot"
 
-          git config user.email \
-            "actions@github.com"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add news.json
 
           if git diff --cached --quiet; then
+
             echo "No news changes detected."
-            exit 0
+
+          else
+
+            git commit \
+              -m "Auto update Nepal news"
+
+            git push
+
           fi
-
-          git commit \
-            -m "Update Nepal news database"
-
-          git push
