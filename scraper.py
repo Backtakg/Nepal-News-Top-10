@@ -15,7 +15,7 @@ import requests
 
 API_URL = "https://gnews.io/api/v4/search"
 
-API_KEY = os.environ.get("GNEWS_API_KEY", "").strip()
+API_KEY = os.environ.get("NEWS_API_KEY", "").strip()
 
 OUTPUT_FILE = Path("news.json")
 
