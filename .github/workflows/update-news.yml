@@ -2,7 +2,7 @@ name: Update Nepal News
 
 on:
   schedule:
-    - cron: "0 */3 * * *"
+    - cron: "0 */6 * * *"
   workflow_dispatch:
 
 permissions:
@@ -15,7 +15,7 @@ concurrency:
 jobs:
   scrape-news:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Checkout repository
@@ -70,7 +70,7 @@ jobs:
               "world",
               "crime",
               "health",
-              "weather"
+              "weather",
           ]
 
           total = 0
@@ -79,25 +79,33 @@ jobs:
               articles = sections.get(section, [])
 
               if not isinstance(articles, list):
-                  raise SystemExit(
-                      f"{section} is not a list"
-                  )
+                  raise SystemExit(f"{section} is not a list")
 
               count = len(articles)
+              print(f"{section}: {count} articles")
 
-              print(
-                  f"{section}: {count} articles"
-              )
+              if count < 10:
+                  raise SystemExit(
+                      f"{section} has only {count} articles. "
+                      "Refusing to publish incomplete news."
+                  )
 
               total += count
 
-          print(f"TOTAL ARTICLES: {total}")
+          latest = data.get("latest", [])
 
-          if total == 0:
+          if not isinstance(latest, list):
+              raise SystemExit("latest is not a list")
+
+          print(f"latest: {len(latest)} articles")
+
+          if len(latest) < 10:
               raise SystemExit(
-                  "ERROR: scraper produced zero articles"
+                  f"latest has only {len(latest)} articles. "
+                  "Refusing to publish incomplete news."
               )
 
+          print(f"TOTAL SECTION ARTICLES: {total}")
           print("news.json validation PASSED")
           PY
 
@@ -111,12 +119,11 @@ jobs:
 
           print("")
           print("====================================")
-          print("NEWS DATABASE")
+          print("NEPAL NEWS DATABASE")
           print("====================================")
           print("Updated:", data.get("updated", ""))
 
           sections = data.get("sections", {})
-
           total = 0
 
           for section, articles in sections.items():
@@ -125,6 +132,7 @@ jobs:
               print(f"{section}: {count}")
 
           print("------------------------------------")
+          print("Latest:", len(data.get("latest", [])))
           print("TOTAL:", total)
           print("====================================")
           PY
