@@ -13,21 +13,36 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # --------------------------------------------------
+      # Checkout repository
+      # --------------------------------------------------
+
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1
 
+      # --------------------------------------------------
+      # Setup Python
+      # --------------------------------------------------
+
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-          cache: "pip"
+
+      # --------------------------------------------------
+      # Install scraper dependencies
+      # --------------------------------------------------
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4 feedparser
+
+      # --------------------------------------------------
+      # Run scraper
+      # --------------------------------------------------
 
       - name: Run news scraper
         env:
@@ -35,7 +50,11 @@ jobs:
         run: |
           python scraper.py
 
-      - name: Validate generated news.json
+      # --------------------------------------------------
+      # Validate news.json
+      # --------------------------------------------------
+
+      - name: Validate news database
         run: |
           test -f news.json
 
@@ -59,7 +78,7 @@ jobs:
           if not isinstance(sections, dict):
               raise SystemExit("'sections' must be an object")
 
-          expected = [
+          expected_sections = [
               "national",
               "politics",
               "business",
@@ -74,7 +93,8 @@ jobs:
 
           total = 0
 
-          for section in expected:
+          for section in expected_sections:
+
               articles = sections.get(section, [])
 
               if not isinstance(articles, list):
@@ -82,41 +102,49 @@ jobs:
                       f"Section '{section}' is not a list"
                   )
 
-              print(
-                  f"{section}: {len(articles)} articles"
-              )
+              count = len(articles)
 
-              total += len(articles)
+              print(f"{section}: {count} articles")
 
-          print(f"Total articles: {total}")
+              total += count
+
+          print("")
+          print(f"TOTAL ARTICLES: {total}")
 
           if total == 0:
               raise SystemExit(
-                  "ERROR: scraper produced zero news articles"
+                  "ERROR: scraper produced zero articles"
               )
 
+          print("")
           print("news.json validation passed.")
           PY
 
-      - name: Show news database
-        run: |
-          echo "----------------------------------------"
-          echo "Generated news.json"
-          echo "----------------------------------------"
+      # --------------------------------------------------
+      # Show database summary
+      # --------------------------------------------------
 
+      - name: Show news summary
+        run: |
           python - <<'PY'
           import json
 
           with open("news.json", "r", encoding="utf-8") as f:
               data = json.load(f)
 
-          print("Updated:", data.get("updated", ""))
+          print("Updated:")
+          print(data.get("updated", ""))
 
-          sections = data.get("sections", {})
+          print("")
+          print("Sections:")
 
-          for section, articles in sections.items():
-              print(f"{section}: {len(articles)}")
+          for section, articles in data.get("sections", {}).items():
+              print(f"  {section}: {len(articles)}")
           PY
+
+      # --------------------------------------------------
+      # Commit updated news.json
+      # --------------------------------------------------
 
       - name: Commit updated news
         run: |
@@ -126,7 +154,7 @@ jobs:
           git add news.json
 
           if git diff --cached --quiet; then
-            echo "No news changes to commit."
+            echo "No changes to news.json."
           else
             git commit -m "Update Nepal news"
             git push
