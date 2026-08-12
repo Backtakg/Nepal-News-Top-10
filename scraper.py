@@ -1,32 +1,36 @@
-#!/usr/bin/env python3
-
-import json
 import os
 import re
-import html
-import hashlib
+import json
 import time
+import hashlib
+from pathlib import Path
 from datetime import datetime, timezone
-from urllib.parse import quote, urlparse
 
 import requests
-import feedparser
 
 
 # ============================================================
-# CONFIG
+# CONFIGURATION
 # ============================================================
 
-OUTPUT_FILE = "news.json"
-TOP_N = 10
-TIMEOUT = 20
+API_URL = "https://gnews.io/api/v4/search"
 
-USER_AGENT = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/131.0 Safari/537.36 "
-    "NepalNewsTop10/1.0"
-)
+API_KEY = os.environ.get("GNEWS_API_KEY", "").strip()
+
+OUTPUT_FILE = Path("news.json")
+
+MAX_PER_CATEGORY = 10
+
+REQUEST_TIMEOUT = 30
+
+# GNews free tier allows 100 requests/day.
+# We use exactly 10 requests per workflow run.
+REQUEST_DELAY = 1.2
+
+
+# ============================================================
+# REQUIRED SECTIONS
+# ============================================================
 
 SECTIONS = [
     "weather",
@@ -43,225 +47,293 @@ SECTIONS = [
 
 
 # ============================================================
-# GOOGLE NEWS SEARCHES
+# CATEGORY SEARCH QUERIES
 # ============================================================
 
-GOOGLE_QUERIES = {
+# These are deliberately targeted toward Nepal.
+#
+# The API searches title + description.
+# We use OR heavily so that one narrow keyword does not
+# cause an entire category to become empty.
+
+QUERIES = {
+
+    "weather": (
+        'Nepal weather OR Nepal rainfall OR Nepal flood OR '
+        'Nepal monsoon OR Nepal landslide OR Nepal storm OR '
+        'Nepal temperature OR Nepal climate'
+    ),
+
+    "national": (
+        'Nepal OR Kathmandu OR government of Nepal OR '
+        'Nepal country'
+    ),
+
+    "politics": (
+        'Nepal politics OR Nepal government OR parliament Nepal OR '
+        'Nepal election OR prime minister Nepal OR president Nepal OR '
+        'Nepali Congress OR UML Nepal'
+    ),
+
+    "business": (
+        'Nepal business OR Nepal economy OR Nepal bank OR '
+        'NEPSE OR Nepal investment OR Nepal trade OR '
+        'Nepal tourism OR Nepal finance'
+    ),
+
+    "sports": (
+        'Nepal cricket OR Nepal football OR Nepal sports OR '
+        'Nepal tournament OR Nepali athlete OR '
+        'Nepal national team OR ICC Nepal'
+    ),
+
+    "technology": (
+        'Nepal technology OR Nepal tech OR Nepal AI OR '
+        'Nepal digital OR Nepal startup OR Nepal cybersecurity OR '
+        'Nepal internet'
+    ),
+
+    "entertainment": (
+        'Nepal entertainment OR Nepali movie OR Nepali film OR '
+        'Nepali music OR Nepali actor OR Nepali singer OR '
+        'Nepal cinema OR Nepali celebrity'
+    ),
+
+    "world": (
+        'world news OR international news OR India OR China OR '
+        'United States OR Europe OR Middle East OR Ukraine OR '
+        'Russia OR Israel OR Iran'
+    ),
+
+    "health": (
+        'Nepal health OR Nepal hospital OR Nepal disease OR '
+        'Nepal doctor OR Nepal medicine OR Nepal healthcare OR '
+        'Nepal dengue OR Nepal outbreak'
+    ),
+
+    "crime": (
+        'Nepal crime OR Nepal police OR Nepal arrest OR '
+        'Nepal murder OR Nepal fraud OR Nepal robbery OR '
+        'Nepal court OR Nepal investigation OR Nepal accident'
+    ),
+}
+
+
+# ============================================================
+# CATEGORY KEYWORDS
+# ============================================================
+
+# Used as a second filtering/ranking layer.
+# This helps prevent unrelated results from appearing
+# in a category simply because the search engine returned them.
+
+CATEGORY_KEYWORDS = {
+
     "weather": [
-        "Nepal weather rainfall flood monsoon landslide storm",
-        "Nepal rain flood landslide temperature weather",
-        "Kathmandu weather rainfall Nepal",
+        "weather",
+        "rain",
+        "rainfall",
+        "flood",
+        "flooding",
+        "monsoon",
+        "landslide",
+        "storm",
+        "temperature",
+        "climate",
+        "snow",
+        "thunderstorm",
+        "lightning",
+        "heatwave",
+        "cold wave",
+        "forecast",
     ],
 
     "national": [
-        "Nepal latest news",
-        "Nepal breaking news today",
-        "Nepal news today",
+        "nepal",
+        "kathmandu",
+        "government",
+        "nation",
+        "national",
+        "ministry",
+        "province",
+        "municipality",
     ],
 
     "politics": [
-        "Nepal politics government parliament",
-        "Nepal prime minister minister cabinet",
-        "Nepal political parties election",
+        "politics",
+        "political",
+        "government",
+        "minister",
+        "prime minister",
+        "president",
+        "parliament",
+        "election",
+        "party",
+        "coalition",
+        "cabinet",
+        "uml",
+        "congress",
+        "maoist",
     ],
 
     "business": [
-        "Nepal business economy finance",
-        "Nepal NEPSE stock market banking",
-        "Nepal trade investment remittance",
+        "business",
+        "economy",
+        "economic",
+        "bank",
+        "banking",
+        "finance",
+        "market",
+        "nepse",
+        "stock",
+        "investment",
+        "trade",
+        "tourism",
+        "company",
+        "industry",
+        "remittance",
     ],
 
     "sports": [
-        "Nepal cricket football sports",
-        "Nepal cricket latest news",
-        "Nepal football latest news",
+        "sports",
+        "sport",
+        "cricket",
+        "football",
+        "soccer",
+        "match",
+        "tournament",
+        "league",
+        "player",
+        "athlete",
+        "fifa",
+        "icc",
+        "championship",
+        "olympic",
     ],
 
     "technology": [
-        "Nepal technology digital AI cyber",
-        "Nepal technology startup internet",
-        "Nepal artificial intelligence technology",
+        "technology",
+        "tech",
+        "artificial intelligence",
+        "ai",
+        "digital",
+        "software",
+        "internet",
+        "cyber",
+        "cybersecurity",
+        "computer",
+        "startup",
+        "app",
+        "mobile",
     ],
 
     "entertainment": [
-        "Nepal entertainment movie music film",
-        "Nepali movie cinema music",
-        "Nepal singer actor entertainment",
+        "entertainment",
+        "movie",
+        "film",
+        "cinema",
+        "music",
+        "actor",
+        "actress",
+        "singer",
+        "concert",
+        "television",
+        "celebrity",
+        "festival",
     ],
 
     "world": [
-        "world latest news",
-        "India China international news",
-        "global breaking news",
+        "world",
+        "international",
+        "india",
+        "china",
+        "america",
+        "united states",
+        "usa",
+        "europe",
+        "russia",
+        "ukraine",
+        "israel",
+        "iran",
+        "pakistan",
+        "middle east",
     ],
 
     "health": [
-        "Nepal health hospital disease medical",
-        "Nepal dengue health outbreak",
-        "Nepal healthcare doctor medicine",
+        "health",
+        "hospital",
+        "doctor",
+        "disease",
+        "medical",
+        "medicine",
+        "patient",
+        "healthcare",
+        "virus",
+        "outbreak",
+        "dengue",
+        "infection",
+        "vaccine",
+        "epidemic",
     ],
 
     "crime": [
-        "Nepal crime police arrest",
-        "Nepal murder fraud court investigation",
-        "Nepal accident security crime",
+        "crime",
+        "police",
+        "arrest",
+        "murder",
+        "fraud",
+        "robbery",
+        "theft",
+        "court",
+        "criminal",
+        "investigation",
+        "accident",
+        "abuse",
+        "drug",
+        "scam",
     ],
 }
 
 
 # ============================================================
-# DIRECT RSS FALLBACKS
-# ============================================================
-
-RSS_SOURCES = [
-    {
-        "name": "The Kathmandu Post",
-        "url": "https://kathmandupost.com/rss",
-    },
-    {
-        "name": "OnlineKhabar",
-        "url": "https://www.onlinekhabar.com/feed",
-    },
-    {
-        "name": "Setopati",
-        "url": "https://www.setopati.com/feed",
-    },
-    {
-        "name": "Ratopati",
-        "url": "https://www.ratopati.com/feed",
-    },
-    {
-        "name": "The Himalayan Times",
-        "url": "https://thehimalayantimes.com/rssFeed",
-    },
-    {
-        "name": "Nepali Times",
-        "url": "https://www.nepalitimes.com/feed/",
-    },
-    {
-        "name": "Ujyaalo Online",
-        "url": "https://ujyaaloonline.com/rss",
-    },
-    {
-        "name": "Nagarik News",
-        "url": "https://nagariknews.nagariknetwork.com/feed",
-    },
-    {
-        "name": "Naya Patrika",
-        "url": "https://www.nayapatrikadaily.com/feed",
-    },
-    {
-        "name": "Gorkhapatra Online",
-        "url": "https://gorkhapatraonline.com/rss",
-    },
-]
-
-
-# ============================================================
-# KEYWORDS
-# ============================================================
-
-KEYWORDS = {
-    "weather": [
-        "weather", "rain", "rainfall", "flood", "flooding",
-        "monsoon", "landslide", "storm", "temperature",
-        "snow", "thunderstorm", "lightning", "climate",
-        "वर्षा", "बाढी", "मनसुन", "पहिरो", "मौसम",
-        "तापक्रम",
-    ],
-
-    "politics": [
-        "government", "minister", "parliament", "election",
-        "political", "prime minister", "cabinet", "party",
-        "president", "coalition",
-        "सरकार", "मन्त्री", "संसद", "निर्वाचन", "राजनीति",
-    ],
-
-    "business": [
-        "business", "economy", "bank", "market", "company",
-        "trade", "finance", "investment", "stock", "nepse",
-        "remittance", "industry", "tourism",
-        "व्यापार", "अर्थतन्त्र", "बैंक", "लगानी",
-    ],
-
-    "sports": [
-        "football", "cricket", "sports", "sport", "tournament",
-        "player", "match", "league", "championship",
-        "olympic", "athlete", "fifa", "icc",
-        "क्रिकेट", "फुटबल", "खेल",
-    ],
-
-    "technology": [
-        "technology", "tech", "digital", "artificial intelligence",
-        " ai ", "software", "internet", "cyber", "computer",
-        "app", "startup", "प्रविधि", "डिजिटल",
-    ],
-
-    "entertainment": [
-        "movie", "film", "music", "actor", "actress",
-        "entertainment", "concert", "singer", "cinema",
-        "television", "celebrity",
-        "चलचित्र", "संगीत", "मनोरञ्जन",
-    ],
-
-    "world": [
-        "world", "international", "india", "china", "america",
-        "iran", "israel", "usa", "ukraine", "russia",
-        "pakistan", "united states", "अन्तर्राष्ट्रिय",
-        "भारत", "चीन",
-    ],
-
-    "crime": [
-        "crime", "police", "arrest", "murder", "fraud",
-        "accident", "security", "court", "criminal",
-        "investigation", "robbery", "abuse",
-        "प्रहरी", "गिरफ्तार", "हत्या", "अपराध",
-    ],
-
-    "health": [
-        "health", "hospital", "doctor", "disease", "medical",
-        "medicine", "patient", "healthcare", "virus",
-        "outbreak", "dengue", "स्वास्थ्य", "अस्पताल",
-        "डाक्टर", "रोग",
-    ],
-}
-
-
-# ============================================================
-# HTTP
+# HTTP SESSION
 # ============================================================
 
 session = requests.Session()
 
 session.headers.update({
-    "User-Agent": USER_AGENT,
-    "Accept": (
-        "application/rss+xml, application/xml, text/xml, "
-        "text/html;q=0.9, */*;q=0.8"
+    "User-Agent": (
+        "Mozilla/5.0 "
+        "(compatible; NepalNewsTop10/1.0; "
+        "+https://github.com/Backtakg/Nepal-News-Top-10)"
     ),
-    "Accept-Language": "en-US,en;q=0.9,ne;q=0.8",
+    "Accept": "application/json",
 })
 
 
 # ============================================================
-# TEXT
+# HELPERS
 # ============================================================
 
 def clean_text(value):
+    """
+    Remove HTML and normalize whitespace.
+    """
+
     if value is None:
         return ""
 
-    value = html.unescape(str(value))
+    value = str(value)
 
     value = re.sub(
-        r"<script.*?</script>",
+        r"<script\b[^>]*>.*?</script>",
         " ",
         value,
         flags=re.I | re.S,
     )
 
     value = re.sub(
-        r"<style.*?</style>",
+        r"<style\b[^>]*>.*?</style>",
         " ",
         value,
         flags=re.I | re.S,
@@ -283,10 +355,14 @@ def clean_text(value):
 
 
 def normalize_title(title):
+    """
+    Used for duplicate detection.
+    """
+
     title = clean_text(title).lower()
 
     title = re.sub(
-        r"[^a-z0-9\u0900-\u097f ]",
+        r"[^a-z0-9\u0900-\u097f]+",
         " ",
         title,
     )
@@ -294,358 +370,390 @@ def normalize_title(title):
     return re.sub(r"\s+", " ", title).strip()
 
 
-def make_id(title, link):
-    raw = (
+def article_id(title, url):
+    """
+    Stable article identifier.
+    """
+
+    value = (
         normalize_title(title)
         + "|"
-        + link.strip().lower()
+        + str(url).strip().lower()
     )
 
     return hashlib.sha256(
-        raw.encode("utf-8")
-    ).hexdigest()[:24]
+        value.encode("utf-8")
+    ).hexdigest()
 
 
-# ============================================================
-# SUMMARY
-# ============================================================
+def parse_datetime(value):
+    """
+    Convert GNews publishedAt into a sortable timestamp.
+    """
 
-def make_summary(title, description):
-    title = clean_text(title)
-    description = clean_text(description)
+    if not value:
+        return 0
 
-    text = description or title
+    try:
+        value = value.replace("Z", "+00:00")
+
+        dt = datetime.fromisoformat(value)
+
+        if dt.tzinfo is None:
+            dt = dt.replace(
+                tzinfo=timezone.utc
+            )
+
+        return dt.timestamp()
+
+    except Exception:
+        return 0
+
+
+def one_sentence(text, fallback):
+    """
+    Convert description/content into one clean sentence.
+    """
+
+    text = clean_text(text)
 
     if not text:
-        return "Latest news update."
+        return fallback
 
+    # Remove common feed prefixes.
     text = re.sub(
-        r"^(read more|continue reading)\s*:?\s*",
+        r"^(read more|continue reading)\s*[:\-]?\s*",
         "",
         text,
         flags=re.I,
     )
 
+    text = re.sub(
+        r"\s+",
+        " ",
+        text,
+    ).strip()
+
+    # Split into sentences.
     sentences = re.split(
-        r"(?<=[.!?।])\s+",
+        r"(?<=[.!?])\s+",
         text,
     )
 
-    result = sentences[0].strip()
+    sentence = sentences[0].strip()
 
-    if not result:
-        result = title
+    # Sometimes descriptions start with a very short fragment.
+    if len(sentence) < 35 and len(sentences) > 1:
+        sentence = (
+            sentence + " " + sentences[1].strip()
+        )
 
-    if len(result) > 260:
-        result = (
-            result[:257]
+    # Keep summaries suitable for your frontend.
+    if len(sentence) > 280:
+        sentence = (
+            sentence[:277]
             .rsplit(" ", 1)[0]
             + "..."
         )
 
-    if not result.endswith(
-        (".", "!", "?", "।")
+    if not sentence.endswith(
+        (".", "!", "?")
     ):
-        result += "."
+        sentence += "."
 
-    return result
+    return sentence
 
 
-# ============================================================
-# CATEGORY
-# ============================================================
+def keyword_score(article, section):
+    """
+    Score how strongly an article belongs to a category.
+    """
 
-def classify(title, description):
-    text = (
-        clean_text(title)
-        + " "
-        + clean_text(description)
+    title = clean_text(
+        article.get("title", "")
     ).lower()
 
-    scores = {
-        section: 0
-        for section in SECTIONS
-    }
+    description = clean_text(
+        article.get("description", "")
+    ).lower()
 
-    for section, words in KEYWORDS.items():
-
-        for word in words:
-
-            if word.lower() in text:
-                scores[section] += 1
-
-    # Weather gets priority when strongly matched.
-    if scores["weather"] >= 2:
-        return "weather"
-
-    best = max(
-        scores,
-        key=scores.get,
-    )
-
-    if scores[best] == 0:
-        return "national"
-
-    return best
-
-
-# ============================================================
-# RANKING
-# ============================================================
-
-def rank_score(article):
-    title = article["title"].lower()
+    text = title + " " + description
 
     score = 0
 
-    important = [
-        "breaking",
-        "latest",
-        "major",
-        "government",
-        "prime minister",
-        "president",
-        "minister",
-        "election",
-        "parliament",
-        "decision",
-        "crisis",
-        "agreement",
-        "earthquake",
-        "flood",
-        "landslide",
-        "storm",
-        "victory",
-        "death",
-    ]
+    for keyword in CATEGORY_KEYWORDS.get(
+        section,
+        [],
+    ):
 
-    for word in important:
-        if word in title:
-            score += 3
+        keyword = keyword.lower()
 
-    if article.get("published"):
-        score += 1
+        if keyword in title:
+            score += 5
 
-    if article.get("source") != "Google News":
-        score += 2
+        elif keyword in description:
+            score += 2
+
+        elif keyword in text:
+            score += 1
 
     return score
 
 
-# ============================================================
-# GOOGLE NEWS
-# ============================================================
+def article_quality_score(article, section):
+    """
+    Ranking score.
 
-def google_url(query):
-    return (
-        "https://news.google.com/rss/search?"
-        "q="
-        + quote(query)
-        + "&hl=en-US&gl=US&ceid=US:en"
+    More relevant articles receive a higher score.
+    Recent articles receive a smaller bonus.
+    """
+
+    score = keyword_score(
+        article,
+        section,
     )
 
-
-def fetch_google(query):
-    url = google_url(query)
-
-    response = session.get(
-        url,
-        timeout=TIMEOUT,
-    )
-
-    response.raise_for_status()
-
-    feed = feedparser.parse(
-        response.content
-    )
-
-    if not feed.entries:
-        return []
-
-    results = []
-
-    for entry in feed.entries[:40]:
-
-        title = clean_text(
-            entry.get("title", "")
-        )
-
-        description = clean_text(
-            entry.get(
-                "summary",
-                entry.get(
-                    "description",
-                    "",
-                ),
-            )
-        )
-
-        link = clean_text(
-            entry.get("link", "")
-        )
-
-        published = clean_text(
-            entry.get(
-                "published",
-                entry.get(
-                    "updated",
-                    "",
-                ),
-            )
-        )
-
-        if not title or not link:
-            continue
-
-        source = "Google News"
-
-        try:
-            source_data = entry.get(
-                "source",
-                None,
-            )
-
-            if source_data:
-
-                source_name = clean_text(
-                    source_data.get(
-                        "title",
-                        "",
-                    )
-                )
-
-                if source_name:
-                    source = source_name
-
-        except Exception:
-            pass
-
-        results.append({
-            "title": title,
-            "summary": description,
-            "source": source,
-            "link": link,
-            "published": published,
-        })
-
-    return results
-
-
-# ============================================================
-# DIRECT RSS
-# ============================================================
-
-def fetch_rss(source):
-    response = session.get(
-        source["url"],
-        timeout=TIMEOUT,
-    )
-
-    response.raise_for_status()
-
-    feed = feedparser.parse(
-        response.content
-    )
-
-    if not feed.entries:
-        return []
-
-    results = []
-
-    for entry in feed.entries[:50]:
-
-        title = clean_text(
-            entry.get("title", "")
-        )
-
-        description = clean_text(
-            entry.get(
-                "summary",
-                entry.get(
-                    "description",
-                    "",
-                ),
-            )
-        )
-
-        link = clean_text(
-            entry.get("link", "")
-        )
-
-        published = clean_text(
-            entry.get(
-                "published",
-                entry.get(
-                    "updated",
-                    "",
-                ),
-            )
-        )
-
-        if not title or not link:
-            continue
-
-        results.append({
-            "title": title,
-            "summary": description,
-            "source": source["name"],
-            "link": link,
-            "published": published,
-        })
-
-    return results
-
-
-# ============================================================
-# NORMALIZE
-# ============================================================
-
-def normalize_article(raw, section):
     title = clean_text(
-        raw.get("title", "")
+        article.get("title", "")
+    ).lower()
+
+    important_words = [
+        "breaking",
+        "latest",
+        "major",
+        "update",
+        "decision",
+        "government",
+        "prime minister",
+        "president",
+        "election",
+        "flood",
+        "earthquake",
+        "landslide",
+        "storm",
+        "war",
+        "death",
+        "victory",
+    ]
+
+    for word in important_words:
+        if word in title:
+            score += 2
+
+    published = parse_datetime(
+        article.get("publishedAt")
+    )
+
+    if published:
+        # Small freshness bonus.
+        age_hours = max(
+            0,
+            (
+                datetime.now(timezone.utc).timestamp()
+                - published
+            ) / 3600,
+        )
+
+        if age_hours < 6:
+            score += 5
+
+        elif age_hours < 24:
+            score += 3
+
+        elif age_hours < 72:
+            score += 1
+
+    return score
+
+
+def is_valid_article(article):
+    """
+    Make sure the API returned usable article data.
+    """
+
+    if not isinstance(article, dict):
+        return False
+
+    title = clean_text(
+        article.get("title")
+    )
+
+    url = clean_text(
+        article.get("url")
+    )
+
+    if not title:
+        return False
+
+    if not url:
+        return False
+
+    if not url.startswith(
+        ("http://", "https://")
+    ):
+        return False
+
+    # GNews sometimes returns "[Removed]"
+    # for unavailable articles.
+    if title.lower() in {
+        "[removed]",
+        "removed",
+    }:
+        return False
+
+    return True
+
+
+# ============================================================
+# GNEWS REQUEST
+# ============================================================
+
+def fetch_category(section):
+    """
+    Fetch one category from GNews.
+    """
+
+    query = QUERIES[section]
+
+    params = {
+        "q": query,
+        "lang": "en",
+        "country": "np",
+        "max": 10,
+        "sortby": "publishedAt",
+        "apikey": API_KEY,
+    }
+
+    print("")
+    print("=" * 70)
+    print(f"FETCHING: {section.upper()}")
+    print(f"Query: {query}")
+
+    try:
+
+        response = session.get(
+            API_URL,
+            params=params,
+            timeout=REQUEST_TIMEOUT,
+        )
+
+        print(
+            "HTTP status:",
+            response.status_code,
+        )
+
+        if response.status_code != 200:
+
+            try:
+                error_data = response.json()
+            except Exception:
+                error_data = response.text[:500]
+
+            raise RuntimeError(
+                f"GNews API error "
+                f"{response.status_code}: "
+                f"{error_data}"
+            )
+
+        data = response.json()
+
+        articles = data.get(
+            "articles",
+            [],
+        )
+
+        if not isinstance(
+            articles,
+            list,
+        ):
+            articles = []
+
+        print(
+            "API returned:",
+            len(articles),
+            "articles",
+        )
+
+        return articles
+
+    except requests.RequestException as error:
+
+        raise RuntimeError(
+            f"Network error: {error}"
+        ) from error
+
+
+# ============================================================
+# CONVERT GNEWS ARTICLE
+# ============================================================
+
+def convert_article(article, section):
+    """
+    Convert GNews response to your site's exact format.
+    """
+
+    title = clean_text(
+        article.get("title")
     )
 
     description = clean_text(
-        raw.get("summary", "")
+        article.get("description")
     )
 
-    link = clean_text(
-        raw.get("link", "")
+    content = clean_text(
+        article.get("content")
     )
 
-    source = clean_text(
-        raw.get(
-            "source",
-            "Unknown source",
-        )
+    url = clean_text(
+        article.get("url")
     )
 
     published = clean_text(
-        raw.get(
-            "published",
-            "",
-        )
+        article.get("publishedAt")
     )
 
-    if not title or not link:
-        return None
+    source = article.get(
+        "source",
+        {},
+    )
+
+    if not isinstance(
+        source,
+        dict,
+    ):
+        source = {}
+
+    source_name = clean_text(
+        source.get("name")
+    )
+
+    if not source_name:
+        source_name = "GNews source"
+
+    summary_source = (
+        description
+        or content
+        or title
+    )
+
+    summary = one_sentence(
+        summary_source,
+        "Read the original article for the latest information.",
+    )
 
     return {
-        "id": make_id(
+        "id": article_id(
             title,
-            link,
+            url,
         ),
 
         "title": title,
 
-        "summary": make_summary(
-            title,
-            description,
-        ),
+        "summary": summary,
 
-        "source": source,
+        "source": source_name,
 
-        "link": link,
+        "link": url,
 
         "published": published,
 
@@ -654,72 +762,346 @@ def normalize_article(raw, section):
 
 
 # ============================================================
-# DEDUPLICATION
+# LOAD EXISTING DATABASE
 # ============================================================
 
-def deduplicate(articles):
-    result = []
+def load_existing_database():
+    """
+    Load the previous news.json.
 
-    seen_ids = set()
-    seen_titles = set()
-    seen_links = set()
+    This is important:
+    if the API fails, we don't destroy a good database
+    with empty arrays.
+    """
 
-    for article in articles:
-
-        article_id = article["id"]
-
-        title_key = normalize_title(
-            article["title"]
-        )
-
-        link = article["link"].strip()
-
-        if article_id in seen_ids:
-            continue
-
-        if title_key in seen_titles:
-            continue
-
-        if link in seen_links:
-            continue
-
-        seen_ids.add(article_id)
-        seen_titles.add(title_key)
-        seen_links.add(link)
-
-        result.append(article)
-
-    return result
-
-
-# ============================================================
-# LOAD OLD DATABASE
-# ============================================================
-
-def load_existing():
-    if not os.path.exists(OUTPUT_FILE):
+    if not OUTPUT_FILE.exists():
         return None
 
     try:
 
-        with open(
-            OUTPUT_FILE,
+        with OUTPUT_FILE.open(
             "r",
             encoding="utf-8",
-        ) as f:
+        ) as file:
 
-            data = json.load(f)
+            data = json.load(file)
+
+        if not isinstance(
+            data,
+            dict,
+        ):
+            return None
+
+        sections = data.get(
+            "sections"
+        )
+
+        if not isinstance(
+            sections,
+            dict,
+        ):
+            return None
 
         return data
 
     except Exception as error:
 
         print(
-            "Could not read existing news.json:",
+            "Could not load existing news.json:",
             error,
         )
 
         return None
+
+
+# ============================================================
+# BUILD DATABASE
+# ============================================================
+
+def build_database():
+    """
+    Fetch every category and create the final database.
+    """
+
+    if not API_KEY:
+
+        raise RuntimeError(
+            "GNEWS_API_KEY is missing. "
+            "Add it to GitHub repository "
+            "Settings > Secrets and variables > Actions."
+        )
+
+    result = {
+        section: []
+        for section in SECTIONS
+    }
+
+    diagnostics = {
+        "successful_categories": [],
+        "failed_categories": [],
+        "api_articles": 0,
+        "final_articles": 0,
+    }
+
+    global_seen_urls = set()
+    global_seen_titles = set()
+
+    for index, section in enumerate(
+        SECTIONS
+    ):
+
+        try:
+
+            raw_articles = fetch_category(
+                section
+            )
+
+            diagnostics[
+                "api_articles"
+            ] += len(raw_articles)
+
+            candidates = []
+
+            for raw in raw_articles:
+
+                if not is_valid_article(
+                    raw
+                ):
+                    continue
+
+                title = clean_text(
+                    raw.get("title")
+                )
+
+                url = clean_text(
+                    raw.get("url")
+                )
+
+                normalized = normalize_title(
+                    title
+                )
+
+                # Remove duplicates globally.
+                if url in global_seen_urls:
+                    continue
+
+                if normalized in global_seen_titles:
+                    continue
+
+                # Calculate category relevance.
+                relevance = keyword_score(
+                    raw,
+                    section,
+                )
+
+                # Because GNews already selected the article
+                # for our query, we allow it even if keyword
+                # scoring is low. This prevents empty sections.
+                candidates.append(
+                    (
+                        article_quality_score(
+                            raw,
+                            section,
+                        ),
+                        raw,
+                        relevance,
+                    )
+                )
+
+            # Highest quality first.
+            candidates.sort(
+                key=lambda item: (
+                    item[0],
+                    parse_datetime(
+                        item[1].get(
+                            "publishedAt"
+                        )
+                    ),
+                ),
+                reverse=True,
+            )
+
+            selected = []
+
+            for score, raw, relevance in candidates:
+
+                if len(selected) >= MAX_PER_CATEGORY:
+                    break
+
+                converted = convert_article(
+                    raw,
+                    section,
+                )
+
+                url = converted["link"]
+
+                normalized = normalize_title(
+                    converted["title"]
+                )
+
+                if url in global_seen_urls:
+                    continue
+
+                if normalized in global_seen_titles:
+                    continue
+
+                global_seen_urls.add(url)
+                global_seen_titles.add(
+                    normalized
+                )
+
+                selected.append(
+                    converted
+                )
+
+            result[section] = selected
+
+            diagnostics[
+                "successful_categories"
+            ].append(section)
+
+            diagnostics[
+                "final_articles"
+            ] += len(selected)
+
+            print(
+                f"{section}: "
+                f"{len(selected)} selected"
+            )
+
+        except Exception as error:
+
+            print(
+                f"FAILED CATEGORY: {section}"
+            )
+
+            print(
+                "Reason:",
+                error,
+            )
+
+            diagnostics[
+                "failed_categories"
+            ].append({
+                "section": section,
+                "error": str(error),
+            })
+
+        # Stay below API rate limits.
+        if index < len(SECTIONS) - 1:
+            time.sleep(
+                REQUEST_DELAY
+            )
+
+    return result, diagnostics
+
+
+# ============================================================
+# SAFE WRITE
+# ============================================================
+
+def write_database(
+    sections,
+    diagnostics,
+):
+    """
+    Write news.json only when we have usable data.
+    """
+
+    total = sum(
+        len(sections.get(section, []))
+        for section in SECTIONS
+    )
+
+    existing = load_existing_database()
+
+    # --------------------------------------------------------
+    # IMPORTANT SAFETY CHECK
+    # --------------------------------------------------------
+
+    if total == 0:
+
+        print("")
+        print("=" * 70)
+        print("ERROR: ZERO ARTICLES")
+        print("=" * 70)
+
+        if existing:
+
+            print(
+                "Keeping previous news.json."
+            )
+
+            return False
+
+        raise RuntimeError(
+            "GNews returned zero usable articles "
+            "and no previous news.json exists."
+        )
+
+    updated = datetime.now(
+        timezone.utc
+    ).isoformat()
+
+    output = {
+        "updated": updated,
+
+        "provider": "GNews",
+
+        "sections": {
+            section: sections.get(
+                section,
+                [],
+            )[:MAX_PER_CATEGORY]
+            for section in SECTIONS
+        },
+
+        "diagnostics": diagnostics,
+    }
+
+    temporary_file = Path(
+        "news.json.tmp"
+    )
+
+    with temporary_file.open(
+        "w",
+        encoding="utf-8",
+    ) as file:
+
+        json.dump(
+            output,
+            file,
+            ensure_ascii=False,
+            indent=2,
+        )
+
+    temporary_file.replace(
+        OUTPUT_FILE
+    )
+
+    print("")
+    print("=" * 70)
+    print("NEWS DATABASE UPDATED")
+    print("=" * 70)
+
+    print(
+        "Updated:",
+        updated,
+    )
+
+    print(
+        "Total articles:",
+        total,
+    )
+
+    for section in SECTIONS:
+
+        print(
+            f"  {section:15} "
+            f"{len(output['sections'][section])}"
+        )
+
+    return True
 
 
 # ============================================================
@@ -728,452 +1110,62 @@ def load_existing():
 
 def main():
 
+    print("")
     print("=" * 70)
     print("NEPAL NEWS TOP 10 SCRAPER")
     print("=" * 70)
 
     print(
-        "Started:",
-        datetime.now(
-            timezone.utc
-        ).isoformat(),
+        "Provider: GNews API"
     )
-
-    print()
-
-    all_articles = []
-
-    diagnostics = {
-        "google_news": {},
-        "rss": {},
-    }
-
-
-    # --------------------------------------------------------
-    # GOOGLE NEWS
-    # --------------------------------------------------------
-
-    print("=" * 70)
-    print("GOOGLE NEWS DISCOVERY")
-    print("=" * 70)
-
-    for section in SECTIONS:
-
-        queries = GOOGLE_QUERIES.get(
-            section,
-            [],
-        )
-
-        section_articles = []
-
-        print()
-        print(
-            f"[{section.upper()}]"
-        )
-
-        for query in queries:
-
-            print(
-                "Searching:",
-                query,
-            )
-
-            try:
-
-                found = fetch_google(
-                    query
-                )
-
-                print(
-                    "  Found:",
-                    len(found),
-                )
-
-                section_articles.extend(
-                    found
-                )
-
-                time.sleep(0.4)
-
-            except Exception as error:
-
-                print(
-                    "  FAILED:",
-                    error,
-                )
-
-        section_articles = deduplicate(
-            [
-                normalize_article(
-                    article,
-                    section,
-                )
-                for article in section_articles
-                if normalize_article(
-                    article,
-                    section,
-                )
-            ]
-        )
-
-        diagnostics["google_news"][
-            section
-        ] = len(section_articles)
-
-        print(
-            f"  Total {section}:",
-            len(section_articles),
-        )
-
-        all_articles.extend(
-            section_articles
-        )
-
-
-    # --------------------------------------------------------
-    # DIRECT RSS FALLBACK
-    # --------------------------------------------------------
-
-    print()
-    print("=" * 70)
-    print("DIRECT RSS FALLBACK")
-    print("=" * 70)
-
-    for source in RSS_SOURCES:
-
-        print()
-        print(
-            "Testing:",
-            source["name"],
-        )
-
-        try:
-
-            found = fetch_rss(
-                source
-            )
-
-            print(
-                "  SUCCESS:",
-                len(found),
-                "articles",
-            )
-
-            diagnostics["rss"][
-                source["name"]
-            ] = {
-                "status": "working",
-                "articles": len(found),
-            }
-
-            for raw in found:
-
-                section = classify(
-                    raw["title"],
-                    raw["summary"],
-                )
-
-                article = normalize_article(
-                    raw,
-                    section,
-                )
-
-                if article:
-                    all_articles.append(
-                        article
-                    )
-
-        except Exception as error:
-
-            print(
-                "  FAILED:",
-                error,
-            )
-
-            diagnostics["rss"][
-                source["name"]
-            ] = {
-                "status": "failed",
-                "error": str(error),
-            }
-
-
-    # --------------------------------------------------------
-    # DEDUPLICATE
-    # --------------------------------------------------------
-
-    all_articles = deduplicate(
-        all_articles
-    )
-
-    print()
-    print(
-        "Unique articles:",
-        len(all_articles),
-    )
-
-
-    # --------------------------------------------------------
-    # RECLASSIFY
-    # --------------------------------------------------------
-
-    for article in all_articles:
-
-        article["section"] = classify(
-            article["title"],
-            article["summary"],
-        )
-
-
-    # --------------------------------------------------------
-    # SORT
-    # --------------------------------------------------------
-
-    all_articles.sort(
-        key=rank_score,
-        reverse=True,
-    )
-
-
-    # --------------------------------------------------------
-    # BUILD SECTIONS
-    # --------------------------------------------------------
-
-    sections = {
-        section: []
-        for section in SECTIONS
-    }
-
-    for article in all_articles:
-
-        section = article["section"]
-
-        if section not in sections:
-            section = "national"
-
-        if len(
-            sections[section]
-        ) >= TOP_N:
-            continue
-
-        sections[section].append({
-            "title": article["title"],
-            "summary": article["summary"],
-            "source": article["source"],
-            "link": article["link"],
-            "published": article["published"],
-        })
-
-
-    # --------------------------------------------------------
-    # DIAGNOSTICS
-    # --------------------------------------------------------
-
-    counts = {
-        section: len(
-            sections[section]
-        )
-        for section in SECTIONS
-    }
-
-    total = sum(
-        counts.values()
-    )
-
-    print()
-    print("=" * 70)
-    print("FINAL RESULTS")
-    print("=" * 70)
-
-    for section in SECTIONS:
-
-        print(
-            f"{section:15} : "
-            f"{counts[section]}"
-        )
-
-    print()
-    print(
-        "TOTAL STORIES:",
-        total,
-    )
-
-
-    # --------------------------------------------------------
-    # SAFETY CHECK
-    #
-    # Never destroy a good database because all
-    # external sources temporarily failed.
-    # --------------------------------------------------------
-
-    existing = load_existing()
-
-    existing_total = 0
-
-    if existing:
-
-        existing_sections = existing.get(
-            "sections",
-            {},
-        )
-
-        if isinstance(
-            existing_sections,
-            dict,
-        ):
-
-            existing_total = sum(
-                len(
-                    existing_sections.get(
-                        section,
-                        [],
-                    )
-                )
-                for section in SECTIONS
-                if isinstance(
-                    existing_sections.get(
-                        section,
-                        [],
-                    ),
-                    list,
-                )
-            )
 
     print(
-        "Existing stories:",
-        existing_total,
-    )
-
-
-    if total == 0:
-
-        print()
-        print(
-            "ERROR: No articles were retrieved."
-        )
-
-        if existing_total > 0:
-
-            print(
-                "Keeping existing news.json."
-            )
-
-            return 0
-
-        print(
-            "No existing database is available."
-        )
-
-        return 1
-
-
-    # --------------------------------------------------------
-    # OUTPUT
-    # --------------------------------------------------------
-
-    output = {
-        "updated": datetime.now(
-            timezone.utc
-        ).isoformat(),
-
-        "generated_by": "Nepal News Top 10 scraper",
-
-        "article_count": total,
-
-        "sources": diagnostics,
-
-        "sections": sections,
-    }
-
-
-    temporary_file = (
-        OUTPUT_FILE
-        + ".tmp"
-    )
-
-    with open(
-        temporary_file,
-        "w",
-        encoding="utf-8",
-    ) as f:
-
-        json.dump(
-            output,
-            f,
-            ensure_ascii=False,
-            indent=2,
-        )
-
-        f.write("\n")
-
-
-    # Atomic replacement.
-    os.replace(
-        temporary_file,
-        OUTPUT_FILE,
-    )
-
-
-    # --------------------------------------------------------
-    # VALIDATE
-    # --------------------------------------------------------
-
-    with open(
-        OUTPUT_FILE,
-        "r",
-        encoding="utf-8",
-    ) as f:
-
-        check = json.load(f)
-
-
-    if not check.get("updated"):
-        raise RuntimeError(
-            "Generated news.json has no timestamp."
-        )
-
-    if not isinstance(
-        check.get("sections"),
-        dict,
-    ):
-        raise RuntimeError(
-            "Generated news.json has invalid sections."
-        )
-
-
-    print()
-    print("=" * 70)
-    print("SUCCESS")
-    print("=" * 70)
-
-    print(
-        "Created:",
+        "Output:",
         OUTPUT_FILE,
     )
 
     print(
-        "Stories:",
-        total,
+        "Categories:",
+        len(SECTIONS),
     )
 
     print(
-        "Updated:",
-        output["updated"],
+        "Maximum articles/category:",
+        MAX_PER_CATEGORY,
     )
 
-    print()
-    print(
-        "news.json is ready for GitHub Pages."
-    )
+    # Never print the API key.
 
-    return 0
+    try:
 
+        sections, diagnostics = (
+            build_database()
+        )
 
-# ============================================================
-# ENTRY POINT
-# ============================================================
+        write_database(
+            sections,
+            diagnostics,
+        )
+
+        print("")
+        print(
+            "Scraper completed successfully."
+        )
+
+    except Exception as error:
+
+        print("")
+        print("=" * 70)
+        print("SCRAPER FAILED")
+        print("=" * 70)
+
+        print(
+            str(error)
+        )
+
+        # Do not overwrite news.json.
+        raise
+
 
 if __name__ == "__main__":
-    raise SystemExit(
-        main()
-    )
+    main()
