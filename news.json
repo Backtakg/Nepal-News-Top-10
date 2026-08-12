@@ -1,17 +1,8 @@
 {
-  "updated": "2026-08-12T09:50:53.356289+00:00",
+  "updated": "2026-08-12T12:36:33.183625+00:00",
   "provider": "GNews",
   "sections": {
     "weather": [
-      {
-        "id": "8b4031bb8d11ef7e8ae828796cbfddba5c453c68ca2675e5f8d17da7e7d257b1",
-        "title": "South Asia updates: Dhaka outreach, Nepal shifts, China typhoon red alert",
-        "summary": "Sunday's developments spanned Bangladesh-India outreach, Nepal's political moves, China's typhoon alarm and security incidents elsewhere.",
-        "source": "India Today",
-        "link": "https://www.indiatoday.in/world/story/south-asia-updates-bangladesh-india-ties-nepal-politics-china-typhoon-red-alert-ptag-2967150-2026-08-09",
-        "published": "2026-08-09T12:00:34Z",
-        "section": "weather"
-      },
       {
         "id": "a838032792d4a9f43f3a6fb872c8d0c4daeab9288406275fe01db8f1c43f7ee6",
         "title": "Crowds, Climate Change and the Future of Climbing",
@@ -19,6 +10,15 @@
         "source": "Forbes India",
         "link": "https://www.forbesindia.com/article/life/scaling-up-what-a-record-number-of-summiteers-mean-for-mt-everest/2995924/1",
         "published": "2026-07-16T07:44:22Z",
+        "section": "weather"
+      },
+      {
+        "id": "8b4031bb8d11ef7e8ae828796cbfddba5c453c68ca2675e5f8d17da7e7d257b1",
+        "title": "South Asia updates: Dhaka outreach, Nepal shifts, China typhoon red alert",
+        "summary": "Sunday's developments spanned Bangladesh-India outreach, Nepal's political moves, China's typhoon alarm and security incidents elsewhere.",
+        "source": "India Today",
+        "link": "https://www.indiatoday.in/world/story/south-asia-updates-bangladesh-india-ties-nepal-politics-china-typhoon-red-alert-ptag-2967150-2026-08-09",
+        "published": "2026-08-09T12:00:34Z",
         "section": "weather"
       }
     ],
@@ -30,6 +30,15 @@
         "source": "Lokmat Times",
         "link": "https://www.lokmattimes.com/international/chinese-nationals-top-nepals-deportation-list/",
         "published": "2026-08-10T06:04:31Z",
+        "section": "national"
+      },
+      {
+        "id": "2622e17cce77dbb155bf2606a7e552c6e5d0fc269f828b57049a73597c52cd31",
+        "title": "Nepal, India ink MoUs for 8 projects worth over NRs 800 million",
+        "summary": "KATHMANDU, Aug 11: India on Tuesday pledged over Nepali Rs 800 million to Nepal for eight high-impact development projects in areas including education, health and agriculture.",
+        "source": "Daily Excelsior",
+        "link": "https://www.dailyexcelsior.com/nepal-india-ink-mous-for-8-projects-worth-over-nrs-800-million/",
+        "published": "2026-08-11T22:57:11Z",
         "section": "national"
       },
       {
@@ -277,6 +286,6 @@
     ],
     "failed_categories": [],
     "api_articles": 28,
-    "final_articles": 27
+    "final_articles": 28
   }
 }
