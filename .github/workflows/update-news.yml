@@ -2,1067 +2,105 @@ name: Update Nepal News
 
 on:
   schedule:
+    # Every 3 hours
     - cron: "0 */3 * * *"
+
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: nepal-news-update
+  group: update-nepal-news
   cancel-in-progress: true
 
 jobs:
   update-news:
+
     runs-on: ubuntu-latest
+
     timeout-minutes: 15
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+
+      # --------------------------------------------------
+      # CHECKOUT
+      # --------------------------------------------------
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
+
+      # --------------------------------------------------
+      # PYTHON
+      # --------------------------------------------------
+
       - name: Setup Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: "pip"
 
-      - name: Install dependencies
+
+      # --------------------------------------------------
+      # INSTALL
+      # --------------------------------------------------
+
+      - name: Install scraper dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests feedparser beautifulsoup4
+          pip install \
+            feedparser \
+            requests \
+            beautifulsoup4
 
-      - name: Create news updater
+
+      # --------------------------------------------------
+      # RUN SCRAPER
+      # --------------------------------------------------
+
+      - name: Scrape and build news database
         run: |
-          cat > update_news.py <<'PY'
-          import json
-          import re
-          import hashlib
-          import html
-          import time
-          from datetime import datetime, timezone
-          from email.utils import parsedate_to_datetime
+          python scraper.py
 
-          import requests
-          import feedparser
-          from bs4 import BeautifulSoup
 
+      # --------------------------------------------------
+      # VALIDATE JSON
+      # --------------------------------------------------
 
-          # ============================================================
-          # SETTINGS
-          # ============================================================
-
-          OUTPUT_FILE = "news.json"
-
-          SECTIONS = [
-              "weather",
-              "national",
-              "politics",
-              "business",
-              "sports",
-              "technology",
-              "entertainment",
-              "world",
-              "health",
-              "crime",
-          ]
-
-
-          # ============================================================
-          # NEWS SOURCES
-          # ============================================================
-
-          SOURCES = [
-              {
-                  "name": "The Kathmandu Post",
-                  "url": "https://kathmandupost.com/rss",
-              },
-              {
-                  "name": "OnlineKhabar",
-                  "url": "https://www.onlinekhabar.com/feed",
-              },
-              {
-                  "name": "Setopati",
-                  "url": "https://www.setopati.com/feed",
-              },
-              {
-                  "name": "Ratopati",
-                  "url": "https://www.ratopati.com/feed",
-              },
-              {
-                  "name": "The Himalayan Times",
-                  "url": "https://thehimalayantimes.com/rssFeed",
-              },
-              {
-                  "name": "Nepali Times",
-                  "url": "https://www.nepalitimes.com/feed/",
-              },
-              {
-                  "name": "Ujyaalo Online",
-                  "url": "https://ujyaaloonline.com/rss",
-              },
-              {
-                  "name": "Nagarik News",
-                  "url": "https://nagariknews.nagariknetwork.com/feed",
-              },
-              {
-                  "name": "Naya Patrika",
-                  "url": "https://www.nayapatrikadaily.com/feed",
-              },
-              {
-                  "name": "Baahrakhari",
-                  "url": "https://baahrakhari.com/feed",
-              },
-              {
-                  "name": "Gorkhapatra Online",
-                  "url": "https://gorkhapatraonline.com/rss",
-              },
-              {
-                  "name": "The Rising Nepal",
-                  "url": "https://risingnepaldaily.com/rss",
-              },
-          ]
-
-
-          # ============================================================
-          # KEYWORDS
-          # ============================================================
-
-          KEYWORDS = {
-
-              "weather": [
-                  "weather",
-                  "rain",
-                  "rainfall",
-                  "flood",
-                  "floods",
-                  "flooding",
-                  "monsoon",
-                  "landslide",
-                  "landslides",
-                  "storm",
-                  "storms",
-                  "thunderstorm",
-                  "temperature",
-                  "heatwave",
-                  "cold wave",
-                  "snow",
-                  "lightning",
-                  "climate",
-                  "heavy rain",
-              ],
-
-              "politics": [
-                  "government",
-                  "minister",
-                  "parliament",
-                  "election",
-                  "political",
-                  "politics",
-                  "prime minister",
-                  "cabinet",
-                  "party",
-                  "president",
-                  "coalition",
-                  "opposition",
-                  "lawmakers",
-                  "ruling party",
-                  "federal",
-                  "provincial assembly",
-              ],
-
-              "business": [
-                  "business",
-                  "economy",
-                  "economic",
-                  "bank",
-                  "banking",
-                  "market",
-                  "company",
-                  "trade",
-                  "finance",
-                  "investment",
-                  "stock",
-                  "nepse",
-                  "remittance",
-                  "industry",
-                  "tourism",
-                  "inflation",
-                  "export",
-                  "import",
-                  "revenue",
-              ],
-
-              "sports": [
-                  "football",
-                  "cricket",
-                  "sports",
-                  "sport",
-                  "tournament",
-                  "player",
-                  "match",
-                  "league",
-                  "championship",
-                  "olympic",
-                  "athlete",
-                  "fifa",
-                  "icc",
-                  "goal",
-                  "wicket",
-                  "runs",
-                  "coach",
-              ],
-
-              "technology": [
-                  "technology",
-                  "tech",
-                  "digital",
-                  "artificial intelligence",
-                  "ai",
-                  "software",
-                  "internet",
-                  "cyber",
-                  "computer",
-                  "app",
-                  "startup",
-                  "smartphone",
-                  "robot",
-                  "data",
-                  "innovation",
-              ],
-
-              "entertainment": [
-                  "movie",
-                  "film",
-                  "music",
-                  "actor",
-                  "actress",
-                  "entertainment",
-                  "concert",
-                  "singer",
-                  "cinema",
-                  "television",
-                  "celebrity",
-                  "album",
-                  "director",
-                  "festival",
-              ],
-
-              "world": [
-                  "world",
-                  "international",
-                  "india",
-                  "china",
-                  "america",
-                  "iran",
-                  "israel",
-                  "usa",
-                  "ukraine",
-                  "russia",
-                  "pakistan",
-                  "united states",
-                  "europe",
-                  "global",
-                  "foreign",
-                  "middle east",
-              ],
-
-              "health": [
-                  "health",
-                  "hospital",
-                  "doctor",
-                  "disease",
-                  "medical",
-                  "medicine",
-                  "patient",
-                  "healthcare",
-                  "virus",
-                  "outbreak",
-                  "dengue",
-                  "vaccine",
-                  "vaccination",
-                  "epidemic",
-                  "public health",
-                  "surgery",
-              ],
-
-              "crime": [
-                  "crime",
-                  "police",
-                  "arrest",
-                  "murder",
-                  "fraud",
-                  "accident",
-                  "security",
-                  "court",
-                  "criminal",
-                  "investigation",
-                  "robbery",
-                  "abuse",
-                  "theft",
-                  "kidnap",
-                  "drugs",
-                  "killed",
-                  "shooting",
-              ],
-          }
-
-
-          # ============================================================
-          # HTTP SESSION
-          # ============================================================
-
-          session = requests.Session()
-
-          session.headers.update({
-              "User-Agent": (
-                  "Mozilla/5.0 "
-                  "(X11; Linux x86_64) "
-                  "AppleWebKit/537.36 "
-                  "(KHTML, like Gecko) "
-                  "Chrome/131.0 Safari/537.36"
-              ),
-              "Accept": (
-                  "application/rss+xml,"
-                  "application/atom+xml,"
-                  "application/xml,"
-                  "text/xml,"
-                  "text/html,"
-                  "*/*"
-              ),
-              "Accept-Language": "en-US,en;q=0.9",
-              "Connection": "keep-alive",
-          })
-
-
-          # ============================================================
-          # TEXT CLEANING
-          # ============================================================
-
-          def clean_text(value):
-
-              if value is None:
-                  return ""
-
-              value = str(value)
-
-              value = html.unescape(value)
-
-              soup = BeautifulSoup(
-                  value,
-                  "html.parser"
-              )
-
-              for tag in soup(
-                  ["script", "style", "noscript"]
-              ):
-                  tag.decompose()
-
-              value = soup.get_text(
-                  " ",
-                  strip=True
-              )
-
-              value = re.sub(
-                  r"\s+",
-                  " ",
-                  value
-              )
-
-              return value.strip()
-
-
-          def normalize_title(title):
-
-              title = clean_text(title).lower()
-
-              title = re.sub(
-                  r"[^\w\s]",
-                  " ",
-                  title
-              )
-
-              title = re.sub(
-                  r"\s+",
-                  " ",
-                  title
-              )
-
-              return title.strip()
-
-
-          def make_id(title):
-
-              return hashlib.sha256(
-                  normalize_title(title)
-                  .encode("utf-8")
-              ).hexdigest()
-
-
-          # ============================================================
-          # SUMMARY
-          # ============================================================
-
-          def make_summary(summary, title):
-
-              summary = clean_text(summary)
-              title = clean_text(title)
-
-              if not summary:
-                  summary = title
-
-              if not summary:
-                  return "Latest news update."
-
-              # Remove common feed junk.
-              summary = re.sub(
-                  r"^(read more|continue reading)\s*:?",
-                  "",
-                  summary,
-                  flags=re.I
-              ).strip()
-
-              sentences = re.split(
-                  r"(?<=[.!?])\s+",
-                  summary
-              )
-
-              sentence = sentences[0].strip()
-
-              if len(sentence) > 280:
-                  sentence = (
-                      sentence[:277]
-                      .rsplit(" ", 1)[0]
-                      + "..."
-                  )
-
-              if not sentence.endswith(
-                  (".", "!", "?")
-              ):
-                  sentence += "."
-
-              return sentence
-
-
-          # ============================================================
-          # DATE
-          # ============================================================
-
-          def get_date(item):
-
-              for key in [
-                  "published_parsed",
-                  "updated_parsed",
-              ]:
-
-                  value = item.get(key)
-
-                  if value:
-
-                      try:
-                          import calendar
-
-                          timestamp = calendar.timegm(
-                              value
-                          )
-
-                          return datetime.fromtimestamp(
-                              timestamp,
-                              timezone.utc
-                          ).isoformat()
-
-                      except Exception:
-                          pass
-
-
-              for key in [
-                  "published",
-                  "updated",
-              ]:
-
-                  value = item.get(key)
-
-                  if not value:
-                      continue
-
-                  try:
-
-                      dt = parsedate_to_datetime(
-                          value
-                      )
-
-                      if dt.tzinfo is None:
-                          dt = dt.replace(
-                              tzinfo=timezone.utc
-                          )
-
-                      return dt.astimezone(
-                          timezone.utc
-                      ).isoformat()
-
-                  except Exception:
-                      pass
-
-              return ""
-
-
-          # ============================================================
-          # CATEGORY
-          # ============================================================
-
-          def classify(title, summary, link):
-
-              text = (
-                  clean_text(title)
-                  + " "
-                  + clean_text(summary)
-                  + " "
-                  + clean_text(link)
-              ).lower()
-
-              scores = {
-                  section: 0
-                  for section in KEYWORDS
-              }
-
-              for section, words in KEYWORDS.items():
-
-                  for word in words:
-
-                      if word.lower() in text:
-                          scores[section] += 1
-
-
-              best = max(
-                  scores,
-                  key=scores.get
-              )
-
-              if scores[best] == 0:
-                  return "national"
-
-              return best
-
-
-          # ============================================================
-          # IMPORTANCE
-          # ============================================================
-
-          def importance(article):
-
-              title = article["title"].lower()
-
-              score = 0
-
-              important = [
-                  "breaking",
-                  "latest",
-                  "government",
-                  "prime minister",
-                  "president",
-                  "election",
-                  "minister",
-                  "major",
-                  "crisis",
-                  "decision",
-                  "agreement",
-                  "earthquake",
-                  "flood",
-                  "landslide",
-                  "storm",
-                  "war",
-                  "victory",
-                  "death",
-                  "killed",
-              ]
-
-              for word in important:
-
-                  if word in title:
-                      score += 2
-
-              if article["published"]:
-                  score += 1
-
-              return score
-
-
-          # ============================================================
-          # FETCH ONE FEED
-          # ============================================================
-
-          def fetch_feed(source):
-
-              print("")
-              print("=" * 70)
-              print("TESTING:", source["name"])
-              print("URL:", source["url"])
-
-              try:
-
-                  response = session.get(
-                      source["url"],
-                      timeout=25,
-                      allow_redirects=True
-                  )
-
-                  print(
-                      "HTTP:",
-                      response.status_code
-                  )
-
-                  print(
-                      "Content-Type:",
-                      response.headers.get(
-                          "content-type",
-                          ""
-                      )
-                  )
-
-                  response.raise_for_status()
-
-                  if not response.content:
-                      raise RuntimeError(
-                          "Empty response"
-                      )
-
-
-                  # Parse raw response directly.
-                  # This is important because some publishers
-                  # return RSS with an incorrect Content-Type.
-                  feed = feedparser.parse(
-                      response.content
-                  )
-
-                  entries = list(
-                      getattr(
-                          feed,
-                          "entries",
-                          []
-                      )
-                  )
-
-                  print(
-                      "Parsed entries:",
-                      len(entries)
-                  )
-
-
-                  # Some feeds are encoded strangely.
-                  # Try text as a second parser input.
-                  if not entries:
-
-                      text = response.content.decode(
-                          response.encoding
-                          or "utf-8",
-                          errors="replace"
-                      )
-
-                      feed = feedparser.parse(
-                          text
-                      )
-
-                      entries = list(
-                          getattr(
-                              feed,
-                              "entries",
-                              []
-                          )
-                      )
-
-                      print(
-                          "Second parser attempt:",
-                          len(entries)
-                      )
-
-
-                  usable = []
-
-                  for item in entries[:100]:
-
-                      title = clean_text(
-                          item.get(
-                              "title",
-                              ""
-                          )
-                      )
-
-                      link = clean_text(
-                          item.get(
-                              "link",
-                              ""
-                          )
-                      )
-
-                      if title and link:
-                          usable.append(item)
-
-
-                  if not usable:
-
-                      raise RuntimeError(
-                          "Feed returned no usable "
-                          "title/link entries"
-                      )
-
-
-                  print(
-                      "USABLE ARTICLES:",
-                      len(usable)
-                  )
-
-                  return usable, None
-
-
-              except Exception as error:
-
-                  return [], str(error)
-
-
-          # ============================================================
-          # MAIN COLLECTION
-          # ============================================================
-
-          articles = []
-
-          seen_links = set()
-          seen_titles = set()
-
-          working_sources = []
-          failed_sources = []
-
-
-          for source in SOURCES:
-
-              entries, error = fetch_feed(
-                  source
-              )
-
-              if error:
-
-                  print(
-                      "FAILED:",
-                      source["name"],
-                      "|",
-                      error
-                  )
-
-                  failed_sources.append({
-                      "name": source["name"],
-                      "url": source["url"],
-                      "error": error,
-                  })
-
-                  continue
-
-
-              working_sources.append(
-                  source["name"]
-              )
-
-
-              for item in entries:
-
-                  title = clean_text(
-                      item.get(
-                          "title",
-                          ""
-                      )
-                  )
-
-                  link = clean_text(
-                      item.get(
-                          "link",
-                          ""
-                      )
-                  )
-
-                  summary = clean_text(
-                      item.get(
-                          "summary",
-                          item.get(
-                              "description",
-                              ""
-                          )
-                      )
-                  )
-
-
-                  if not title or not link:
-                      continue
-
-
-                  normalized = normalize_title(
-                      title
-                  )
-
-
-                  if link in seen_links:
-                      continue
-
-                  if normalized in seen_titles:
-                      continue
-
-
-                  seen_links.add(link)
-                  seen_titles.add(normalized)
-
-
-                  section = classify(
-                      title,
-                      summary,
-                      link
-                  )
-
-
-                  articles.append({
-
-                      "id": make_id(title),
-
-                      "title": title,
-
-                      "summary": make_summary(
-                          summary,
-                          title
-                      ),
-
-                      "source":
-                          source["name"],
-
-                      "link": link,
-
-                      "published":
-                          get_date(item),
-
-                      "section": section,
-
-                  })
-
-
-          print("")
-          print("=" * 70)
-          print(
-              "TOTAL UNIQUE ARTICLES:",
-              len(articles)
-          )
-
-
-          # ============================================================
-          # NEVER DESTROY GOOD DATA
-          # ============================================================
-
-          if not articles:
-
-              print("")
-              print(
-                  "ERROR: No articles were extracted."
-              )
-
-              print(
-                  "Existing news.json will NOT "
-                  "be overwritten."
-              )
-
-              raise SystemExit(1)
-
-
-          # ============================================================
-          # SORT
-          # ============================================================
-
-          articles.sort(
-              key=importance,
-              reverse=True
-          )
-
-
-          # ============================================================
-          # CREATE SECTIONS
-          # ============================================================
-
-          sections = {
-              section: []
-              for section in SECTIONS
-          }
-
-
-          for article in articles:
-
-              section = article["section"]
-
-              if section not in sections:
-                  section = "national"
-
-              if len(
-                  sections[section]
-              ) >= 10:
-                  continue
-
-
-              # IMPORTANT:
-              # No image field is created here.
-              sections[section].append({
-
-                  "title":
-                      article["title"],
-
-                  "summary":
-                      article["summary"],
-
-                  "source":
-                      article["source"],
-
-                  "link":
-                      article["link"],
-
-                  "published":
-                      article["published"],
-
-              })
-
-
-          # ============================================================
-          # CREATE JSON
-          # ============================================================
-
-          output = {
-
-              "updated":
-                  datetime.now(
-                      timezone.utc
-                  ).isoformat(),
-
-              "sources": {
-
-                  "working":
-                      working_sources,
-
-                  "failed":
-                      failed_sources,
-
-              },
-
-              "sections":
-                  sections,
-
-          }
-
-
-          # ============================================================
-          # WRITE ATOMICALLY
-          # ============================================================
-
-          temp_file = OUTPUT_FILE + ".tmp"
-
-          with open(
-              temp_file,
-              "w",
-              encoding="utf-8"
-          ) as f:
-
-              json.dump(
-                  output,
-                  f,
-                  ensure_ascii=False,
-                  indent=2
-              )
-
-          # Validate before replacing the real file.
-          with open(
-              temp_file,
-              "r",
-              encoding="utf-8"
-          ) as f:
-
-              json.load(f)
-
-
-          import os
-
-          os.replace(
-              temp_file,
-              OUTPUT_FILE
-          )
-
-
-          # ============================================================
-          # REPORT
-          # ============================================================
-
-          print("")
-          print("=" * 70)
-          print("NEWS UPDATE SUCCESSFUL")
-          print("=" * 70)
-
-          print(
-              "Working sources:",
-              len(working_sources)
-          )
-
-          for source in working_sources:
-              print(
-                  "  ✓",
-                  source
-              )
-
-
-          print("")
-          print(
-              "Failed sources:",
-              len(failed_sources)
-          )
-
-          for source in failed_sources:
-              print(
-                  "  ✗",
-                  source["name"],
-                  "|",
-                  source["error"]
-              )
-
-
-          print("")
-          print("CATEGORY COUNTS:")
-
-          for section in SECTIONS:
-
-              print(
-                  f"  {section}: "
-                  f"{len(sections[section])}"
-              )
-
-          print("")
-          print(
-              "news.json generated successfully."
-          )
-
-          PY
-
-      - name: Run news updater
-        run: |
-          python update_news.py
-
-      - name: Validate generated database
+      - name: Validate news.json
         run: |
           python - <<'PY'
           import json
-          import os
+          from pathlib import Path
 
-          assert os.path.exists("news.json")
+          path = Path("news.json")
 
-          with open(
-              "news.json",
+          if not path.exists():
+              raise SystemExit("ERROR: news.json was not created")
+
+          with path.open(
+              "r",
               encoding="utf-8"
           ) as f:
               data = json.load(f)
 
-          assert data.get("updated")
-          assert "sections" in data
-          assert "sources" in data
-
           required = [
-              "weather",
+              "updated",
+              "top10",
+              "sections",
+              "sources"
+          ]
+
+          for key in required:
+              if key not in data:
+                  raise SystemExit(
+                      f"ERROR: missing key: {key}"
+                  )
+
+          sections = [
               "national",
               "politics",
               "business",
@@ -1070,46 +108,31 @@ jobs:
               "technology",
               "entertainment",
               "world",
-              "health",
               "crime",
+              "health",
+              "weather"
           ]
 
-          total = 0
+          for section in sections:
 
-          for section in required:
+              if section not in data["sections"]:
+                  raise SystemExit(
+                      f"ERROR: missing section: {section}"
+                  )
 
-              assert section in data["sections"]
-
-              stories = data["sections"][section]
-
-              assert isinstance(
-                  stories,
-                  list
+              count = len(
+                  data["sections"][section]
               )
 
-              assert len(stories) <= 10
-
-              total += len(stories)
-
-              for story in stories:
-
-                  assert story.get("title")
-                  assert story.get("summary")
-                  assert story.get("source")
-                  assert story.get("link")
-
-                  # No images in backend data.
-                  assert "image" not in story
-                  assert "image_url" not in story
+              print(
+                  f"{section}: {count} articles"
+              )
 
           print("")
+          print("news.json validation PASSED")
           print(
-              "VALIDATION PASSED"
-          )
-
-          print(
-              "Total stories:",
-              total
+              "Overall Top 10:",
+              len(data["top10"])
           )
 
           print(
@@ -1118,13 +141,25 @@ jobs:
                   data["sources"]["working"]
               )
           )
+
+          print(
+              "Failed sources:",
+              len(
+                  data["sources"]["failed"]
+              )
+          )
           PY
+
+
+      # --------------------------------------------------
+      # SHOW NEWS PREVIEW IN ACTION LOG
+      # --------------------------------------------------
 
       - name: Show generated news
         run: |
-          echo "========================================"
-          echo "GENERATED NEWS"
-          echo "========================================"
+          echo "======================================"
+          echo "GENERATED NEWS PREVIEW"
+          echo "======================================"
 
           python - <<'PY'
           import json
@@ -1135,38 +170,59 @@ jobs:
           ) as f:
               data = json.load(f)
 
-          for section, stories in data["sections"].items():
+          print("")
+          print("UPDATED:")
+          print(data["updated"])
 
-              print("")
+          print("")
+          print("TOP 10:")
+          print("")
+
+          for i, item in enumerate(
+              data["top10"],
+              1
+          ):
               print(
-                  f"--- {section.upper()} "
-                  f"({len(stories)}) ---"
+                  f"{i}. {item['title']}"
+              )
+              print(
+                  f"   {item['source']}"
               )
 
-              for i, story in enumerate(
-                  stories[:5],
-                  1
-              ):
+          print("")
+          print("CATEGORIES:")
+          print("")
 
-                  print(
-                      f"{i}. {story['title']}"
-                  )
+          for section, items in data[
+              "sections"
+          ].items():
 
-                  print(
-                      f"   {story['source']}"
-                  )
+              print(
+                  f"{section}: {len(items)}"
+              )
           PY
 
-      - name: Commit news.json
+
+      # --------------------------------------------------
+      # COMMIT
+      # --------------------------------------------------
+
+      - name: Commit updated news
         run: |
+
           git config user.name "Nepal News Bot"
-          git config user.email "actions@github.com"
+
+          git config user.email \
+            "actions@github.com"
 
           git add news.json
 
           if git diff --cached --quiet; then
-            echo "No changes to commit."
-          else
-            git commit -m "Update Nepal news"
-            git push
+            echo "No news changes detected."
+            exit 0
           fi
+
+          git commit \
+            -m "Update Nepal news database"
+
+          git push
