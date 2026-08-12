@@ -67,9 +67,11 @@ jobs:
       # Run scraper
       # --------------------------------------------------
 
-      - name: Run news scraper
-        run: |
-          python scraper.py
+      - name: Run scraper
+  env:
+    NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
+  run: |
+    python scraper.py
 
 
       # --------------------------------------------------
